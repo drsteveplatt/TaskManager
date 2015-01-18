@@ -1,0 +1,21 @@
+  TaskManager KEYWORD1
+  add KEYWORD1
+  addWaitDelay KEYWORD2
+  addWaitUntil KEYWORD2
+  addAutoWaitDelay KEYWORD2
+  addWaitSignal KEYWORD2
+  addWaitMessage KEYWORD2
+  addAutoWaitMessage KEYWORD2
+  yield KEYWORD2
+  yieldDelay KEYWORD2
+  yieldUntil	KEYWORD2
+  yieldForSignal	KEYWORD2
+  yieldForMessage	KEYWORD2
+  timedOut KEYWORD2
+  getMessage KEYWORD2
+  sendSingal KEYWORD2
+  sendSignalAll KEYWORD2
+  sendMessage KEYWORD2
+  runtime KEYWORD2
+  printTo KEYWORD2
+  
