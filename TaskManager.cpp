@@ -206,7 +206,7 @@ void TaskManager::addWaitUntil(byte taskId, void(*fn)(), unsigned long msWhen) {
     */
 void TaskManager::addAutoWaitDelay(byte taskId, void(*fn)(), unsigned int period, bool startWaiting /*=false*/) {
     _TaskManagerTask newTask(taskId, fn);
-    if(startWaiting) newTask.setWaitDelay(period);
+    if(startWaiting) newTask.setWaitDelay(period); else newTask.m_restartTime = millis();
     newTask.setAutoDelay(period);
     m_theTasks.push_back(newTask);
 }
@@ -569,7 +569,16 @@ void TaskManager::loop() {
         // this is the normal path we use to invoke and process "normal" returns
         (nextTask->m_fn)();
         if(nextTask->stateTestBit(_TaskManagerTask::AutoReWaitUntil)) {
+#if 1
+		   unsigned long newRestart = nextTask->m_restartTime;	// the time this one started
+		   unsigned long now = millis();
+		   while(newRestart<now) {
+                newRestart += nextTask->m_period;	// keep bumping til the future
+		   }
+		   nextTask->setWaitUntil(newRestart);
+#else
            nextTask->setWaitUntil(millis()+nextTask->m_period);
+#endif
         }
         // Note that timeout autorestarts will have AutoReUntil and AutoReSignal/Message set
         // So to handle this, we process the bits separately and set both if needed.

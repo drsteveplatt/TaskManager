@@ -287,16 +287,18 @@ template<class T> inline bool ring<T>::operator==(ring<T>& r) const {
 template<class T>size_t ring<T>::printTo(Print& p) const {
     _ringNode<T>* last;
     _ringNode<T>* cur;
-    p.print("[");
-    p.print(m_prefix);
+    size_t len = 0;
+    len += p.print("[");
+    len += p.print(m_prefix);
     if(m_cur!=NULL) {
         for(cur=m_cur, last=m_cur->m_prev; cur!=last; cur=cur->m_next) {
-            p.print(cur->m_val);
-            p.print(" ");
+            len += p.print(cur->m_val);
+            len += p.print(" ");
         }
-        p.print(last->m_val);
+        len += p.print(last->m_val);
     }
-    p.print("]");
+    len += p.print("]");
+    return len;
 }
 
 //! \brief Print out the contents of the ring to a Print object.
