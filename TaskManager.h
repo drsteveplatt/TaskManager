@@ -4,10 +4,7 @@
 #include "ring.h"
 #include <setjmp.h>
 
-class TaskManager;
-#if !defined(TASKMANAGER_MAIN)
-extern TaskManager TaskMgr;
-#endif
+
 
 /*! \file TaskManager.h
     Header for Arduino TaskManager library
@@ -19,7 +16,14 @@ extern TaskManager TaskMgr;
     This defines the maximum size for an inter-task message.  It is constrained, in part,
     by plans for RFI communication between tasks running on different devices.
 */
-#define TASKMGR_MESSAGE_SIZE 25
+#define TASKMGR_MESSAGE_SIZE 30
+
+//  Radio code -- ensure definition
+#if !defined(TASKMANAGER_RADIO)
+#define TASKMANAGER_RADIO 0
+#endif
+
+
 
 /*! \class _TaskManagerTask
     \brief Internal class to manage a single active task
@@ -118,6 +122,11 @@ public:
     ring<_TaskManagerTask> m_theTasks; //!< The ring of all tasks.  For internal use only.
 private:
     unsigned long m_startTime;  //!< Start clock time.  Used to calcualte runtime. For internal use only.
+#if TASKMANAGER_RADIO>0
+#if TASJNABAGER_RADIO==1
+	Radio*	m_rf24;
+#endif
+#endif
 
 public:
     TaskManager();
@@ -172,6 +181,12 @@ public:
     void sendSignalAll(byte);
     void sendMessage(byte, char*);       // string
     void sendMessage(byte, void*, int);  // arbitrary buffer
+#if TASKMANAGER_RADIO>0
+    void sendSignal(byte, byte);			//	remote, sigID
+    void sendSignalAll(byte, byte);			//	remote, sigID
+    void sendMessage(byte, byte, char*);	//	remote, taskID, msg text
+    void sendMessage(byte, byte, void*, int);	// remote, taskID, data, len)
+#endif
 
 private:
     // Find the next active task
@@ -189,7 +204,25 @@ public:
     // internal utility
 public:
     _TaskManagerTask* findTaskById(byte id);
+
+    // radio
+#if TASKMANAGER_RADIO>0
+public:
+	void radioReceiverTask();
+#if TASKMANAGER_RADIO==TASKMANAGER_RADIO_RF24
+	void radioBegin();
+#endif
+#endif
 };
+
+//
+// Defining our global TaskMgr
+//
+#if !defined(TASKMANAGER_MAIN)
+extern TaskManager TaskMgr;
+#else
+TaskManager TaskMgr;
+#endif
 
 //
 // Inline stuff

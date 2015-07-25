@@ -7,8 +7,6 @@
     Implementation file for Arduino Task Manager
 */
 
-TaskManager TaskMgr;
-
 static void nullTask() {
 }
 
@@ -16,6 +14,12 @@ static void nullTask() {
 void loop() {
     TaskMgr.loop();
 }
+
+#if TASKMANAGER_RADIO>0
+static void radioReceiverTask() {
+	TaskMgr.radioReceiver();
+}
+#endif
 
 //
 // Implementation of _TaskManagerTask
@@ -126,6 +130,9 @@ size_t _TaskManagerTask::printTo(Print& p) const {
 */
 TaskManager::TaskManager() {
     add(0xff, nullTask);
+#if TASKMANAGER_RADIO>0
+	add(0xfe, radioReceiverTask);
+#endif
     m_startTime = millis();
 }
 /*!  \brief Destructor.  Destroys the TaskManager.
@@ -445,14 +452,17 @@ void TaskManager::sendSignalAll(byte sigNum) {
     Note that once a task has been sent a message, it will not be waiting for
     other instances of the same siggnal number.
     Note that additional messages sent prior to the task executing will overwrite any prior messages.
+    Messages that are too large are ignored.  Remember to account for the trailing '\n'
+    when considering the string message size.
+
     \param taskId -- the ID number of the task
-    \param message -- the character string message.  It is restricted in length to 24 characters.  Longer messages
-    will be ignored.
+    \param message -- the character string message.  It is restricted in length to
+    TASKMGR_MESSAGE_LENGTH-1 characters.
     \sa yieldForMessage()
 */
 void TaskManager::sendMessage(byte taskId, char* message) {
     _TaskManagerTask* tsk;
-    if(strlen(message)>TASKMGR_MESSAGE_SIZE) return;
+    if(strlen(message)>TASKMGR_MESSAGE_SIZE-1) return;
     tsk = findTaskById(taskId);
     if(tsk==NULL) return;
     tsk->putMessage((void*)message, strlen(message)+1);
@@ -461,12 +471,14 @@ void TaskManager::sendMessage(byte taskId, char* message) {
 
     Sends a message to a task.  The message will go to only one task.
     Note that once a task has been sent a message, it will not be waiting for
-    other instances of the same siggnal number.
+    other instances of the same signal number.  Messages that are too large are
+    ignored.
 
     Note that additional messages sent prior to the task executing will overwrite any prior messages.
     \param taskId -- the ID number of the task
     \param buf -- A pointer to the structure that is to be passed to the task
-    \param len -- The length of the buffer.  Buffers over 24 bytes long will be ignored -- no message will be sent.
+    \param len -- The length of the buffer.  Buffers can be at most TASKMGR_MESSAGE_LENGTH
+    bytes long.
     \sa yieldForMessage()
 */
 void TaskManager::sendMessage(byte taskId, void* buf, int len) {
@@ -568,17 +580,18 @@ void TaskManager::loop() {
     if((jmpVal=setjmp(TaskMgr.taskJmpBuf))==0) {
         // this is the normal path we use to invoke and process "normal" returns
         (nextTask->m_fn)();
+        // Process auto bits
+        // AutoReWaitUntil has two interpretations:  If alone, it is periodic and is
+        // incremented based on the previous restartTime.  If in conjunction with
+        // AutoReSignal/AutoReMessage then it is a timeout and is based on "now"
+#if 0
         if(nextTask->stateTestBit(_TaskManagerTask::AutoReWaitUntil)) {
-#if 1
 		   unsigned long newRestart = nextTask->m_restartTime;	// the time this one started
 		   unsigned long now = millis();
 		   while(newRestart<now) {
                 newRestart += nextTask->m_period;	// keep bumping til the future
 		   }
 		   nextTask->setWaitUntil(newRestart);
-#else
-           nextTask->setWaitUntil(millis()+nextTask->m_period);
-#endif
         }
         // Note that timeout autorestarts will have AutoReUntil and AutoReSignal/Message set
         // So to handle this, we process the bits separately and set both if needed.
@@ -587,6 +600,30 @@ void TaskManager::loop() {
         } else if(nextTask->stateTestBit(_TaskManagerTask::AutoReWaitMessage)) {
            nextTask->setWaitMessage();
         }
+#else
+		// new code to handle different interpretations
+		if(nextTask->stateTestBit(_TaskManagerTask::AutoReWaitSignal) ||
+			nextTask->stateTestBit(_TaskManagerTask::AutoReWaitMessage)) {
+			// set up next signal/message
+			if(nextTask->stateTestBit(_TaskManagerTask::AutoReWaitSignal)) {
+			   nextTask->setWaitSignal(nextTask->m_restartSignal);
+			} else {
+			   nextTask->setWaitMessage();
+			}
+			// set up next timing
+			nextTask->setWaitUntil(millis()+nextTask->m_period);
+		} else {
+			// just check for AutoReWaitUntil and process periodic timing
+			if(nextTask->stateTestBit(_TaskManagerTask::AutoReWaitUntil)) {
+			   unsigned long newRestart = nextTask->m_restartTime;	// the time this one started
+			   unsigned long now = millis();
+			   while(newRestart<now) {
+					newRestart += nextTask->m_period;	// keep bumping til the future
+			   }
+			   nextTask->setWaitUntil(newRestart);
+			}
+        }
+#endif
     } else {
         // this is the path executed if a yield was called
         // Yield types (jmpVal values) are from YtYield
@@ -638,3 +675,10 @@ void TaskManager::loop() {
         }
      }
 }
+
+/*! \brief Radio receiver task for inter-node communication
+
+    This receives radio messages
+
+    This routine is for internal use only.
+*/
