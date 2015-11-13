@@ -72,7 +72,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Macros</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Macros</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -84,7 +84,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="class_task_manager-members.html">List of all members</a>  </div>
@@ -93,7 +92,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 
-<p>Manages a set of cooperative tasks.  
+<p>A cooperative multitasking manager.  
  <a href="class_task_manager.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="_task_manager_8h_source.html">TaskManager.h</a>&gt;</code></p>
@@ -106,23 +105,6 @@ Inheritance diagram for TaskManager:</div>
 </map>
  </div></div>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
-Public Types</h2></td></tr>
-<tr class="memitem:a36210e786c8b94e0858c0df948521318"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#a36210e786c8b94e0858c0df948521318">YieldTypes</a> { <br />
-&#160;&#160;<a class="el" href="class_task_manager.html#a36210e786c8b94e0858c0df948521318aaa83b744b431450c40569fb787a9cc62">YtYield</a>, 
-<a class="el" href="class_task_manager.html#a36210e786c8b94e0858c0df948521318a89e00019d0ccda9139d6599e4c9c83c5">YtYieldUntil</a>, 
-<a class="el" href="class_task_manager.html#a36210e786c8b94e0858c0df948521318a5520a5cc62f59a79ac9df855695b2aee">YtYieldSignal</a>, 
-<a class="el" href="class_task_manager.html#a36210e786c8b94e0858c0df948521318a8ba72bfec1db82ac312c46a4db617e0e">YtYieldSignalTimeout</a>, 
-<br />
-&#160;&#160;<a class="el" href="class_task_manager.html#a36210e786c8b94e0858c0df948521318a021639087baa77a364842df6e78d66fb">YtYieldMessage</a>, 
-<a class="el" href="class_task_manager.html#a36210e786c8b94e0858c0df948521318ab3132706adb88e8931bcf3caf9c90182">YtYieldMessageTimeout</a>, 
-<a class="el" href="class_task_manager.html#a36210e786c8b94e0858c0df948521318a7e2896dba2a019465d5f08dc5216d5eb">YtYieldSuspend</a>, 
-<a class="el" href="class_task_manager.html#a36210e786c8b94e0858c0df948521318a5c95246258ae22a052d55e6effc4f8dc">YtYieldKill</a>
-<br />
- }</td></tr>
-<tr class="memdesc:a36210e786c8b94e0858c0df948521318"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defines the different methods a process may yield control.  <a href="class_task_manager.html#a36210e786c8b94e0858c0df948521318">More...</a><br /></td></tr>
-<tr class="separator:a36210e786c8b94e0858c0df948521318"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a491dc7a77a5381675f614a411755ef64"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a491dc7a77a5381675f614a411755ef64"></a>
@@ -130,47 +112,118 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a491dc7a77a5381675f614a411755ef64"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor, Creates an empty task. <br /></td></tr>
 <tr class="separator:a491dc7a77a5381675f614a411755ef64"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6ecdd2b8a6b7545eae64da180ba80c53"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#a6ecdd2b8a6b7545eae64da180ba80c53">~TaskManager</a> ()</td></tr>
-<tr class="memdesc:a6ecdd2b8a6b7545eae64da180ba80c53"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor. Destroys the <a class="el" href="class_task_manager.html" title="Manages a set of cooperative tasks. ">TaskManager</a>.  <a href="#a6ecdd2b8a6b7545eae64da180ba80c53">More...</a><br /></td></tr>
+<tr class="memdesc:a6ecdd2b8a6b7545eae64da180ba80c53"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor. Destroys the <a class="el" href="class_task_manager.html" title="A cooperative multitasking manager. ">TaskManager</a>.  <a href="#a6ecdd2b8a6b7545eae64da180ba80c53">More...</a><br /></td></tr>
 <tr class="separator:a6ecdd2b8a6b7545eae64da180ba80c53"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aece076dfbe6b0a93eedd7a292adeab65"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#aece076dfbe6b0a93eedd7a292adeab65">add</a> (byte, void(*)())</td></tr>
-<tr class="memdesc:aece076dfbe6b0a93eedd7a292adeab65"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a simple task.  <a href="#aece076dfbe6b0a93eedd7a292adeab65">More...</a><br /></td></tr>
-<tr class="separator:aece076dfbe6b0a93eedd7a292adeab65"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa13a030b77dc96dc4e8ca0e2c1f80c26"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#aa13a030b77dc96dc4e8ca0e2c1f80c26">addWaitDelay</a> (byte, void(*)(), unsigned int)</td></tr>
-<tr class="memdesc:aa13a030b77dc96dc4e8ca0e2c1f80c26"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a task that will be delayed before its first invocation.  <a href="#aa13a030b77dc96dc4e8ca0e2c1f80c26">More...</a><br /></td></tr>
-<tr class="separator:aa13a030b77dc96dc4e8ca0e2c1f80c26"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad11b36a0c2f89d6bc537ff4376ca26f5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#ad11b36a0c2f89d6bc537ff4376ca26f5">addWaitUntil</a> (byte, void(*)(), unsigned long)</td></tr>
-<tr class="memdesc:ad11b36a0c2f89d6bc537ff4376ca26f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a task that will be delayed until a set system clock time before its first invocation.  <a href="#ad11b36a0c2f89d6bc537ff4376ca26f5">More...</a><br /></td></tr>
-<tr class="separator:ad11b36a0c2f89d6bc537ff4376ca26f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0dcf18d181fb18621dc5c833450dc4d5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#a0dcf18d181fb18621dc5c833450dc4d5">addAutoWaitDelay</a> (byte, void(*)(), unsigned int, bool startDelayed=false)</td></tr>
-<tr class="memdesc:a0dcf18d181fb18621dc5c833450dc4d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a task that will automatically reschedule itself with a delay.  <a href="#a0dcf18d181fb18621dc5c833450dc4d5">More...</a><br /></td></tr>
-<tr class="separator:a0dcf18d181fb18621dc5c833450dc4d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a540a21c6a6de30cf37421e37de5f0f79"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#a540a21c6a6de30cf37421e37de5f0f79">addWaitSignal</a> (byte, void(*)(), byte, unsigned int timeout=0)</td></tr>
-<tr class="memdesc:a540a21c6a6de30cf37421e37de5f0f79"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a task that will wait until a signal arrives or (optionally) a timeout occurs.  <a href="#a540a21c6a6de30cf37421e37de5f0f79">More...</a><br /></td></tr>
-<tr class="separator:a540a21c6a6de30cf37421e37de5f0f79"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad15b8303b799eb80f2a9a30d750fea0e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#ad15b8303b799eb80f2a9a30d750fea0e">addAutoWaitSignal</a> (byte, void(*)(), byte, unsigned int timeout=0, bool startWaiting=true)</td></tr>
-<tr class="memdesc:ad15b8303b799eb80f2a9a30d750fea0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a task that waits until a signal arrives or (optionally) timeout occurs. The task automatically reschedules itself.  <a href="#ad15b8303b799eb80f2a9a30d750fea0e">More...</a><br /></td></tr>
-<tr class="separator:ad15b8303b799eb80f2a9a30d750fea0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acd9ff04476305904cd68acfcd2c77735"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#acd9ff04476305904cd68acfcd2c77735">addWaitMessage</a> (byte, void(*)(), unsigned int timeout=0)</td></tr>
-<tr class="memdesc:acd9ff04476305904cd68acfcd2c77735"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a task that is waiting for a message.  <a href="#acd9ff04476305904cd68acfcd2c77735">More...</a><br /></td></tr>
-<tr class="separator:acd9ff04476305904cd68acfcd2c77735"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9414298030ad56315deb42261209df79"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#a9414298030ad56315deb42261209df79">addAutoWaitMessage</a> (byte, void(*)(), unsigned int timeout=0, bool startWaiting=true)</td></tr>
-<tr class="memdesc:a9414298030ad56315deb42261209df79"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a task that is waiting for a message or until a timeout occurs.  <a href="#a9414298030ad56315deb42261209df79">More...</a><br /></td></tr>
-<tr class="separator:a9414298030ad56315deb42261209df79"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2b88a62f061cbc8159a101844d8e5469"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#a2b88a62f061cbc8159a101844d8e5469">loop</a> ()</td></tr>
+<tr class="memdesc:a2b88a62f061cbc8159a101844d8e5469"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implements a single pass for the system <a class="el" href="class_task_manager.html#a2b88a62f061cbc8159a101844d8e5469" title="Implements a single pass for the system loop() routine. ">loop()</a> routine.  <a href="#a2b88a62f061cbc8159a101844d8e5469">More...</a><br /></td></tr>
+<tr class="separator:a2b88a62f061cbc8159a101844d8e5469"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a99a2a6da977b9d586fd16d71ff9108e5"><td class="memItemLeft" align="right" valign="top">_TaskManagerTask *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#a99a2a6da977b9d586fd16d71ff9108e5">findTaskById</a> (byte id)</td></tr>
+<tr class="memdesc:a99a2a6da977b9d586fd16d71ff9108e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Find a task by its ID.  <a href="#a99a2a6da977b9d586fd16d71ff9108e5">More...</a><br /></td></tr>
+<tr class="separator:a99a2a6da977b9d586fd16d71ff9108e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0189a1b17878cb115126da8dcf7822ae"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#a0189a1b17878cb115126da8dcf7822ae">tmRadioReceiverTask</a> ()</td></tr>
+<tr class="memdesc:a0189a1b17878cb115126da8dcf7822ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Radio receiver task for inter-node communication.  <a href="#a0189a1b17878cb115126da8dcf7822ae">More...</a><br /></td></tr>
+<tr class="separator:a0189a1b17878cb115126da8dcf7822ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a74220151c502df205b101da1825d9e41"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#a74220151c502df205b101da1825d9e41">radioBegin</a> (byte nodeId, byte cePin, byte csPin)</td></tr>
+<tr class="memdesc:a74220151c502df205b101da1825d9e41"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create the radio and start it receiving.  <a href="#a74220151c502df205b101da1825d9e41">More...</a><br /></td></tr>
+<tr class="separator:a74220151c502df205b101da1825d9e41"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">Adding a New Task</div></td></tr>
+<tr><td colspan="2"><div class="groupText"><p>These methods are used to add new tasks to the task list </p>
+</div></td></tr>
+<tr class="memitem:a65196b3d3d327a203ec51b9b68a39b4a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#a65196b3d3d327a203ec51b9b68a39b4a">add</a> (byte taskId, void(*fn)())</td></tr>
+<tr class="memdesc:a65196b3d3d327a203ec51b9b68a39b4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a simple task.  <a href="#a65196b3d3d327a203ec51b9b68a39b4a">More...</a><br /></td></tr>
+<tr class="separator:a65196b3d3d327a203ec51b9b68a39b4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8d1e82c4d967c66d8992ec2e99baaae7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#a8d1e82c4d967c66d8992ec2e99baaae7">addWaitDelay</a> (byte taskId, void(*fn)(), unsigned long msDelay)</td></tr>
+<tr class="memdesc:a8d1e82c4d967c66d8992ec2e99baaae7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a task that will be delayed before its first invocation.  <a href="#a8d1e82c4d967c66d8992ec2e99baaae7">More...</a><br /></td></tr>
+<tr class="separator:a8d1e82c4d967c66d8992ec2e99baaae7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a645ff50a9656974b61e7774af4e5632c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#a645ff50a9656974b61e7774af4e5632c">addWaitUntil</a> (byte taskId, void(*fn)(), unsigned long msWhen)</td></tr>
+<tr class="memdesc:a645ff50a9656974b61e7774af4e5632c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a task that will be delayed until a set system clock time before its first invocation.  <a href="#a645ff50a9656974b61e7774af4e5632c">More...</a><br /></td></tr>
+<tr class="separator:a645ff50a9656974b61e7774af4e5632c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aef5abb11af80255547aa1ec31a77dfe5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#aef5abb11af80255547aa1ec31a77dfe5">addWaitMessage</a> (byte taskId, void(*fn)(), unsigned long timeout=0)</td></tr>
+<tr class="memdesc:aef5abb11af80255547aa1ec31a77dfe5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a task that is waiting for a message.  <a href="#aef5abb11af80255547aa1ec31a77dfe5">More...</a><br /></td></tr>
+<tr class="separator:aef5abb11af80255547aa1ec31a77dfe5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1d46a7527bc15f3ea4289d2bbb3663b2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#a1d46a7527bc15f3ea4289d2bbb3663b2">addWaitSignal</a> (byte taskId, void(*fn)(), byte sigNum, unsigned long timeout=0)</td></tr>
+<tr class="memdesc:a1d46a7527bc15f3ea4289d2bbb3663b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a task that will wait until a signal arrives or (optionally) a timeout occurs.  <a href="#a1d46a7527bc15f3ea4289d2bbb3663b2">More...</a><br /></td></tr>
+<tr class="separator:a1d46a7527bc15f3ea4289d2bbb3663b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aee330530f268b857d18ac33ce9e6f8f3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#aee330530f268b857d18ac33ce9e6f8f3">addAutoWaitDelay</a> (byte taskId, void(*fn)(), unsigned long period, bool startDelayed=false)</td></tr>
+<tr class="memdesc:aee330530f268b857d18ac33ce9e6f8f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a task that will automatically reschedule itself with a delay.  <a href="#aee330530f268b857d18ac33ce9e6f8f3">More...</a><br /></td></tr>
+<tr class="separator:aee330530f268b857d18ac33ce9e6f8f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a996a483a57bee67434279eb95168a330"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#a996a483a57bee67434279eb95168a330">addAutoWaitSignal</a> (byte taskId, void(*fn)(), byte sigNum, unsigned long timeout=0, bool startWaiting=true)</td></tr>
+<tr class="memdesc:a996a483a57bee67434279eb95168a330"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a task that waits until a signal arrives or (optionally) timeout occurs. The task automatically reschedules itself.  <a href="#a996a483a57bee67434279eb95168a330">More...</a><br /></td></tr>
+<tr class="separator:a996a483a57bee67434279eb95168a330"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab8d9a4165e19f96637b684a245fa985e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#ab8d9a4165e19f96637b684a245fa985e">addAutoWaitMessage</a> (byte taskId, void(*fn)(), unsigned long timeout=0, bool startWaiting=true)</td></tr>
+<tr class="memdesc:ab8d9a4165e19f96637b684a245fa985e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a task that is waiting for a message or until a timeout occurs.  <a href="#ab8d9a4165e19f96637b684a245fa985e">More...</a><br /></td></tr>
+<tr class="separator:ab8d9a4165e19f96637b684a245fa985e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">Yield</div></td></tr>
+<tr><td colspan="2"><div class="groupText"><p>These methods are used to yield control back to the task manager core. </p><dl class="section note"><dt>Note</dt><dd>Upon next invocation, execution will start at the TOP of the routine, not at the statement following the yield. </dd>
+<dd>
+A <em>yield</em> call will override any of the <em>addAuto...</em> automatic rescheduling. This will be a one-time override; later (non-<em>yield</em>) returns will resume automatic rescheduling. </dd></dl>
+</div></td></tr>
 <tr class="memitem:abc4f2e57cdc1fd1d3051b58dc816de98"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#abc4f2e57cdc1fd1d3051b58dc816de98">yield</a> ()</td></tr>
 <tr class="memdesc:abc4f2e57cdc1fd1d3051b58dc816de98"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exit from this task and return control to the task manager.  <a href="#abc4f2e57cdc1fd1d3051b58dc816de98">More...</a><br /></td></tr>
 <tr class="separator:abc4f2e57cdc1fd1d3051b58dc816de98"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7604115fcf2aeca0b15f0aa92d6a048c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#a7604115fcf2aeca0b15f0aa92d6a048c">yieldDelay</a> (int)</td></tr>
-<tr class="memdesc:a7604115fcf2aeca0b15f0aa92d6a048c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exit from the task manager and do not restart this task until after a specified period.  <a href="#a7604115fcf2aeca0b15f0aa92d6a048c">More...</a><br /></td></tr>
-<tr class="separator:a7604115fcf2aeca0b15f0aa92d6a048c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac5f215104e1112fd506002d9d4894fce"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#ac5f215104e1112fd506002d9d4894fce">yieldUntil</a> (unsigned long)</td></tr>
-<tr class="memdesc:ac5f215104e1112fd506002d9d4894fce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exit from the task manager and do not restart this task until (after) a specified CPU clock time.  <a href="#ac5f215104e1112fd506002d9d4894fce">More...</a><br /></td></tr>
-<tr class="separator:ac5f215104e1112fd506002d9d4894fce"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3db602b48a774019ccb8320148e0f8e1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#a3db602b48a774019ccb8320148e0f8e1">yieldForSignal</a> (byte, unsigned int timeout=0)</td></tr>
-<tr class="memdesc:a3db602b48a774019ccb8320148e0f8e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exit from the task manager and do not restart this task until a signal has been received or a stated time period has passed.  <a href="#a3db602b48a774019ccb8320148e0f8e1">More...</a><br /></td></tr>
-<tr class="separator:a3db602b48a774019ccb8320148e0f8e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2ee8e9c6dcd5c990f8849293cf1d389a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#a2ee8e9c6dcd5c990f8849293cf1d389a">yieldForMessage</a> (unsigned int timeout=0)</td></tr>
-<tr class="memdesc:a2ee8e9c6dcd5c990f8849293cf1d389a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exit from the task manager and do not restart this task until a message has been received or a stated time period has passed.  <a href="#a2ee8e9c6dcd5c990f8849293cf1d389a">More...</a><br /></td></tr>
-<tr class="separator:a2ee8e9c6dcd5c990f8849293cf1d389a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2123fa0af84c3a1373b9437e2157e872"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#a2123fa0af84c3a1373b9437e2157e872">yieldDelay</a> (unsigned long ms)</td></tr>
+<tr class="memdesc:a2123fa0af84c3a1373b9437e2157e872"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exit from the task manager and do not restart this task until after a specified period.  <a href="#a2123fa0af84c3a1373b9437e2157e872">More...</a><br /></td></tr>
+<tr class="separator:a2123fa0af84c3a1373b9437e2157e872"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa3f827ee35d80bc4faa2f7d438163e78"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#aa3f827ee35d80bc4faa2f7d438163e78">yieldUntil</a> (unsigned long when)</td></tr>
+<tr class="memdesc:aa3f827ee35d80bc4faa2f7d438163e78"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exit from the task manager and do not restart this task until (after) a specified CPU clock time.  <a href="#aa3f827ee35d80bc4faa2f7d438163e78">More...</a><br /></td></tr>
+<tr class="separator:aa3f827ee35d80bc4faa2f7d438163e78"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a887541b9c53d4dab1e28779098f68ce2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#a887541b9c53d4dab1e28779098f68ce2">yieldForSignal</a> (byte sigNum, unsigned long timeout=0)</td></tr>
+<tr class="memdesc:a887541b9c53d4dab1e28779098f68ce2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exit from the task manager and do not restart this task until a signal has been received or a stated time period has passed.  <a href="#a887541b9c53d4dab1e28779098f68ce2">More...</a><br /></td></tr>
+<tr class="separator:a887541b9c53d4dab1e28779098f68ce2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4f368a9141c55b085aefdc8833aeaeec"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#a4f368a9141c55b085aefdc8833aeaeec">yieldForMessage</a> (unsigned long timeout=0)</td></tr>
+<tr class="memdesc:a4f368a9141c55b085aefdc8833aeaeec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exit from the task manager and do not restart this task until a message has been received or a stated time period has passed.  <a href="#a4f368a9141c55b085aefdc8833aeaeec">More...</a><br /></td></tr>
+<tr class="separator:a4f368a9141c55b085aefdc8833aeaeec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">Sending Signals and Messages</div></td></tr>
+<tr><td colspan="2"><div class="groupText"><p>These methods send signals or messages to other tasks running on this or other nodes </p><dl class="section note"><dt>Note</dt><dd>If the nodeID is 0 on any routine that sends signals/messages to other nodes, the signal/message will be sent to this node. </dd></dl>
+</div></td></tr>
+<tr class="memitem:a7498109c70ab6189c18565c633533404"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#a7498109c70ab6189c18565c633533404">sendSignal</a> (byte sigNum)</td></tr>
+<tr class="memdesc:a7498109c70ab6189c18565c633533404"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a signal to a task.  <a href="#a7498109c70ab6189c18565c633533404">More...</a><br /></td></tr>
+<tr class="separator:a7498109c70ab6189c18565c633533404"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a540062b2280572ec48ff33d88a654868"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#a540062b2280572ec48ff33d88a654868">sendSignal</a> (byte nodeId, byte sigNum)</td></tr>
+<tr class="memdesc:a540062b2280572ec48ff33d88a654868"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a signal to a task.  <a href="#a540062b2280572ec48ff33d88a654868">More...</a><br /></td></tr>
+<tr class="separator:a540062b2280572ec48ff33d88a654868"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab8a7b2a2c2f92f97da186bb3f2f19f9b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#ab8a7b2a2c2f92f97da186bb3f2f19f9b">sendSignalAll</a> (byte sigNum)</td></tr>
+<tr class="memdesc:ab8a7b2a2c2f92f97da186bb3f2f19f9b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send a signal to all tasks that are waiting for this particular signal.  <a href="#ab8a7b2a2c2f92f97da186bb3f2f19f9b">More...</a><br /></td></tr>
+<tr class="separator:ab8a7b2a2c2f92f97da186bb3f2f19f9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aae633830f4a2d862d36fc357612bcf0e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#aae633830f4a2d862d36fc357612bcf0e">sendSignalAll</a> (byte nodeId, byte sigNum)</td></tr>
+<tr class="memdesc:aae633830f4a2d862d36fc357612bcf0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send a signal to all tasks that are waiting for this particular signal.  <a href="#aae633830f4a2d862d36fc357612bcf0e">More...</a><br /></td></tr>
+<tr class="separator:aae633830f4a2d862d36fc357612bcf0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afa64288296449953f690b50935891f07"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#afa64288296449953f690b50935891f07">sendMessage</a> (byte taskId, char *message)</td></tr>
+<tr class="memdesc:afa64288296449953f690b50935891f07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a string message to a task.  <a href="#afa64288296449953f690b50935891f07">More...</a><br /></td></tr>
+<tr class="separator:afa64288296449953f690b50935891f07"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0bcf13555d0d36f64ec45c559d25dd5f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#a0bcf13555d0d36f64ec45c559d25dd5f">sendMessage</a> (byte nodeId, byte taskId, char *message)</td></tr>
+<tr class="memdesc:a0bcf13555d0d36f64ec45c559d25dd5f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a string message to a task.  <a href="#a0bcf13555d0d36f64ec45c559d25dd5f">More...</a><br /></td></tr>
+<tr class="separator:a0bcf13555d0d36f64ec45c559d25dd5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af332a07dcf5a649aabd22e57b2038e58"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#af332a07dcf5a649aabd22e57b2038e58">sendMessage</a> (byte taskId, void *buf, int len)</td></tr>
+<tr class="memdesc:af332a07dcf5a649aabd22e57b2038e58"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send a binary message to a task.  <a href="#af332a07dcf5a649aabd22e57b2038e58">More...</a><br /></td></tr>
+<tr class="separator:af332a07dcf5a649aabd22e57b2038e58"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a89c43cec12e3dc85f6786dbb970f10f9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#a89c43cec12e3dc85f6786dbb970f10f9">sendMessage</a> (byte nodeId, byte taskId, void *buf, int len)</td></tr>
+<tr class="memdesc:a89c43cec12e3dc85f6786dbb970f10f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send a binary message to a task.  <a href="#a89c43cec12e3dc85f6786dbb970f10f9">More...</a><br /></td></tr>
+<tr class="separator:a89c43cec12e3dc85f6786dbb970f10f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2db63c9bae9d5b8197253d7f06cfcf9a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#a2db63c9bae9d5b8197253d7f06cfcf9a">getSource</a> (byte &amp;fromNodeId, byte &amp;fromTaskId)</td></tr>
+<tr class="memdesc:a2db63c9bae9d5b8197253d7f06cfcf9a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get source node/task of last message/signal.  <a href="#a2db63c9bae9d5b8197253d7f06cfcf9a">More...</a><br /></td></tr>
+<tr class="separator:a2db63c9bae9d5b8197253d7f06cfcf9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">Task Management</div></td></tr>
+<tr class="memitem:af7ffb2b405dc4b78ec918345367509c0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#af7ffb2b405dc4b78ec918345367509c0">suspend</a> (byte taskId)</td></tr>
+<tr class="memdesc:af7ffb2b405dc4b78ec918345367509c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Suspend the given task.  <a href="#af7ffb2b405dc4b78ec918345367509c0">More...</a><br /></td></tr>
+<tr class="separator:af7ffb2b405dc4b78ec918345367509c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af3da3c8b045fb55ecde0a610f85d7802"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#af3da3c8b045fb55ecde0a610f85d7802">suspend</a> (byte nodeId, byte taskId)</td></tr>
+<tr class="memdesc:af3da3c8b045fb55ecde0a610f85d7802"><td class="mdescLeft">&#160;</td><td class="mdescRight">Suspend the given task on the given node.  <a href="#af3da3c8b045fb55ecde0a610f85d7802">More...</a><br /></td></tr>
+<tr class="separator:af3da3c8b045fb55ecde0a610f85d7802"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa5f938f2b80ae5cb0bb3365fa5ddaa0a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#aa5f938f2b80ae5cb0bb3365fa5ddaa0a">resume</a> (byte taskId)</td></tr>
+<tr class="memdesc:aa5f938f2b80ae5cb0bb3365fa5ddaa0a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resume the given task on the given node.  <a href="#aa5f938f2b80ae5cb0bb3365fa5ddaa0a">More...</a><br /></td></tr>
+<tr class="separator:aa5f938f2b80ae5cb0bb3365fa5ddaa0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a950385515af8db01ac0d72f38d064f03"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#a950385515af8db01ac0d72f38d064f03">resume</a> (byte nodeId, byte taskId)</td></tr>
+<tr class="memdesc:a950385515af8db01ac0d72f38d064f03"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resume the given task on the given node.  <a href="#a950385515af8db01ac0d72f38d064f03">More...</a><br /></td></tr>
+<tr class="separator:a950385515af8db01ac0d72f38d064f03"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">Miscellaneous and Informational Routines</div></td></tr>
+<tr class="memitem:a126881c885723fe254e941391ad4472e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a126881c885723fe254e941391ad4472e"></a>
+unsigned long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#a126881c885723fe254e941391ad4472e">runtime</a> () const </td></tr>
+<tr class="memdesc:a126881c885723fe254e941391ad4472e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the time since the start of the run, in milliseconds. <br /></td></tr>
+<tr class="separator:a126881c885723fe254e941391ad4472e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a261cd53a22a9d260c64141b1c2d71364"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#a261cd53a22a9d260c64141b1c2d71364">printTo</a> (Print &amp;p) const </td></tr>
+<tr class="memdesc:a261cd53a22a9d260c64141b1c2d71364"><td class="mdescLeft">&#160;</td><td class="mdescRight">Support routine to allow the printing of the contents of a <a class="el" href="class_task_manager.html" title="A cooperative multitasking manager. ">TaskManager</a> object.  <a href="#a261cd53a22a9d260c64141b1c2d71364">More...</a><br /></td></tr>
+<tr class="separator:a261cd53a22a9d260c64141b1c2d71364"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae7641b79a5efb0a5e640daa8f623fa5c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae7641b79a5efb0a5e640daa8f623fa5c"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#ae7641b79a5efb0a5e640daa8f623fa5c">timedOut</a> ()</td></tr>
 <tr class="memdesc:ae7641b79a5efb0a5e640daa8f623fa5c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tell if the current task has timed out. <br /></td></tr>
@@ -178,101 +231,25 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:ab7a70749690f57b64c4db036abf1fa9d"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#ab7a70749690f57b64c4db036abf1fa9d">getMessage</a> ()</td></tr>
 <tr class="memdesc:ab7a70749690f57b64c4db036abf1fa9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a task's message buffer.  <a href="#ab7a70749690f57b64c4db036abf1fa9d">More...</a><br /></td></tr>
 <tr class="separator:ab7a70749690f57b64c4db036abf1fa9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adfc36e6ef3cf0dff1e201a2c6d411f97"><td class="memItemLeft" align="right" valign="top">byte&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#adfc36e6ef3cf0dff1e201a2c6d411f97">myID</a> ()</td></tr>
-<tr class="memdesc:adfc36e6ef3cf0dff1e201a2c6d411f97"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the task ID of the currently running task.  <a href="#adfc36e6ef3cf0dff1e201a2c6d411f97">More...</a><br /></td></tr>
-<tr class="separator:adfc36e6ef3cf0dff1e201a2c6d411f97"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abf9432fd2a73e348ce00cf49c631ad66"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#abf9432fd2a73e348ce00cf49c631ad66">sendSignal</a> (byte)</td></tr>
-<tr class="memdesc:abf9432fd2a73e348ce00cf49c631ad66"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a signal to a task.  <a href="#abf9432fd2a73e348ce00cf49c631ad66">More...</a><br /></td></tr>
-<tr class="separator:abf9432fd2a73e348ce00cf49c631ad66"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad987e8609d7925fc97d91ba49afa8ed5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#ad987e8609d7925fc97d91ba49afa8ed5">sendSignalAll</a> (byte)</td></tr>
-<tr class="memdesc:ad987e8609d7925fc97d91ba49afa8ed5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send a signal to all tasks that are waiting for this particular signal.  <a href="#ad987e8609d7925fc97d91ba49afa8ed5">More...</a><br /></td></tr>
-<tr class="separator:ad987e8609d7925fc97d91ba49afa8ed5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afee5e2f8a42db493117deddf0c5c33d4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#afee5e2f8a42db493117deddf0c5c33d4">sendMessage</a> (byte, char *)</td></tr>
-<tr class="memdesc:afee5e2f8a42db493117deddf0c5c33d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a string message to a task.  <a href="#afee5e2f8a42db493117deddf0c5c33d4">More...</a><br /></td></tr>
-<tr class="separator:afee5e2f8a42db493117deddf0c5c33d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a70daf90751f465012f4fe0e44132c0d7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#a70daf90751f465012f4fe0e44132c0d7">sendMessage</a> (byte, void *, int)</td></tr>
-<tr class="memdesc:a70daf90751f465012f4fe0e44132c0d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send a binary message to a task.  <a href="#a70daf90751f465012f4fe0e44132c0d7">More...</a><br /></td></tr>
-<tr class="separator:a70daf90751f465012f4fe0e44132c0d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a177bac2cbad40db6eac4877909a51f0e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class___task_manager_task.html">_TaskManagerTask</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#a177bac2cbad40db6eac4877909a51f0e">FindNextRunnable</a> ()</td></tr>
-<tr class="memdesc:a177bac2cbad40db6eac4877909a51f0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Find tne next runnable task. Internal routine.  <a href="#a177bac2cbad40db6eac4877909a51f0e">More...</a><br /></td></tr>
-<tr class="separator:a177bac2cbad40db6eac4877909a51f0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a126881c885723fe254e941391ad4472e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a126881c885723fe254e941391ad4472e"></a>
-unsigned long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#a126881c885723fe254e941391ad4472e">runtime</a> () const </td></tr>
-<tr class="memdesc:a126881c885723fe254e941391ad4472e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the time since the start of the run, in milliseconds. <br /></td></tr>
-<tr class="separator:a126881c885723fe254e941391ad4472e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a261cd53a22a9d260c64141b1c2d71364"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#a261cd53a22a9d260c64141b1c2d71364">printTo</a> (Print &amp;p) const </td></tr>
-<tr class="memdesc:a261cd53a22a9d260c64141b1c2d71364"><td class="mdescLeft">&#160;</td><td class="mdescRight">Support routine to allow the printing of the contents of a <a class="el" href="class_task_manager.html" title="Manages a set of cooperative tasks. ">TaskManager</a> object.  <a href="#a261cd53a22a9d260c64141b1c2d71364">More...</a><br /></td></tr>
-<tr class="separator:a261cd53a22a9d260c64141b1c2d71364"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2b88a62f061cbc8159a101844d8e5469"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#a2b88a62f061cbc8159a101844d8e5469">loop</a> ()</td></tr>
-<tr class="memdesc:a2b88a62f061cbc8159a101844d8e5469"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implements a single pass for the system <a class="el" href="class_task_manager.html#a2b88a62f061cbc8159a101844d8e5469" title="Implements a single pass for the system loop() routine. ">loop()</a> routine.  <a href="#a2b88a62f061cbc8159a101844d8e5469">More...</a><br /></td></tr>
-<tr class="separator:a2b88a62f061cbc8159a101844d8e5469"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a99a2a6da977b9d586fd16d71ff9108e5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class___task_manager_task.html">_TaskManagerTask</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#a99a2a6da977b9d586fd16d71ff9108e5">findTaskById</a> (byte id)</td></tr>
-<tr class="memdesc:a99a2a6da977b9d586fd16d71ff9108e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Find a task by its ID.  <a href="#a99a2a6da977b9d586fd16d71ff9108e5">More...</a><br /></td></tr>
-<tr class="separator:a99a2a6da977b9d586fd16d71ff9108e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9aae8179ea07541745321481de45aa68"><td class="memItemLeft" align="right" valign="top">byte&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#a9aae8179ea07541745321481de45aa68">myId</a> ()</td></tr>
+<tr class="memdesc:a9aae8179ea07541745321481de45aa68"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the task ID of the currently running task.  <a href="#a9aae8179ea07541745321481de45aa68">More...</a><br /></td></tr>
+<tr class="separator:a9aae8179ea07541745321481de45aa68"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac6b399f73f010bbec00826cd20aab6c5"><td class="memItemLeft" align="right" valign="top">byte&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#ac6b399f73f010bbec00826cd20aab6c5">myNodeId</a> ()</td></tr>
+<tr class="memdesc:ac6b399f73f010bbec00826cd20aab6c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the node ID of this system.  <a href="#ac6b399f73f010bbec00826cd20aab6c5">More...</a><br /></td></tr>
+<tr class="separator:ac6b399f73f010bbec00826cd20aab6c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a01f290a48b9f1f9ad4fdb08cffddaca5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a01f290a48b9f1f9ad4fdb08cffddaca5"></a>
-<a class="el" href="singletonring.html">ring</a>&lt; <a class="el" href="class___task_manager_task.html">_TaskManagerTask</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#a01f290a48b9f1f9ad4fdb08cffddaca5">m_theTasks</a></td></tr>
+<a class="el" href="singletonring.html">ring</a>&lt; _TaskManagerTask &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#a01f290a48b9f1f9ad4fdb08cffddaca5">m_theTasks</a></td></tr>
 <tr class="memdesc:a01f290a48b9f1f9ad4fdb08cffddaca5"><td class="mdescLeft">&#160;</td><td class="mdescRight">The ring of all tasks. For internal use only. <br /></td></tr>
 <tr class="separator:a01f290a48b9f1f9ad4fdb08cffddaca5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a97d775065bfc22bbe1da009b1720398f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a97d775065bfc22bbe1da009b1720398f"></a>
-unsigned long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#a97d775065bfc22bbe1da009b1720398f">m_startTime</a></td></tr>
-<tr class="memdesc:a97d775065bfc22bbe1da009b1720398f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start clock time. Used to calcualte runtime. For internal use only. <br /></td></tr>
-<tr class="separator:a97d775065bfc22bbe1da009b1720398f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2bf36ceaa3877cf46ad4b2f4c6f8fdc7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2bf36ceaa3877cf46ad4b2f4c6f8fdc7"></a>
-jmp_buf&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#a2bf36ceaa3877cf46ad4b2f4c6f8fdc7">taskJmpBuf</a></td></tr>
-<tr class="memdesc:a2bf36ceaa3877cf46ad4b2f4c6f8fdc7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Jump buffer used by yield. For internal use only. <br /></td></tr>
-<tr class="separator:a2bf36ceaa3877cf46ad4b2f4c6f8fdc7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Manages a set of cooperative tasks. </p>
-<p>Manages a set of cooperative tasks. This includes round-robin scheduling, yielding, and inter-task messaging and signaling. It also replaces the <a class="el" href="class_task_manager.html#a2b88a62f061cbc8159a101844d8e5469" title="Implements a single pass for the system loop() routine. ">loop()</a> function in standard Arduino programs. Nominally, there is a single instance of <a class="el" href="class_task_manager.html" title="Manages a set of cooperative tasks. ">TaskManager</a> called TaskMgr. TaskMgr is used for all actual task control.</p>
+<div class="textblock"><p>A cooperative multitasking manager. </p>
+<p>Manages a set of cooperative tasks. This includes round-robin scheduling, yielding, and inter-task messaging and signaling. It also replaces the <a class="el" href="class_task_manager.html#a2b88a62f061cbc8159a101844d8e5469" title="Implements a single pass for the system loop() routine. ">loop()</a> function in standard Arduino programs. Nominally, there is a single instance of <a class="el" href="class_task_manager.html" title="A cooperative multitasking manager. ">TaskManager</a> called TaskMgr. TaskMgr is used for all actual task control.</p>
 <p>Each task has a taskID. By convention, user tasks' taskID values are in the range [0 127]. </p>
-</div><h2 class="groupheader">Member Enumeration Documentation</h2>
-<a class="anchor" id="a36210e786c8b94e0858c0df948521318"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">enum <a class="el" href="class_task_manager.html#a36210e786c8b94e0858c0df948521318">TaskManager::YieldTypes</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Defines the different methods a process may yield control. </p>
-<p>This is the return value passsed back by the different yield*() routines to the control <code><a class="el" href="class_task_manager.html#a2b88a62f061cbc8159a101844d8e5469" title="Implements a single pass for the system loop() routine. ">loop()</a></code>. It indicates which form of yield*() was called.</p>
-<p>This is for internal use only. </p>
-<table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a class="anchor" id="a36210e786c8b94e0858c0df948521318aaa83b744b431450c40569fb787a9cc62"></a>YtYield&#160;</td><td class="fielddoc">
-<p>Normal <a class="el" href="class_task_manager.html#abc4f2e57cdc1fd1d3051b58dc816de98" title="Exit from this task and return control to the task manager. ">yield()</a> </p>
-</td></tr>
-<tr><td class="fieldname"><a class="anchor" id="a36210e786c8b94e0858c0df948521318a89e00019d0ccda9139d6599e4c9c83c5"></a>YtYieldUntil&#160;</td><td class="fielddoc">
-<p><a class="el" href="class_task_manager.html#ac5f215104e1112fd506002d9d4894fce" title="Exit from the task manager and do not restart this task until (after) a specified CPU clock time...">yieldUntil()</a> or <a class="el" href="class_task_manager.html#a7604115fcf2aeca0b15f0aa92d6a048c" title="Exit from the task manager and do not restart this task until after a specified period. ">yieldDelay()</a> </p>
-</td></tr>
-<tr><td class="fieldname"><a class="anchor" id="a36210e786c8b94e0858c0df948521318a5520a5cc62f59a79ac9df855695b2aee"></a>YtYieldSignal&#160;</td><td class="fielddoc">
-<p>yieldSignal() with no specified timeout </p>
-</td></tr>
-<tr><td class="fieldname"><a class="anchor" id="a36210e786c8b94e0858c0df948521318a8ba72bfec1db82ac312c46a4db617e0e"></a>YtYieldSignalTimeout&#160;</td><td class="fielddoc">
-<p>yieldSignal() with a specified timeout </p>
-</td></tr>
-<tr><td class="fieldname"><a class="anchor" id="a36210e786c8b94e0858c0df948521318a021639087baa77a364842df6e78d66fb"></a>YtYieldMessage&#160;</td><td class="fielddoc">
-<p>yieldMessage() </p>
-</td></tr>
-<tr><td class="fieldname"><a class="anchor" id="a36210e786c8b94e0858c0df948521318ab3132706adb88e8931bcf3caf9c90182"></a>YtYieldMessageTimeout&#160;</td><td class="fielddoc">
-<p>yieldMessage() with a specified timeout </p>
-</td></tr>
-<tr><td class="fieldname"><a class="anchor" id="a36210e786c8b94e0858c0df948521318a7e2896dba2a019465d5f08dc5216d5eb"></a>YtYieldSuspend&#160;</td><td class="fielddoc">
-<p>suspend() </p>
-</td></tr>
-<tr><td class="fieldname"><a class="anchor" id="a36210e786c8b94e0858c0df948521318a5c95246258ae22a052d55e6effc4f8dc"></a>YtYieldKill&#160;</td><td class="fielddoc">
-<p>killMe() </p>
-</td></tr>
-</table>
-
-</div>
-</div>
-<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="a6ecdd2b8a6b7545eae64da180ba80c53"></a>
 <div class="memitem">
 <div class="memproto">
@@ -286,13 +263,13 @@ jmp_buf&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
       </table>
 </div><div class="memdoc">
 
-<p>Destructor. Destroys the <a class="el" href="class_task_manager.html" title="Manages a set of cooperative tasks. ">TaskManager</a>. </p>
+<p>Destructor. Destroys the <a class="el" href="class_task_manager.html" title="A cooperative multitasking manager. ">TaskManager</a>. </p>
 <p>After calling this, any operations based on the object will fail. For normal purpoases, destroying the TaskMgr instance will have serious consequences for the standard <a class="el" href="class_task_manager.html#a2b88a62f061cbc8159a101844d8e5469" title="Implements a single pass for the system loop() routine. ">loop()</a> routine. </p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="aece076dfbe6b0a93eedd7a292adeab65"></a>
+<a class="anchor" id="a65196b3d3d327a203ec51b9b68a39b4a"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -324,11 +301,11 @@ jmp_buf&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
   </table>
   </dd>
 </dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_task_manager.html#aa13a030b77dc96dc4e8ca0e2c1f80c26" title="Add a task that will be delayed before its first invocation. ">addWaitDelay</a>, <a class="el" href="class_task_manager.html#ad11b36a0c2f89d6bc537ff4376ca26f5" title="Add a task that will be delayed until a set system clock time before its first invocation. ">addWaitUntil</a>, <a class="el" href="class_task_manager.html#a0dcf18d181fb18621dc5c833450dc4d5" title="Add a task that will automatically reschedule itself with a delay. ">addAutoWaitDelay</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_task_manager.html#a8d1e82c4d967c66d8992ec2e99baaae7" title="Add a task that will be delayed before its first invocation. ">addWaitDelay</a>, <a class="el" href="class_task_manager.html#a645ff50a9656974b61e7774af4e5632c" title="Add a task that will be delayed until a set system clock time before its first invocation. ">addWaitUntil</a>, <a class="el" href="class_task_manager.html#aee330530f268b857d18ac33ce9e6f8f3" title="Add a task that will automatically reschedule itself with a delay. ">addAutoWaitDelay</a> </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a0dcf18d181fb18621dc5c833450dc4d5"></a>
+<a class="anchor" id="aee330530f268b857d18ac33ce9e6f8f3"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -347,14 +324,14 @@ jmp_buf&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramtype">unsigned long&#160;</td>
           <td class="paramname"><em>period</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>startWaiting</em> = <code>false</code>&#160;</td>
+          <td class="paramname"><em>startDelayed</em> = <code>false</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -371,15 +348,15 @@ jmp_buf&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
     <tr><td class="paramname">taskId</td><td>- the task's ID. For normal user tasks, this should be a byte value in the range [0 127]. System tasks have taskId values in the range [128 255]. </td></tr>
     <tr><td class="paramname">fn</td><td>&ndash; this is a void function with no arguments. This is the procedure that is called every time the task is invoked. </td></tr>
     <tr><td class="paramname">period</td><td>&ndash; the schedule, in milliseconds </td></tr>
-    <tr><td class="paramname">startWaiting</td><td>&ndash; for the first execution, start immediately (false), or delay its start for one period (true) </td></tr>
+    <tr><td class="paramname">startDelayed</td><td>&ndash; for the first execution, start immediately (false), or delay its start for one period (true) </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_task_manager.html#aece076dfbe6b0a93eedd7a292adeab65" title="Add a simple task. ">add</a>, addDelayed, <a class="el" href="class_task_manager.html#ad11b36a0c2f89d6bc537ff4376ca26f5" title="Add a task that will be delayed until a set system clock time before its first invocation. ">addWaitUntil</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_task_manager.html#a65196b3d3d327a203ec51b9b68a39b4a" title="Add a simple task. ">add</a>, addDelayed, <a class="el" href="class_task_manager.html#a645ff50a9656974b61e7774af4e5632c" title="Add a task that will be delayed until a set system clock time before its first invocation. ">addWaitUntil</a> </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a9414298030ad56315deb42261209df79"></a>
+<a class="anchor" id="ab8d9a4165e19f96637b684a245fa985e"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -398,7 +375,7 @@ jmp_buf&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramtype">unsigned long&#160;</td>
           <td class="paramname"><em>timeout</em> = <code>0</code>, </td>
         </tr>
         <tr>
@@ -425,11 +402,11 @@ jmp_buf&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
   </table>
   </dd>
 </dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_task_manager.html#a9414298030ad56315deb42261209df79" title="Add a task that is waiting for a message or until a timeout occurs. ">addAutoWaitMessage</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_task_manager.html#aef5abb11af80255547aa1ec31a77dfe5" title="Add a task that is waiting for a message. ">addWaitMessage</a> </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="ad15b8303b799eb80f2a9a30d750fea0e"></a>
+<a class="anchor" id="a996a483a57bee67434279eb95168a330"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -454,7 +431,7 @@ jmp_buf&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramtype">unsigned long&#160;</td>
           <td class="paramname"><em>timeout</em> = <code>0</code>, </td>
         </tr>
         <tr>
@@ -482,11 +459,11 @@ jmp_buf&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
   </table>
   </dd>
 </dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_task_manager.html#ad15b8303b799eb80f2a9a30d750fea0e" title="Add a task that waits until a signal arrives or (optionally) timeout occurs. The task automatically r...">addAutoWaitSignal</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_task_manager.html#a996a483a57bee67434279eb95168a330" title="Add a task that waits until a signal arrives or (optionally) timeout occurs. The task automatically r...">addAutoWaitSignal</a> </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="aa13a030b77dc96dc4e8ca0e2c1f80c26"></a>
+<a class="anchor" id="a8d1e82c4d967c66d8992ec2e99baaae7"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -505,7 +482,7 @@ jmp_buf&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramtype">unsigned long&#160;</td>
           <td class="paramname"><em>msDelay</em>&#160;</td>
         </tr>
         <tr>
@@ -525,11 +502,11 @@ jmp_buf&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
   </table>
   </dd>
 </dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_task_manager.html#aece076dfbe6b0a93eedd7a292adeab65" title="Add a simple task. ">add</a>, <a class="el" href="class_task_manager.html#ad11b36a0c2f89d6bc537ff4376ca26f5" title="Add a task that will be delayed until a set system clock time before its first invocation. ">addWaitUntil</a>, <a class="el" href="class_task_manager.html#a0dcf18d181fb18621dc5c833450dc4d5" title="Add a task that will automatically reschedule itself with a delay. ">addAutoWaitDelay</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_task_manager.html#a65196b3d3d327a203ec51b9b68a39b4a" title="Add a simple task. ">add</a>, <a class="el" href="class_task_manager.html#a645ff50a9656974b61e7774af4e5632c" title="Add a task that will be delayed until a set system clock time before its first invocation. ">addWaitUntil</a>, <a class="el" href="class_task_manager.html#aee330530f268b857d18ac33ce9e6f8f3" title="Add a task that will automatically reschedule itself with a delay. ">addAutoWaitDelay</a> </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="acd9ff04476305904cd68acfcd2c77735"></a>
+<a class="anchor" id="aef5abb11af80255547aa1ec31a77dfe5"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -548,7 +525,7 @@ jmp_buf&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramtype">unsigned long&#160;</td>
           <td class="paramname"><em>timeout</em> = <code>0</code>&#160;</td>
         </tr>
         <tr>
@@ -571,7 +548,7 @@ jmp_buf&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 
 </div>
 </div>
-<a class="anchor" id="a540a21c6a6de30cf37421e37de5f0f79"></a>
+<a class="anchor" id="a1d46a7527bc15f3ea4289d2bbb3663b2"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -596,7 +573,7 @@ jmp_buf&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramtype">unsigned long&#160;</td>
           <td class="paramname"><em>timeout</em> = <code>0</code>&#160;</td>
         </tr>
         <tr>
@@ -609,7 +586,7 @@ jmp_buf&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 
 <p>Add a task that will wait until a signal arrives or (optionally) a timeout occurs. </p>
 <p>The task will be added, but will be set to be waiting for the listed signal. If a nonzero timeout is specified and ifthe signal does not arrive before the timeout period (in milliseconds), then the routine will be activated. The routine may use TaskManager::timeout() to determine whether it timed our or received the signal.</p>
-<p>Note that calling <a class="el" href="class_task_manager.html#a540a21c6a6de30cf37421e37de5f0f79" title="Add a task that will wait until a signal arrives or (optionally) a timeout occurs. ">addWaitSignal()</a> with no timeout or startWaiting parmeter, the task will start in a wait state with no timeout. To start the task in a non-wait-state (active) with no timeout, the routine must be called as addWaitSignal(id, fn, 0, false). </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Note that calling <a class="el" href="class_task_manager.html#a1d46a7527bc15f3ea4289d2bbb3663b2" title="Add a task that will wait until a signal arrives or (optionally) a timeout occurs. ">addWaitSignal()</a> with no timeout or startWaiting parmeter, the task will start in a wait state with no timeout. To start the task in a non-wait-state (active) with no timeout, the routine must be called as addWaitSignal(id, fn, 0, false). </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">taskId</td><td>- the task's ID. For normal user tasks, this should be a byte value in the range [0 127]. System tasks have taskId values in the range [128 255]. </td></tr>
     <tr><td class="paramname">fn</td><td>&ndash; this is a void function with no arguments. This is the procedure that is called every time the task is invoked. </td></tr>
@@ -618,11 +595,11 @@ jmp_buf&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
   </table>
   </dd>
 </dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_task_manager.html#ad15b8303b799eb80f2a9a30d750fea0e" title="Add a task that waits until a signal arrives or (optionally) timeout occurs. The task automatically r...">addAutoWaitSignal</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_task_manager.html#a996a483a57bee67434279eb95168a330" title="Add a task that waits until a signal arrives or (optionally) timeout occurs. The task automatically r...">addAutoWaitSignal</a> </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="ad11b36a0c2f89d6bc537ff4376ca26f5"></a>
+<a class="anchor" id="a645ff50a9656974b61e7774af4e5632c"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -661,25 +638,7 @@ jmp_buf&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
   </table>
   </dd>
 </dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_task_manager.html#aece076dfbe6b0a93eedd7a292adeab65" title="Add a simple task. ">add</a>, addDelayed, addAutoReachedule </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a177bac2cbad40db6eac4877909a51f0e"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="class___task_manager_task.html">_TaskManagerTask</a> * TaskManager::FindNextRunnable </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Find tne next runnable task. Internal routine. </p>
-<p>Finds the next runnaable task on the task ring. This routine assumes that the task ring is on the most-recently-run task. It moves the task ring to the next task that is ready to run. Since there is a null task and it is always runnable, <a class="el" href="class_task_manager.html#a177bac2cbad40db6eac4877909a51f0e" title="Find tne next runnable task. Internal routine. ">FindNextRunnable()</a> is guaranteed to find a runnable task. For internal use only. </p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_task_manager.html#a65196b3d3d327a203ec51b9b68a39b4a" title="Add a simple task. ">add</a>, <a class="el" href="class_task_manager.html#a8d1e82c4d967c66d8992ec2e99baaae7" title="Add a task that will be delayed before its first invocation. ">addWaitDelay</a>, <a class="el" href="class_task_manager.html#aee330530f268b857d18ac33ce9e6f8f3" title="Add a task that will automatically reschedule itself with a delay. ">addAutoWaitDelay</a> </dd></dl>
 
 </div>
 </div>
@@ -688,7 +647,7 @@ jmp_buf&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class___task_manager_task.html">_TaskManagerTask</a> * TaskManager::findTaskById </td>
+          <td class="memname">_TaskManagerTask * TaskManager::findTaskById </td>
           <td>(</td>
           <td class="paramtype">byte&#160;</td>
           <td class="paramname"><em>id</em></td><td>)</td>
@@ -704,7 +663,7 @@ jmp_buf&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A pointer to the <a class="el" href="class___task_manager_task.html" title="Internal class to manage a single active task. ">_TaskManagerTask</a> or NULL if not found </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A pointer to the _TaskManagerTask or NULL if not found </dd></dl>
 
 </div>
 </div>
@@ -734,6 +693,42 @@ jmp_buf&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 
 </div>
 </div>
+<a class="anchor" id="a2db63c9bae9d5b8197253d7f06cfcf9a"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void TaskManager::getSource </td>
+          <td>(</td>
+          <td class="paramtype">byte &amp;&#160;</td>
+          <td class="paramname"><em>fromNodeId</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">byte &amp;&#160;</td>
+          <td class="paramname"><em>fromTaskId</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get source node/task of last message/signal. </p>
+<p>Returns the nodeId and taskId of the node/task that last sent a signal or message to the current task. If the current task has never received a signal, returns [0 0]. If the last message/signal was from "this" node, returns fromNodeId=0.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[out]</td><td class="paramname">fromNodeId</td><td>&ndash; the nodeId that sent the last message or signal </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">fromTaskId</td><td>&ndash; the taskId that sent the last message or signal </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a class="anchor" id="a2b88a62f061cbc8159a101844d8e5469"></a>
 <div class="memitem">
 <div class="memproto">
@@ -753,7 +748,7 @@ jmp_buf&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 
 </div>
 </div>
-<a class="anchor" id="adfc36e6ef3cf0dff1e201a2c6d411f97"></a>
+<a class="anchor" id="a9aae8179ea07541745321481de45aa68"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -761,7 +756,7 @@ jmp_buf&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">byte TaskManager::myID </td>
+          <td class="memname">byte TaskManager::myId </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -779,6 +774,32 @@ jmp_buf&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 
 </div>
 </div>
+<a class="anchor" id="ac6b399f73f010bbec00826cd20aab6c5"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">byte TaskManager::myNodeId </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Return the node ID of this system. </p>
+<dl class="section return"><dt>Returns</dt><dd>The byte value that is the current node's radio ID. If the radio has not been enabled, returns 0. </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a261cd53a22a9d260c64141b1c2d71364"></a>
 <div class="memitem">
 <div class="memproto">
@@ -793,14 +814,124 @@ jmp_buf&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
       </table>
 </div><div class="memdoc">
 
-<p>Support routine to allow the printing of the contents of a <a class="el" href="class_task_manager.html" title="Manages a set of cooperative tasks. ">TaskManager</a> object. </p>
-<p>This prints a <a class="el" href="class_task_manager.html" title="Manages a set of cooperative tasks. ">TaskManager</a> object. It should only be used for debugging purposes. </p>
+<p>Support routine to allow the printing of the contents of a <a class="el" href="class_task_manager.html" title="A cooperative multitasking manager. ">TaskManager</a> object. </p>
+<p>This prints a <a class="el" href="class_task_manager.html" title="A cooperative multitasking manager. ">TaskManager</a> object. It should only be used for debugging purposes. </p>
 
 </div>
 </div>
-<a class="anchor" id="afee5e2f8a42db493117deddf0c5c33d4"></a>
+<a class="anchor" id="a74220151c502df205b101da1825d9e41"></a>
 <div class="memitem">
 <div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void TaskManager::radioBegin </td>
+          <td>(</td>
+          <td class="paramtype">byte&#160;</td>
+          <td class="paramname"><em>nodeId</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">byte&#160;</td>
+          <td class="paramname"><em>cePin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">byte&#160;</td>
+          <td class="paramname"><em>csPin</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create the radio and start it receiving. </p>
+<p>Create an RF24 radio instance and set our radio node ID.</p>
+<p>Note that additional messages sent prior to the task executing will overwrite any prior messages.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">nodeId</td><td>&ndash; the node the message is sent to </td></tr>
+    <tr><td class="paramname">cePin</td><td>&ndash; Chip Enable pin </td></tr>
+    <tr><td class="paramname">csPin</td><td>&ndash; Chip Select pin </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="aa5f938f2b80ae5cb0bb3365fa5ddaa0a"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void TaskManager::resume </td>
+          <td>(</td>
+          <td class="paramtype">byte&#160;</td>
+          <td class="paramname"><em>taskId</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Resume the given task on the given node. </p>
+<p>Resumes a task. If the task do not exist, nothing happens. If the task had not been suspended, nothing happens. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">taskId</td><td>The task to be resumed</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>Not implemented. </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_task_manager.html#af7ffb2b405dc4b78ec918345367509c0" title="Suspend the given task. ">suspend()</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a950385515af8db01ac0d72f38d064f03"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void TaskManager::resume </td>
+          <td>(</td>
+          <td class="paramtype">byte&#160;</td>
+          <td class="paramname"><em>nodeId</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">byte&#160;</td>
+          <td class="paramname"><em>taskId</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Resume the given task on the given node. </p>
+<p>Resumes a task on any node. If nodeID==0, it resumes a task on this node. If the node or task do not exist, nothing happens. If the task had not been suspended, nothing happens. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">nodeId</td><td>The node containnig the task </td></tr>
+    <tr><td class="paramname">taskId</td><td>The task to be resumed </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>Not implemented. </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_task_manager.html#af7ffb2b405dc4b78ec918345367509c0" title="Suspend the given task. ">suspend()</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="afa64288296449953f690b50935891f07"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void TaskManager::sendMessage </td>
@@ -820,24 +951,80 @@ jmp_buf&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
           <td></td><td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>Sends a string message to a task. </p>
 <p>Sends a message to a task. The message will go to only one task.</p>
-<p>Note that once a task has been sent a message, it will not be waiting for other instances of the same siggnal number. Note that additional messages sent prior to the task executing will overwrite any prior messages. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Note that once a task has been sent a message, it will not be waiting for other instances of the same siggnal number. Note that additional messages sent prior to the task executing will overwrite any prior messages. Messages that are too large are ignored. Remember to account for the trailing '<br />
+' when considering the string message size.</p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">taskId</td><td>&ndash; the ID number of the task </td></tr>
-    <tr><td class="paramname">message</td><td>&ndash; the character string message. It is restricted in length to 24 characters. Longer messages will be ignored. </td></tr>
+    <tr><td class="paramname">message</td><td>&ndash; the character string message. It is restricted in length to TASKMGR_MESSAGE_LENGTH-1 characters. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_task_manager.html#a2ee8e9c6dcd5c990f8849293cf1d389a" title="Exit from the task manager and do not restart this task until a message has been received or a stated...">yieldForMessage()</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_task_manager.html#a4f368a9141c55b085aefdc8833aeaeec" title="Exit from the task manager and do not restart this task until a message has been received or a stated...">yieldForMessage()</a> </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a70daf90751f465012f4fe0e44132c0d7"></a>
+<a class="anchor" id="a0bcf13555d0d36f64ec45c559d25dd5f"></a>
 <div class="memitem">
 <div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void TaskManager::sendMessage </td>
+          <td>(</td>
+          <td class="paramtype">byte&#160;</td>
+          <td class="paramname"><em>nodeId</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">byte&#160;</td>
+          <td class="paramname"><em>taskId</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>message</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sends a string message to a task. </p>
+<p>Sends a message to a task. The message will go to only one task.</p>
+<p>Note that once a task has been sent a message, it will not be waiting for other instances of the same siggnal number. Note that additional messages sent prior to the task executing will overwrite any prior messages. Messages that are too large are ignored. Remember to account for the trailing '<br />
+' when considering the string message size.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">nodeId</td><td>&ndash; the node the message is sent to </td></tr>
+    <tr><td class="paramname">taskId</td><td>&ndash; the ID number of the task </td></tr>
+    <tr><td class="paramname">message</td><td>&ndash; the character string message. It is restricted in length to TASKMGR_MESSAGE_LENGTH-1 characters. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_task_manager.html#a4f368a9141c55b085aefdc8833aeaeec" title="Exit from the task manager and do not restart this task until a message has been received or a stated...">yieldForMessage()</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="af332a07dcf5a649aabd22e57b2038e58"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void TaskManager::sendMessage </td>
@@ -863,25 +1050,85 @@ jmp_buf&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
           <td></td><td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>Send a binary message to a task. </p>
-<p>Sends a message to a task. The message will go to only one task. Note that once a task has been sent a message, it will not be waiting for other instances of the same siggnal number.</p>
+<p>Sends a message to a task. The message will go to only one task. Note that once a task has been sent a message, it will not be waiting for other instances of the same signal number. Messages that are too large are ignored.</p>
 <p>Note that additional messages sent prior to the task executing will overwrite any prior messages. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">taskId</td><td>&ndash; the ID number of the task </td></tr>
     <tr><td class="paramname">buf</td><td>&ndash; A pointer to the structure that is to be passed to the task </td></tr>
-    <tr><td class="paramname">len</td><td>&ndash; The length of the buffer. Buffers over 24 bytes long will be ignored &ndash; no message will be sent. </td></tr>
+    <tr><td class="paramname">len</td><td>&ndash; The length of the buffer. Buffers can be at most TASKMGR_MESSAGE_LENGTH bytes long. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_task_manager.html#a2ee8e9c6dcd5c990f8849293cf1d389a" title="Exit from the task manager and do not restart this task until a message has been received or a stated...">yieldForMessage()</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_task_manager.html#a4f368a9141c55b085aefdc8833aeaeec" title="Exit from the task manager and do not restart this task until a message has been received or a stated...">yieldForMessage()</a> </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="abf9432fd2a73e348ce00cf49c631ad66"></a>
+<a class="anchor" id="a89c43cec12e3dc85f6786dbb970f10f9"></a>
 <div class="memitem">
 <div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void TaskManager::sendMessage </td>
+          <td>(</td>
+          <td class="paramtype">byte&#160;</td>
+          <td class="paramname"><em>nodeId</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">byte&#160;</td>
+          <td class="paramname"><em>taskId</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>buf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>len</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Send a binary message to a task. </p>
+<p>Sends a message to a task. The message will go to only one task. Note that once a task has been sent a message, it will not be waiting for other instances of the same signal number. Messages that are too large are ignored.</p>
+<p>Note that additional messages sent prior to the task executing will overwrite any prior messages.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">nodeId</td><td>&ndash; the node the message is sent to </td></tr>
+    <tr><td class="paramname">taskId</td><td>&ndash; the ID number of the task </td></tr>
+    <tr><td class="paramname">buf</td><td>&ndash; A pointer to the structure that is to be passed to the task </td></tr>
+    <tr><td class="paramname">len</td><td>&ndash; The length of the buffer. Buffers can be at most TASKMGR_MESSAGE_LENGTH bytes long. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_task_manager.html#a4f368a9141c55b085aefdc8833aeaeec" title="Exit from the task manager and do not restart this task until a message has been received or a stated...">yieldForMessage()</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a7498109c70ab6189c18565c633533404"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void TaskManager::sendSignal </td>
@@ -891,22 +1138,68 @@ jmp_buf&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>Sends a signal to a task. </p>
-<p>Sends a signal to a task. The signal will go to only one task. If there are several tasks waiting on the signal, it will go to the first task found that is waiting for this particular signal. Note that once a task is signalled, it will not be waiting for other instances of the same siggnal number. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Sends a signal to a task. The signal will go to only one task. If there are several tasks waiting on the signal, it will go to the first task found that is waiting for this particular signal. Note that once a task is signalled, it will not be waiting for other instances of the same siggnal number.</p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">sigNum</td><td>&ndash; the value of the signal to be sent </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_task_manager.html#a3db602b48a774019ccb8320148e0f8e1" title="Exit from the task manager and do not restart this task until a signal has been received or a stated ...">yieldForSignal()</a>, <a class="el" href="class_task_manager.html#ad987e8609d7925fc97d91ba49afa8ed5" title="Send a signal to all tasks that are waiting for this particular signal. ">sendSignalAll()</a>, <a class="el" href="class_task_manager.html#a540a21c6a6de30cf37421e37de5f0f79" title="Add a task that will wait until a signal arrives or (optionally) a timeout occurs. ">addWaitSignal</a>, <a class="el" href="class_task_manager.html#ad15b8303b799eb80f2a9a30d750fea0e" title="Add a task that waits until a signal arrives or (optionally) timeout occurs. The task automatically r...">addAutoWaitSignal()</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_task_manager.html#a887541b9c53d4dab1e28779098f68ce2" title="Exit from the task manager and do not restart this task until a signal has been received or a stated ...">yieldForSignal()</a>, <a class="el" href="class_task_manager.html#ab8a7b2a2c2f92f97da186bb3f2f19f9b" title="Send a signal to all tasks that are waiting for this particular signal. ">sendSignalAll()</a>, <a class="el" href="class_task_manager.html#a1d46a7527bc15f3ea4289d2bbb3663b2" title="Add a task that will wait until a signal arrives or (optionally) a timeout occurs. ">addWaitSignal</a>, <a class="el" href="class_task_manager.html#a996a483a57bee67434279eb95168a330" title="Add a task that waits until a signal arrives or (optionally) timeout occurs. The task automatically r...">addAutoWaitSignal()</a> </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="ad987e8609d7925fc97d91ba49afa8ed5"></a>
+<a class="anchor" id="a540062b2280572ec48ff33d88a654868"></a>
 <div class="memitem">
 <div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void TaskManager::sendSignal </td>
+          <td>(</td>
+          <td class="paramtype">byte&#160;</td>
+          <td class="paramname"><em>nodeId</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">byte&#160;</td>
+          <td class="paramname"><em>sigNum</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sends a signal to a task. </p>
+<p>Sends a signal to a task running on a different node. The signal will go to only one task. If there are several tasks on the node waiting on the signal, it will go to the first task found that is waiting for this particular signal. Note that once a task is signalled, it will not be waiting for other instances of the same siggnal number.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">nodeId</td><td>&ndash; The node that is to receive the signal </td></tr>
+    <tr><td class="paramname">sigNum</td><td>&ndash; The value of the signal to be sent </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_task_manager.html#a887541b9c53d4dab1e28779098f68ce2" title="Exit from the task manager and do not restart this task until a signal has been received or a stated ...">yieldForSignal()</a>, <a class="el" href="class_task_manager.html#ab8a7b2a2c2f92f97da186bb3f2f19f9b" title="Send a signal to all tasks that are waiting for this particular signal. ">sendSignalAll()</a>, <a class="el" href="class_task_manager.html#a1d46a7527bc15f3ea4289d2bbb3663b2" title="Add a task that will wait until a signal arrives or (optionally) a timeout occurs. ">addWaitSignal</a>, <a class="el" href="class_task_manager.html#a996a483a57bee67434279eb95168a330" title="Add a task that waits until a signal arrives or (optionally) timeout occurs. The task automatically r...">addAutoWaitSignal()</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ab8a7b2a2c2f92f97da186bb3f2f19f9b"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void TaskManager::sendSignalAll </td>
@@ -916,16 +1209,139 @@ jmp_buf&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>Send a signal to all tasks that are waiting for this particular signal. </p>
 <p>Signals all tasks that are waiting for signal <em>sigNum</em>. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">sigNum</td><td>&ndash; the signal number to be sent </td></tr>
+    <tr><td class="paramname">sigNum</td><td>&ndash; The signal number to be sent </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_task_manager.html#abf9432fd2a73e348ce00cf49c631ad66" title="Sends a signal to a task. ">sendSignal()</a>, yieldForSiganl(), <a class="el" href="class_task_manager.html#a540a21c6a6de30cf37421e37de5f0f79" title="Add a task that will wait until a signal arrives or (optionally) a timeout occurs. ">addWaitSignal()</a>, <a class="el" href="class_task_manager.html#ad15b8303b799eb80f2a9a30d750fea0e" title="Add a task that waits until a signal arrives or (optionally) timeout occurs. The task automatically r...">addAutoWaitSignal()</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_task_manager.html#a7498109c70ab6189c18565c633533404" title="Sends a signal to a task. ">sendSignal()</a>, yieldForSiganl(), <a class="el" href="class_task_manager.html#a1d46a7527bc15f3ea4289d2bbb3663b2" title="Add a task that will wait until a signal arrives or (optionally) a timeout occurs. ">addWaitSignal()</a>, <a class="el" href="class_task_manager.html#a996a483a57bee67434279eb95168a330" title="Add a task that waits until a signal arrives or (optionally) timeout occurs. The task automatically r...">addAutoWaitSignal()</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="aae633830f4a2d862d36fc357612bcf0e"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void TaskManager::sendSignalAll </td>
+          <td>(</td>
+          <td class="paramtype">byte&#160;</td>
+          <td class="paramname"><em>nodeId</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">byte&#160;</td>
+          <td class="paramname"><em>sigNum</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Send a signal to all tasks that are waiting for this particular signal. </p>
+<p>Signals all tasks that are waiting for signal <em>sigNum</em>. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">nodeId</td><td>&ndash; The node that is to receive the signal </td></tr>
+    <tr><td class="paramname">sigNum</td><td>&ndash; the signal number to be sent</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_task_manager.html#a7498109c70ab6189c18565c633533404" title="Sends a signal to a task. ">sendSignal()</a>, yieldForSiganl(), <a class="el" href="class_task_manager.html#a1d46a7527bc15f3ea4289d2bbb3663b2" title="Add a task that will wait until a signal arrives or (optionally) a timeout occurs. ">addWaitSignal()</a>, <a class="el" href="class_task_manager.html#a996a483a57bee67434279eb95168a330" title="Add a task that waits until a signal arrives or (optionally) timeout occurs. The task automatically r...">addAutoWaitSignal()</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="af7ffb2b405dc4b78ec918345367509c0"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void TaskManager::suspend </td>
+          <td>(</td>
+          <td class="paramtype">byte&#160;</td>
+          <td class="paramname"><em>taskId</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Suspend the given task. </p>
+<p>The given task will be suspended until it is resumed. It will not be allowed to run, nor will it receive messages or signals. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">taskId</td><td>The task to be suspended</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>Not implemented.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd>receive </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="af3da3c8b045fb55ecde0a610f85d7802"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void TaskManager::suspend </td>
+          <td>(</td>
+          <td class="paramtype">byte&#160;</td>
+          <td class="paramname"><em>nodeId</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">byte&#160;</td>
+          <td class="paramname"><em>taskId</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Suspend the given task on the given node. </p>
+<p>Suspends a task on any node. If nodeID==0, it suspends a task on this node. If the node or task do not exist, nothing happens. If the task was already suspended, it remains suspended. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">nodeId</td><td>The node containing the task </td></tr>
+    <tr><td class="paramname">taskId</td><td>The task to be suspended</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>Not implemented. </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_task_manager.html#aa5f938f2b80ae5cb0bb3365fa5ddaa0a" title="Resume the given task on the given node. ">resume()</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a0189a1b17878cb115126da8dcf7822ae"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void TaskManager::tmRadioReceiverTask </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Radio receiver task for inter-node communication. </p>
+<p>This receives radio messages and processes them. It will transmit messages and signals as needed.</p>
+<p>This routine is for internal use only. </p>
 
 </div>
 </div>
@@ -943,18 +1359,18 @@ jmp_buf&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 </div><div class="memdoc">
 
 <p>Exit from this task and return control to the task manager. </p>
-<p>This exits from the current task, and returns control to the task manager. Functionally, it is similar to a return statement. The next time the task gains control, it will resume from the TOP of the routine. Note that if the task was an Auto task, it will be automatically rescheduled according to its Auto specifications. </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="class_task_manager.html#a7604115fcf2aeca0b15f0aa92d6a048c" title="Exit from the task manager and do not restart this task until after a specified period. ">yieldDelay()</a>, <a class="el" href="class_task_manager.html#ac5f215104e1112fd506002d9d4894fce" title="Exit from the task manager and do not restart this task until (after) a specified CPU clock time...">yieldUntil()</a>, yieldSignal(), yieldMessage(), <a class="el" href="class_task_manager.html#a0dcf18d181fb18621dc5c833450dc4d5" title="Add a task that will automatically reschedule itself with a delay. ">addAutoWaitDelay()</a>, <a class="el" href="class_task_manager.html#ad15b8303b799eb80f2a9a30d750fea0e" title="Add a task that waits until a signal arrives or (optionally) timeout occurs. The task automatically r...">addAutoWaitSignal()</a>, <a class="el" href="class_task_manager.html#a9414298030ad56315deb42261209df79" title="Add a task that is waiting for a message or until a timeout occurs. ">addAutoWaitMessage()</a> </dd></dl>
+<p>This exits from the current task, and returns control to the task manager. Functionally, it is similar to a return statement. The next time the task gains control, it will resume from the TOP of the routine. Note that if the task was an Auto task, it will be automatically rescheduled according to its Auto specifications. </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="class_task_manager.html#a2123fa0af84c3a1373b9437e2157e872" title="Exit from the task manager and do not restart this task until after a specified period. ">yieldDelay()</a>, <a class="el" href="class_task_manager.html#aa3f827ee35d80bc4faa2f7d438163e78" title="Exit from the task manager and do not restart this task until (after) a specified CPU clock time...">yieldUntil()</a>, yieldSignal(), yieldMessage(), <a class="el" href="class_task_manager.html#aee330530f268b857d18ac33ce9e6f8f3" title="Add a task that will automatically reschedule itself with a delay. ">addAutoWaitDelay()</a>, <a class="el" href="class_task_manager.html#a996a483a57bee67434279eb95168a330" title="Add a task that waits until a signal arrives or (optionally) timeout occurs. The task automatically r...">addAutoWaitSignal()</a>, <a class="el" href="class_task_manager.html#ab8d9a4165e19f96637b684a245fa985e" title="Add a task that is waiting for a message or until a timeout occurs. ">addAutoWaitMessage()</a> </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a7604115fcf2aeca0b15f0aa92d6a048c"></a>
+<a class="anchor" id="a2123fa0af84c3a1373b9437e2157e872"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void TaskManager::yieldDelay </td>
           <td>(</td>
-          <td class="paramtype">int&#160;</td>
+          <td class="paramtype">unsigned long&#160;</td>
           <td class="paramname"><em>ms</em></td><td>)</td>
           <td></td>
         </tr>
@@ -968,18 +1384,18 @@ jmp_buf&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
   </table>
   </dd>
 </dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_task_manager.html#abc4f2e57cdc1fd1d3051b58dc816de98" title="Exit from this task and return control to the task manager. ">yield()</a>, <a class="el" href="class_task_manager.html#ac5f215104e1112fd506002d9d4894fce" title="Exit from the task manager and do not restart this task until (after) a specified CPU clock time...">yieldUntil()</a>, yieldSignal(), yieldMessage(), <a class="el" href="class_task_manager.html#a0dcf18d181fb18621dc5c833450dc4d5" title="Add a task that will automatically reschedule itself with a delay. ">addAutoWaitDelay()</a>, <a class="el" href="class_task_manager.html#ad15b8303b799eb80f2a9a30d750fea0e" title="Add a task that waits until a signal arrives or (optionally) timeout occurs. The task automatically r...">addAutoWaitSignal()</a>, <a class="el" href="class_task_manager.html#a9414298030ad56315deb42261209df79" title="Add a task that is waiting for a message or until a timeout occurs. ">addAutoWaitMessage()</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_task_manager.html#abc4f2e57cdc1fd1d3051b58dc816de98" title="Exit from this task and return control to the task manager. ">yield()</a>, <a class="el" href="class_task_manager.html#aa3f827ee35d80bc4faa2f7d438163e78" title="Exit from the task manager and do not restart this task until (after) a specified CPU clock time...">yieldUntil()</a>, yieldSignal(), yieldMessage(), <a class="el" href="class_task_manager.html#aee330530f268b857d18ac33ce9e6f8f3" title="Add a task that will automatically reschedule itself with a delay. ">addAutoWaitDelay()</a>, <a class="el" href="class_task_manager.html#a996a483a57bee67434279eb95168a330" title="Add a task that waits until a signal arrives or (optionally) timeout occurs. The task automatically r...">addAutoWaitSignal()</a>, <a class="el" href="class_task_manager.html#ab8d9a4165e19f96637b684a245fa985e" title="Add a task that is waiting for a message or until a timeout occurs. ">addAutoWaitMessage()</a> </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a2ee8e9c6dcd5c990f8849293cf1d389a"></a>
+<a class="anchor" id="a4f368a9141c55b085aefdc8833aeaeec"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void TaskManager::yieldForMessage </td>
           <td>(</td>
-          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramtype">unsigned long&#160;</td>
           <td class="paramname"><em>timeout</em> = <code>0</code></td><td>)</td>
           <td></td>
         </tr>
@@ -994,11 +1410,11 @@ jmp_buf&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
   </table>
   </dd>
 </dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_task_manager.html#abc4f2e57cdc1fd1d3051b58dc816de98" title="Exit from this task and return control to the task manager. ">yield()</a>, <a class="el" href="class_task_manager.html#a7604115fcf2aeca0b15f0aa92d6a048c" title="Exit from the task manager and do not restart this task until after a specified period. ">yieldDelay()</a>, <a class="el" href="class_task_manager.html#a3db602b48a774019ccb8320148e0f8e1" title="Exit from the task manager and do not restart this task until a signal has been received or a stated ...">yieldForSignal()</a>, <a class="el" href="class_task_manager.html#a0dcf18d181fb18621dc5c833450dc4d5" title="Add a task that will automatically reschedule itself with a delay. ">addAutoWaitDelay()</a>, <a class="el" href="class_task_manager.html#ad15b8303b799eb80f2a9a30d750fea0e" title="Add a task that waits until a signal arrives or (optionally) timeout occurs. The task automatically r...">addAutoWaitSignal()</a>, <a class="el" href="class_task_manager.html#a9414298030ad56315deb42261209df79" title="Add a task that is waiting for a message or until a timeout occurs. ">addAutoWaitMessage()</a>, timeOut() </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_task_manager.html#abc4f2e57cdc1fd1d3051b58dc816de98" title="Exit from this task and return control to the task manager. ">yield()</a>, <a class="el" href="class_task_manager.html#a2123fa0af84c3a1373b9437e2157e872" title="Exit from the task manager and do not restart this task until after a specified period. ">yieldDelay()</a>, <a class="el" href="class_task_manager.html#a887541b9c53d4dab1e28779098f68ce2" title="Exit from the task manager and do not restart this task until a signal has been received or a stated ...">yieldForSignal()</a>, <a class="el" href="class_task_manager.html#aee330530f268b857d18ac33ce9e6f8f3" title="Add a task that will automatically reschedule itself with a delay. ">addAutoWaitDelay()</a>, <a class="el" href="class_task_manager.html#a996a483a57bee67434279eb95168a330" title="Add a task that waits until a signal arrives or (optionally) timeout occurs. The task automatically r...">addAutoWaitSignal()</a>, <a class="el" href="class_task_manager.html#ab8d9a4165e19f96637b684a245fa985e" title="Add a task that is waiting for a message or until a timeout occurs. ">addAutoWaitMessage()</a>, timeOut() </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a3db602b48a774019ccb8320148e0f8e1"></a>
+<a class="anchor" id="a887541b9c53d4dab1e28779098f68ce2"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -1011,7 +1427,7 @@ jmp_buf&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramtype">unsigned long&#160;</td>
           <td class="paramname"><em>timeout</em> = <code>0</code>&#160;</td>
         </tr>
         <tr>
@@ -1031,11 +1447,11 @@ jmp_buf&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
   </table>
   </dd>
 </dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_task_manager.html#abc4f2e57cdc1fd1d3051b58dc816de98" title="Exit from this task and return control to the task manager. ">yield()</a>, <a class="el" href="class_task_manager.html#a7604115fcf2aeca0b15f0aa92d6a048c" title="Exit from the task manager and do not restart this task until after a specified period. ">yieldDelay()</a>, <a class="el" href="class_task_manager.html#a2ee8e9c6dcd5c990f8849293cf1d389a" title="Exit from the task manager and do not restart this task until a message has been received or a stated...">yieldForMessage()</a>, <a class="el" href="class_task_manager.html#a0dcf18d181fb18621dc5c833450dc4d5" title="Add a task that will automatically reschedule itself with a delay. ">addAutoWaitDelay()</a>, <a class="el" href="class_task_manager.html#ad15b8303b799eb80f2a9a30d750fea0e" title="Add a task that waits until a signal arrives or (optionally) timeout occurs. The task automatically r...">addAutoWaitSignal()</a>, <a class="el" href="class_task_manager.html#a9414298030ad56315deb42261209df79" title="Add a task that is waiting for a message or until a timeout occurs. ">addAutoWaitMessage()</a>, timeOut() </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_task_manager.html#abc4f2e57cdc1fd1d3051b58dc816de98" title="Exit from this task and return control to the task manager. ">yield()</a>, <a class="el" href="class_task_manager.html#a2123fa0af84c3a1373b9437e2157e872" title="Exit from the task manager and do not restart this task until after a specified period. ">yieldDelay()</a>, <a class="el" href="class_task_manager.html#a4f368a9141c55b085aefdc8833aeaeec" title="Exit from the task manager and do not restart this task until a message has been received or a stated...">yieldForMessage()</a>, <a class="el" href="class_task_manager.html#aee330530f268b857d18ac33ce9e6f8f3" title="Add a task that will automatically reschedule itself with a delay. ">addAutoWaitDelay()</a>, <a class="el" href="class_task_manager.html#a996a483a57bee67434279eb95168a330" title="Add a task that waits until a signal arrives or (optionally) timeout occurs. The task automatically r...">addAutoWaitSignal()</a>, <a class="el" href="class_task_manager.html#ab8d9a4165e19f96637b684a245fa985e" title="Add a task that is waiting for a message or until a timeout occurs. ">addAutoWaitMessage()</a>, timeOut() </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="ac5f215104e1112fd506002d9d4894fce"></a>
+<a class="anchor" id="aa3f827ee35d80bc4faa2f7d438163e78"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -1056,7 +1472,7 @@ jmp_buf&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
   </table>
   </dd>
 </dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_task_manager.html#abc4f2e57cdc1fd1d3051b58dc816de98" title="Exit from this task and return control to the task manager. ">yield()</a>, <a class="el" href="class_task_manager.html#a7604115fcf2aeca0b15f0aa92d6a048c" title="Exit from the task manager and do not restart this task until after a specified period. ">yieldDelay()</a>, yieldSignal(), yieldMessage(), <a class="el" href="class_task_manager.html#a0dcf18d181fb18621dc5c833450dc4d5" title="Add a task that will automatically reschedule itself with a delay. ">addAutoWaitDelay()</a>, <a class="el" href="class_task_manager.html#ad15b8303b799eb80f2a9a30d750fea0e" title="Add a task that waits until a signal arrives or (optionally) timeout occurs. The task automatically r...">addAutoWaitSignal()</a>, <a class="el" href="class_task_manager.html#a9414298030ad56315deb42261209df79" title="Add a task that is waiting for a message or until a timeout occurs. ">addAutoWaitMessage()</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_task_manager.html#abc4f2e57cdc1fd1d3051b58dc816de98" title="Exit from this task and return control to the task manager. ">yield()</a>, <a class="el" href="class_task_manager.html#a2123fa0af84c3a1373b9437e2157e872" title="Exit from the task manager and do not restart this task until after a specified period. ">yieldDelay()</a>, yieldSignal(), yieldMessage(), <a class="el" href="class_task_manager.html#aee330530f268b857d18ac33ce9e6f8f3" title="Add a task that will automatically reschedule itself with a delay. ">addAutoWaitDelay()</a>, <a class="el" href="class_task_manager.html#a996a483a57bee67434279eb95168a330" title="Add a task that waits until a signal arrives or (optionally) timeout occurs. The task automatically r...">addAutoWaitSignal()</a>, <a class="el" href="class_task_manager.html#ab8d9a4165e19f96637b684a245fa985e" title="Add a task that is waiting for a message or until a timeout occurs. ">addAutoWaitMessage()</a> </dd></dl>
 
 </div>
 </div>
@@ -1067,7 +1483,7 @@ jmp_buf&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun Jan 18 2015 14:26:20 for TaskManager by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Nov 13 2015 11:15:14 for TaskManager by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.8
 </small></address>

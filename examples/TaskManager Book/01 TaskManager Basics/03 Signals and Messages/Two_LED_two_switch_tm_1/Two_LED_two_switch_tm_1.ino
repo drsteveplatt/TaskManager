@@ -1,8 +1,3 @@
-//#include <Arduino.h>
-
-#include <Streaming.h>
-#include <TaskManager.h>
-
 /*
   Demonstrates different forms of signalling/messaging/yielding
   Six tasks:
@@ -15,6 +10,10 @@
   6. ticker: every 5 seconds write a message to the console
     telling how many timeouts on led_1b
 */
+
+#include <SPI.h>
+#include <RF24.h>
+#include <TaskManager.h>
 
 // forward declarations
 void button_1();

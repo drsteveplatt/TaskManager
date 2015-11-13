@@ -1,6 +1,8 @@
-#include <Arduino.h>
 
 #define TASKMANAGER_MAIN
+
+#include <SPI.h>
+#include <RF24.h>
 #include "TaskManager.h"
 
 /*! \file TaskManager.cpp
@@ -11,15 +13,14 @@ static void nullTask() {
 }
 
 // This is the replacement for the normal loop().
+//!	\private
 void loop() {
     TaskMgr.loop();
 }
 
-#if TASKMANAGER_RADIO>0
 static void radioReceiverTask() {
-	TaskMgr.radioReceiver();
+	TaskMgr.tmRadioReceiverTask();
 }
-#endif
 
 //
 // Implementation of _TaskManagerTask
@@ -65,7 +66,6 @@ bool _TaskManagerTask::isRunnable()  {
     } else {
         ret = true;
     }
-    //Serial << "isRunnable, examining " << m_id << (ret ? " is " : " is not " ) << "runnable\n";
     return ret;
 }
 
@@ -126,141 +126,56 @@ size_t _TaskManagerTask::printTo(Print& p) const {
 
 // Constructor and Destructor
 
-/*! \brief Constructor,  Creates an empty task
-*/
+
 TaskManager::TaskManager() {
     add(0xff, nullTask);
-#if TASKMANAGER_RADIO>0
-	add(0xfe, radioReceiverTask);
-#endif
+	m_rf24 = NULL;
+	m_myNodeId = 0;
+	m_radioReceiverRunning = false;
     m_startTime = millis();
 }
-/*!  \brief Destructor.  Destroys the TaskManager.
 
-    After calling this, any operations based on the object will fail.  For normal purpoases, destroying the
-    TaskMgr instance will have serious consequences for the standard loop() routine.
-*/
 TaskManager::~TaskManager() {
+	if(m_rf24!=NULL) delete m_rf24;
 }
 
 //
 //  Add a new task
 //
 
-/*!  \brief Add a simple task.
 
-    The task will execute once each cycle through the task list.  Unless the task itself forces itself into a different scheduling
-    model (e.g., through YieldSignal), it will execute again at the next available opportunity
-    \param taskId - the task's ID.  For normal user tasks, this should be a byte value in the range [0 127].
-    System tasks have taskId values in the range [128 255].
-    \param fn -- this is a void function with no arguments.  This is the procedure that is called every time
-    the task is invoked.
-    \sa addWaitDelay, addWaitUntil, addAutoWaitDelay
-*/
 void TaskManager::add(byte taskId, void (*fn)()) {
     _TaskManagerTask newTask(taskId, fn);
     m_theTasks.push_back(newTask);
 }
 
-/*! \brief Add a task that will be delayed before its first invocation
 
-    This task will execute once each cycle.  Its first execution will be delayed for a set time.  After this,
-    unless the task forces itself into a different scheduling model (e.g., through yieldSignal), it will
-    execute agaion at the next available opportunity.
-    \param taskId - the task's ID.  For normal user tasks, this should be a byte value in the range [0 127].
-    System tasks have taskId values in the range [128 255].
-    \param fn -- this is a void function with no arguments.  This is the procedure that is called every time
-    the task is invoked.
-    \param msDelay -- the initial delay, in milliseconds
-    \sa add, addWaitUntil, addAutoWaitDelay
-    */
-void TaskManager::addWaitDelay(byte taskId, void(*fn)(), unsigned int msDelay) {
+void TaskManager::addWaitDelay(byte taskId, void(*fn)(), unsigned long msDelay) {
     addWaitUntil(taskId, fn, millis() + msDelay);
 }
-/*! \brief Add a task that will be delayed until a set system clock time before its first invocation
 
-    This task will execute once each cycle.  Its first execution will be delayed until a set system clock time.  After this,
-    unless the task forces itself into a different scheduling model (e.g., through yieldSignal), it will
-    execute agaion at the next available opportunity.
-    \param taskId - the task's ID.  For normal user tasks, this should be a byte value in the range [0 127].
-    System tasks have taskId values in the range [128 255].
-    \param fn -- this is a void function with no arguments.  This is the procedure that is called every time
-    the task is invoked.
-    \param msWhen -- the initial delay, in milliseconds
-    \sa add, addDelayed, addAutoReachedule
-    */
 void TaskManager::addWaitUntil(byte taskId, void(*fn)(), unsigned long msWhen) {
     _TaskManagerTask newTask(taskId, fn);
     newTask.setWaitUntil(msWhen);
     m_theTasks.push_back(newTask);
 }
-/*! \brief Add a task that will automatically reschedule itself with a delay
 
-    This task will execute once each cycle.  The task will automatically reschedule itself to not execute
-    until the given delay has passed. THe first execution may be delayed using the optional fourth parameter startDelayed.
-    This delay, if used, will be the same as the period.
-
-    Note that
-    yielding for messages or signals may extend this delay.  However, if a signal/message is received during the
-    delay period., the procedure will still wait until the end of the delay period.
-    \param taskId - the task's ID.  For normal user tasks, this should be a byte value in the range [0 127].
-    System tasks have taskId values in the range [128 255].
-    \param fn -- this is a void function with no arguments.  This is the procedure that is called every time
-    the task is invoked.
-    \param period -- the schedule, in milliseconds
-    \param startWaiting -- for the first execution, start immediately (false), or delay its start for one period (true)
-    \sa add, addDelayed, addWaitUntil
-    */
-void TaskManager::addAutoWaitDelay(byte taskId, void(*fn)(), unsigned int period, bool startWaiting /*=false*/) {
+void TaskManager::addAutoWaitDelay(byte taskId, void(*fn)(), unsigned long period, bool startWaiting /*=false*/) {
     _TaskManagerTask newTask(taskId, fn);
     if(startWaiting) newTask.setWaitDelay(period); else newTask.m_restartTime = millis();
     newTask.setAutoDelay(period);
     m_theTasks.push_back(newTask);
 }
 
-/*! \brief Add a task that will wait until a signal arrives or (optionally) a timeout occurs.
 
-    The task will be added, but will be set to be waiting for the listed signal.  If a nonzero timeout is
-    specified and ifthe signal does
-    not arrive before the timeout period (in milliseconds), then the routine will be activated.  The
-    routine may use TaskManager::timeout() to determine whether it timed our or received the signal.
-
-    Note that calling addWaitSignal() with no timeout or startWaiting parmeter, the task will start in a wait
-    state with no timeout.  To start the task in a non-wait-state (active) with no timeout, the routine must
-    be called as addWaitSignal(id, fn, 0, false).
-    \param taskId - the task's ID.  For normal user tasks, this should be a byte value in the range [0 127].
-    System tasks have taskId values in the range [128 255].
-    \param fn -- this is a void function with no arguments.  This is the procedure that is called every time
-    the task is invoked.
-    \param sigNum -- the signal the task will be waiting for
-    \param timeout -- the maximum time to wait (in ms) before timing out.  The default is zero (no timeout).
-    \sa addAutoWaitSignal
-*/
-void TaskManager::addWaitSignal(byte taskId, void(*fn)(), byte sigNum, unsigned int timeout/*=0*/){
+void TaskManager::addWaitSignal(byte taskId, void(*fn)(), byte sigNum, unsigned long timeout/*=0*/){
     _TaskManagerTask newTask(taskId, fn);
     newTask.setWaitSignal(sigNum, timeout);
     m_theTasks.push_back(newTask);
 }
 
-/*! \brief Add a task that waits until a signal arrives or (optionally) timeout occurs. The task
-    automatically reschedules itself
 
-    The task will be added, but will be set to be waiting for the listed signal. If the task exits normally
-    (normal return, fall out of the bottom, or yield()), it will reschedule itself to wait for the same
-    signal.  If a timeout (>0) is specified and the signal does
-    not arrive before the timeout period (in milliseconds), then the routine will be activated.  The
-    routine may use TaskManager::timeout() to determine whether it timed our or received the signal.
-    \param taskId - the task's ID.  For normal user tasks, this should be a byte value in the range [0 127].
-    System tasks have taskId values in the range [128 255].
-    \param fn -- this is a void function with no arguments.  This is the procedure that is called every time
-    the task is invoked.
-    \param sigNum -- the signal the task will be waiting for
-    \param timeout -- the maximum time to wait (in ms) before timing out.
-    \param startWaiting -- tells whether the routine will start waiting for the signal (true) or will execute
-    immediately (false).
-    \sa addAutoWaitSignal
-*/
-void TaskManager::addAutoWaitSignal(byte taskId, void(*fn)(), byte sigNum, unsigned int timeout/*=0*/, bool startWaiting/*=true*/) {
+void TaskManager::addAutoWaitSignal(byte taskId, void(*fn)(), byte sigNum, unsigned long timeout/*=0*/, bool startWaiting/*=true*/) {
     _TaskManagerTask newTask(taskId, fn);
     if(startWaiting) {
         newTask.setWaitSignal(sigNum, timeout);
@@ -269,35 +184,14 @@ void TaskManager::addAutoWaitSignal(byte taskId, void(*fn)(), byte sigNum, unsig
     newTask.setAutoSignal(sigNum, timeout);
     m_theTasks.push_back(newTask);
 }
-/*! \brief Add a task that is waiting for a message
 
-    The task will be added, but will be waiting for a message.
-    \param taskId - the task's ID.  For normal user tasks, this should be a byte value in the range [0 127].
-    System tasks have taskId values in the range [128 255].
-    \param fn -- this is a void function with no arguments.  This is the procedure that is called every time
-    the task is invoked.
-    \param timeout -- the maximum time to wait (in ms) before timing out.
-*/
-void TaskManager::addWaitMessage(byte taskId, void (*fn)(), unsigned int timeout/*=0*/) {
+void TaskManager::addWaitMessage(byte taskId, void (*fn)(), unsigned long timeout/*=0*/) {
     _TaskManagerTask newTask(taskId, fn);
     newTask.setWaitMessage(timeout);
     m_theTasks.push_back(newTask);
 }
-/*! \brief Add a task that is waiting for a message or until a timeout occurs
 
-    The task will be added, but will be set to be waiting for the listed signal.  If the signal does
-    not arrive before the timeout period (in milliseconds), then the routine will be activated.  The
-    routine may use TaskManager::timeout() to determine whether it timed our or received the signal.
-    \param taskId - the task's ID.  For normal user tasks, this should be a byte value in the range [0 127].
-    System tasks have taskId values in the range [128 255].
-    \param fn -- this is a void function with no arguments.  This is the procedure that is called every time
-    the task is invoked.
-    \param timeout -- the maximum time to wait (in ms) before timing out.
-    \param startWaiting -- tells whether the routine will start waiting for the signal (true) or will execute
-    immediately (false).
-    \sa addAutoWaitMessage
-*/
-void TaskManager::addAutoWaitMessage(byte taskId, void (*fn)(), unsigned int timeout/*=0*/, bool startWaiting/*=true*/) {
+void TaskManager::addAutoWaitMessage(byte taskId, void (*fn)(), unsigned long timeout/*=0*/, bool startWaiting/*=true*/) {
     _TaskManagerTask newTask(taskId, fn);
     if(startWaiting) {
         newTask.setWaitMessage(timeout);
@@ -309,93 +203,36 @@ void TaskManager::addAutoWaitMessage(byte taskId, void (*fn)(), unsigned int tim
 //
 // Yield functions
 //
-/*! \brief Exit from this task and return control to the task manager
 
-    This exits from the current task, and returns control to the task manager.  Functionally, it is similar to a
-    return statement.  The next time the task gains control, it will resume from the TOP of the routine.  Note that
-    if the task was an Auto task, it will be automatically rescheduled according to its Auto specifications.
-    \sa yieldDelay(), yieldUntil(), yieldSignal(), yieldMessage(), addAutoWaitDelay(), addAutoWaitSignal(), addAutoWaitMessage()
-*/
 void TaskManager::yield() {
     longjmp(taskJmpBuf, YtYield);
 }
-/*! \brief Exit from the task manager and do not restart this task until after a specified period.
 
-    This exits from the current task and returns control to the task manager.  This task will not be rescheduled until
-    at least the stated number of milliseconds has passed.  Note that yieldDelay _overrides_ any of the Auto
-    specifications.  That is, the next rescheduling will occur _solely_ after the stated time period, and will
-    not be constrained by AutoWaitSignal, AutoWaitMessage, or a different AutoWaitDelay value.  The Auto specification will
-    be retained, and will be applied on future executions where yield() or a normal return are used.
-    \param ms -- the delay in milliseconds.  Note the next call may exceed this constraint depending on time taken by other tasks.
-    \sa yield(), yieldUntil(), yieldSignal(), yieldMessage(), addAutoWaitDelay(), addAutoWaitSignal(), addAutoWaitMessage()
-*/
-void TaskManager::yieldDelay(int ms) {
+void TaskManager::yieldDelay(unsigned long ms) {
     yieldUntil(millis()+ms);
 }
-/*! \brief Exit from the task manager and do not restart this task until (after) a specified CPU clock time.
 
-    This exits from the current task and returns control to the task manager.  This task will not be rescheduled until
-    the CPU clock (millis()) has exceeded the given time.  Note that yieldUntil _overrides_ any of the Auto
-    specifications.  That is, the next rescheduling will occur _solely_ after the stated clock time has passed, and will
-    not be constrained by AutoWaitSignal, AutoWaitMessage, or a different AutoWaitDelay value.  The Auto specification will
-    be retained, and will be applied on future executions where yield() or a normal return are used.
-    \param when -- The target CPU time.  Note the next call may exceed this constraint depending on time taken by other tasks.
-    \sa yield(), yieldDelay(), yieldSignal(), yieldMessage(), addAutoWaitDelay(), addAutoWaitSignal(), addAutoWaitMessage()
-*/
 void TaskManager::yieldUntil(unsigned long when) {
     // mark it as waiting
     m_theTasks.front().setWaitUntil(when);
     longjmp(taskJmpBuf, YtYieldUntil);
 }
 
-/*! \brief Exit from the task manager and do not restart this task until a signal has been received or a stated time period has passed.
-
-    This exits from the current task and returns control to the task manager.  This task will not be rescheduled until
-    the given signal has been received or a stated time period has passed (the timeout period). The TaskManager::timeOut()
-    function will tell whether or not the timeout had been triggered.
-
-    Note that yieldForSignal _overrides_ any of the Auto
-    specifications.  That is, the next rescheduling will occur _solely_ after the signal has been received, and will
-    not be constrained by AutoWaitDelay, AutoWaitMessage, or a different AutoWaitSignal value.  The Auto specification will
-    be retained, and will be applied on future executions where yield() or a normal return are used.
-    \param sigNum -- the value of the signal the task will wait for.
-    \param timeout -- The timeout period, in milliseconds.
-    \sa yield(), yieldDelay(), yieldForMessage(), addAutoWaitDelay(), addAutoWaitSignal(), addAutoWaitMessage(), timeOut()
-*/
-void TaskManager::yieldForSignal(byte sigNum, unsigned int timeout/*=0*/) {
+void TaskManager::yieldForSignal(byte sigNum, unsigned long timeout/*=0*/) {
     m_theTasks.front().setWaitSignal(sigNum, timeout);
     longjmp(taskJmpBuf, YtYieldSignalTimeout);
 }
 
-/*! \brief Exit from the task manager and do not restart this task until a message has been received or a stated time period has passed.
 
-    This exits from the current task and returns control to the task manager.  This task will not be rescheduled until
-    a message has been received or a stated time period has passed (the timeout period). The TaskManager::timeOut()
-    function will tell whether or not the timeout had been triggered.
-
-    Note that yieldForMessage _overrides_ any of the Auto
-    specifications.  That is, the next rescheduling will occur _solely_ after the signal has been received, and will
-    not be constrained by AutoWaitDelay, AutoWaitSignal, or a different AutoWaitMessage value.  The Auto specification will
-    be retained, and will be applied on future executions where yield() or a normal return are used.
-    \param timeout -- The timeout period, in milliseconds.
-    \sa yield(), yieldDelay(), yieldForSignal(), addAutoWaitDelay(), addAutoWaitSignal(), addAutoWaitMessage(), timeOut()
-*/
-void TaskManager::yieldForMessage(unsigned int timeout/*=0*/) {
+void TaskManager::yieldForMessage(unsigned long timeout/*=0*/) {
     m_theTasks.front().setWaitMessage(timeout);
     longjmp(taskJmpBuf, YtYieldMessageTimeout);
 }
 //
 // Signal functions
 //
-/*! \brief  Sends a signal to a task
 
-    Sends a signal to a task.  The signal will go to only one task.  If there are several tasks waiting on the signal, it will go to
-    the first task found that is waiting for this particular signal.  Note that once a task is signalled, it will not be waiting for
-    other instances of the same siggnal number.
-    \param sigNum -- the value of the signal to be sent
-    \sa yieldForSignal(), sendSignalAll(), addWaitSignal, addAutoWaitSignal()
-*/
-void TaskManager::sendSignal(byte sigNum) {
+void TaskManager::internalSendSignal(byte fromNodeId, byte fromTaskId, byte sigNum) {
     ring<_TaskManagerTask> tmpTasks;
     _TaskManagerTask* tmt;
     _TaskManagerTask* last;
@@ -408,6 +245,8 @@ void TaskManager::sendSignal(byte sigNum) {
     while(&(tmpTasks.front())!=last && !found) {
         tmt = &(tmpTasks.front());
         if(tmt->stateTestBit(_TaskManagerTask::WaitSignal) && tmt->m_sigNum==sigNum) {
+			tmt->m_fromNodeId = fromNodeId;
+			tmt->m_fromTaskId = fromTaskId;
             tmt->signal();
             found = true;
         }
@@ -415,16 +254,13 @@ void TaskManager::sendSignal(byte sigNum) {
     }
     if(!found && last->stateTestBit(_TaskManagerTask::WaitSignal) && last->m_sigNum==sigNum) {
         // the last task is the one we want to signal
+        last->m_fromNodeId = fromNodeId;
+        last->m_fromTaskId = fromTaskId;
         last->signal();
     }
 }
-/*! \brief Send a signal to all tasks that are waiting for this particular signal.
 
-    Signals all tasks that are waiting for signal <i>sigNum</i>.
-    \param sigNum -- the signal number to be sent
-    \sa sendSignal(), yieldForSiganl(), addWaitSignal(), addAutoWaitSignal()
-*/
-void TaskManager::sendSignalAll(byte sigNum) {
+void TaskManager::internalSendSignalAll(byte fromNodeId, byte fromTaskId, byte sigNum) {
     ring<_TaskManagerTask> tmpTasks;
     _TaskManagerTask* tmt;
     _TaskManagerTask* last;
@@ -436,58 +272,40 @@ void TaskManager::sendSignalAll(byte sigNum) {
     while(&(tmpTasks.front())!=last) {
         tmt = &(tmpTasks.front());
         if(tmt->stateTestBit(_TaskManagerTask::WaitSignal) && tmt->m_sigNum==sigNum) {
+			tmt->m_fromNodeId = fromNodeId;
+			tmt->m_fromTaskId = fromTaskId;
             tmt->signal();
         }
         tmpTasks.move_next();
     }
     if(last->stateTestBit(_TaskManagerTask::WaitSignal) && last->m_sigNum==sigNum) {
         // the last task is the one we want to signal
+        last->m_fromNodeId = fromNodeId;
+        last->m_fromTaskId = fromTaskId;
         last->signal();
     }
 }
-/*! \brief  Sends a string message to a task
 
-    Sends a message to a task.  The message will go to only one task.
-
-    Note that once a task has been sent a message, it will not be waiting for
-    other instances of the same siggnal number.
-    Note that additional messages sent prior to the task executing will overwrite any prior messages.
-    Messages that are too large are ignored.  Remember to account for the trailing '\n'
-    when considering the string message size.
-
-    \param taskId -- the ID number of the task
-    \param message -- the character string message.  It is restricted in length to
-    TASKMGR_MESSAGE_LENGTH-1 characters.
-    \sa yieldForMessage()
-*/
-void TaskManager::sendMessage(byte taskId, char* message) {
+void TaskManager::internalSendMessage(byte fromNodeId, byte fromTaskId, byte taskId, char* message) {
     _TaskManagerTask* tsk;
     if(strlen(message)>TASKMGR_MESSAGE_SIZE-1) return;
     tsk = findTaskById(taskId);
     if(tsk==NULL) return;
+    tsk->m_fromNodeId = fromNodeId;
+    tsk->m_fromTaskId = fromTaskId;
     tsk->putMessage((void*)message, strlen(message)+1);
 }
-/*! \brief Send a binary message to a task
 
-    Sends a message to a task.  The message will go to only one task.
-    Note that once a task has been sent a message, it will not be waiting for
-    other instances of the same signal number.  Messages that are too large are
-    ignored.
-
-    Note that additional messages sent prior to the task executing will overwrite any prior messages.
-    \param taskId -- the ID number of the task
-    \param buf -- A pointer to the structure that is to be passed to the task
-    \param len -- The length of the buffer.  Buffers can be at most TASKMGR_MESSAGE_LENGTH
-    bytes long.
-    \sa yieldForMessage()
-*/
-void TaskManager::sendMessage(byte taskId, void* buf, int len) {
+void TaskManager::internalSendMessage(byte fromNodeId, byte fromTaskId, byte taskId, void* buf, int len) {
     _TaskManagerTask* tsk;
     if(len>TASKMGR_MESSAGE_SIZE) return;
     tsk = findTaskById(taskId);
     if(tsk==NULL) return;
+    tsk->m_fromNodeId = fromNodeId;
+    tsk->m_fromTaskId = fromTaskId;
     tsk->putMessage(buf, len);
 }
+
 // FindNextRunnable
 // Relies on the null task being present and always runnable.
 /*! \brief Find tne next runnable task.  Internal routine.
@@ -507,18 +325,12 @@ _TaskManagerTask* TaskManager::FindNextRunnable() {
     //      do so, it would have to check all other tasks.
     // Note: m_theTasks must NEVER be empty.  It must ALWAYS have a NULL task that is runnable.
     _TaskManagerTask* tmt;
-    //Serial << "FindNextRunnable: scanning at " << millis() << "\n";
-    //Serial << TaskMgr << "\n";
-    //Serial << "...before move_next, front is " << m_theTasks.front().m_id << "\n";
     m_theTasks.move_next(); // go past the current one
-    //Serial << "...after move_next, front is " << m_theTasks.front().m_id << "\n";
     tmt = &(m_theTasks.front());
     while(!tmt->isRunnable()) {
         m_theTasks.move_next();
         tmt = &(m_theTasks.front());
     }
-    //Serial << "... found " << tmt->m_id << "\n";
-    //Serial << "...TaskMgr is " << TaskMgr << "\n";
     return tmt;
 }
 
@@ -676,9 +488,163 @@ void TaskManager::loop() {
      }
 }
 
-/*! \brief Radio receiver task for inter-node communication
+// Status tasks
 
-    This receives radio messages
+void TaskManager::suspend(byte taskId) {
+}
 
-    This routine is for internal use only.
-*/
+void TaskManager::resume(byte taskId) {
+}
+
+// ***************************
+//  All the world's radio code
+// ***************************
+
+
+// General purpose receiver.  Gets a message (varying with the kind of radio)
+// then parses and delivers it
+void TaskManager::tmRadioReceiverTask() {
+	static int cnt=0;
+	// polled receiver -- if there is a packet waiting, grab and process it
+	// receive packet from NRF24.  Poll and process messages
+	// We need to find the destination task and save the fromNode and fromTask.
+	// They are saved on the task instead of the TaskManager object in case several
+	// messages/signals have been received.
+	while(m_rf24->available()) {
+		// read a packet
+		m_rf24->read((void*)(&radioBuf), sizeof(radioBuf));
+		// process it
+		switch(radioBuf.m_cmd) {
+			case tmrNoop:
+				break;
+			case tmrStatus:	// NYI
+				break;
+			case tmrAck:	// NYI
+				break;
+			case tmrTaskStatus:	// NYI
+				break;
+			case tmrTaskAck:	// NYI
+				break;
+			case tmrSignal:
+				internalSendSignal(radioBuf.m_fromNodeId, radioBuf.m_fromTaskId, radioBuf.m_data[0]);
+				break;
+			case tmrSignalAll:
+				sendSignalAll(radioBuf.m_data[0]);
+				break;
+			case tmrMessage:
+				internalSendMessage(radioBuf.m_fromNodeId, radioBuf.m_fromTaskId,
+					radioBuf.m_data[0], &radioBuf.m_data[1], TASKMGR_MESSAGE_SIZE);
+				break;
+			case tmrSuspend:
+				suspend(radioBuf.m_data[0]);
+				break;
+			case tmrResume:
+				resume(radioBuf.m_data[0]);
+				break;
+		}
+	}
+}
+
+// General purpose sender.  Sends a message somewhere (varying with the kind of radio)
+void TaskManager::radioSender(byte destNodeID) {
+	// send packet to NRF24 node "TMGR"+nodeID
+	static byte nodeName[6] = "xTMGR";
+	m_rf24->stopListening(); delay(50);
+	nodeName[0] = destNodeID;
+	m_rf24->openWritingPipe(nodeName);
+	for(int i=0; i<5; i++) {
+		if(!m_rf24->write(&radioBuf, sizeof(radioBuf))) {
+			Serial.print("write fail "); Serial.println(i);
+		}
+		else {
+			break;
+		}
+	}
+	m_rf24->startListening();
+}
+
+// If we have different radio receivers, they will have different instantiation routines.
+
+void TaskManager::radioBegin(byte nodeId, byte cePin, byte csPin) {
+	uint8_t pipeName[6];
+	m_myNodeId = nodeId;
+	m_rf24 = new RF24(cePin, csPin);
+	strcpy((char*)pipeName,"xTMGR");	// R for read
+	pipeName[0] = myNodeId();	// (read pipe preconfigure) not printable, who cares...
+	m_rf24->begin();
+	m_rf24->openReadingPipe(1, pipeName);
+	m_rf24->startListening();
+	pipeName[3] = 'W';	// write
+	m_rf24->openWritingPipe(pipeName);
+	if(!m_radioReceiverRunning) { add(0xfe, radioReceiverTask); m_radioReceiverRunning = true; }
+}
+
+
+void TaskManager::sendSignal(byte nodeId, byte sigNum) {
+	if(nodeId==0 || nodeId==myNodeId()) { sendSignal(sigNum); return; }
+	radioBuf.m_cmd = tmrSignal;
+	radioBuf.m_fromNodeId = myNodeId();
+	radioBuf.m_fromTaskId = myId();
+	radioBuf.m_data[0] = sigNum;
+	radioSender(nodeId);
+}
+
+void TaskManager::sendSignalAll(byte nodeId, byte sigNum) {
+	if(nodeId==0 || nodeId==myNodeId()) { sendSignalAll(sigNum); return; }
+	radioBuf.m_cmd = tmrSignalAll;
+	radioBuf.m_fromNodeId = myNodeId();
+	radioBuf.m_fromTaskId = myId();
+	radioBuf.m_data[0] = sigNum;
+	radioSender(nodeId);
+}
+
+void TaskManager::sendMessage(byte nodeId, byte taskId, char* message) {
+	if(nodeId==0 || nodeId==myNodeId()) { sendMessage(taskId, message); return; }
+	radioBuf.m_cmd = tmrMessage;
+	radioBuf.m_fromNodeId = myNodeId();
+	radioBuf.m_fromTaskId = myId();
+	radioBuf.m_data[0] = taskId;	// who we are sending it to
+	if(strlen(message)>TASKMGR_MESSAGE_SIZE-2) {
+		memcpy(&radioBuf.m_data[1], message, TASKMGR_MESSAGE_SIZE-2);
+		radioBuf.m_data[TASKMGR_MESSAGE_SIZE-2]='\0';
+	} else {
+		strcpy((char*)&radioBuf.m_data[1], message);
+	}
+	radioSender(nodeId);
+}
+
+void TaskManager::sendMessage(byte nodeId, byte taskId, void* buf, int len) {
+	if(nodeId==0 || nodeId==myNodeId()) { sendMessage(taskId, buf, len); return; }
+	if(len>TASKMGR_MESSAGE_SIZE) return;	// reject too-long messages
+	radioBuf.m_cmd = tmrMessage;
+	radioBuf.m_fromNodeId = myNodeId();
+	radioBuf.m_fromTaskId = myId();
+	radioBuf.m_data[0] = taskId;	// who we are sending it to
+	memcpy(&radioBuf.m_data[1], buf, len);
+	radioSender(nodeId);
+}
+
+void TaskManager::suspend(byte nodeId, byte taskId) {
+	if(nodeId==0 || nodeId==myNodeId()) { suspend(taskId); return; }
+	radioBuf.m_cmd = tmrSuspend;
+	radioBuf.m_fromNodeId = myNodeId();
+	radioBuf.m_fromTaskId = myId();
+	radioBuf.m_data[0] = taskId;
+	radioSender(nodeId);
+}
+
+void TaskManager::resume(byte nodeId, byte taskId) {
+	if(nodeId==0 || nodeId==myNodeId()) { resume(taskId); return; }
+	radioBuf.m_cmd = tmrResume;
+	radioBuf.m_fromNodeId = myNodeId();
+	radioBuf.m_fromTaskId = myId();
+	radioBuf.m_data[0] = taskId;
+	radioSender(nodeId);
+}
+
+void TaskManager::getSource(byte& fromNodeId, byte& fromTaskId) {
+	fromNodeId = m_theTasks.front().m_fromNodeId;
+	fromTaskId = m_theTasks.front().m_fromTaskId;
+}
+
+

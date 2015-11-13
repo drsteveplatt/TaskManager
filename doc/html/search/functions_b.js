@@ -1,5 +1,7 @@
 var searchData=
 [
-  ['operator_3d',['operator=',['../singletonring.html#a52e785fb89c3e8ca7f4c5824f51f3532',1,'ring::operator=()'],['../class___task_manager_task.html#acac8df0944dfb33513bffd6f6420d416',1,'_TaskManagerTask::operator=()']]],
-  ['operator_3d_3d',['operator==',['../singletonring.html#aced639cf6769387b733d6455f86d6e2d',1,'ring::operator==()'],['../class___task_manager_task.html#a3da2a6b0f120cc7640669f72665b0943',1,'_TaskManagerTask::operator==()']]]
+  ['radiobegin',['radioBegin',['../class_task_manager.html#a74220151c502df205b101da1825d9e41',1,'TaskManager']]],
+  ['resume',['resume',['../class_task_manager.html#aa5f938f2b80ae5cb0bb3365fa5ddaa0a',1,'TaskManager::resume(byte taskId)'],['../class_task_manager.html#a950385515af8db01ac0d72f38d064f03',1,'TaskManager::resume(byte nodeId, byte taskId)']]],
+  ['ring',['ring',['../singletonring.html#a289cfd3a4d5885e43351277b1d3fb9d9',1,'ring']]],
+  ['runtime',['runtime',['../class_task_manager.html#a126881c885723fe254e941391ad4472e',1,'TaskManager']]]
 ];

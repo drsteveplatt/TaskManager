@@ -1,6 +1,4 @@
-//#include <Arduino.h>
 
-#include <Streaming.h>
 #include <TaskManager.h>
 
 /*
@@ -14,6 +12,8 @@
   5. messenger: receive a message and write it to the console
   6. ticker: every 5 seconds write a message to the console
     telling how many timeouts on led_1b
+    
+  This program uses auto-rescheduling wherever possible.
 */
 
 // forward declarations
@@ -113,7 +113,8 @@ void button_2() {
 }
 
 void led_1a() {
-    // just invert the LED and reschedule
+    // just invert the LED
+    // This routine automatically reschedules to wait for a signal.
     static int ledState = LOW;
     ledState = (ledState==LOW) ? HIGH : LOW;
     digitalWrite(LED_1A_PORT, ledState);
@@ -123,6 +124,7 @@ void led_1b() {
     // led_1b needs to process both signals and timeouts
     // Both invert the LED
     // Timeout increments a counter as well
+    // This routine automatically reschedules to wait for a signal or timeout
     static int ledState = LOW;
     if(TaskMgr.timedOut()) {
         timeoutCounter++;
@@ -133,7 +135,8 @@ void led_1b() {
 }
 
 void messenger() {
-    // if we've hit the end we go back to the start
+    // print the passed message to the console
+    // This routine automatically reschedules to wait for a message
     char* myMessage;
     myMessage = (char*)TaskMgr.getMessage();
     Serial.print("Messenger says: ");
@@ -142,6 +145,7 @@ void messenger() {
 
 void ticker() {
     // print a message to the console with the number of timeouts on LED_1B
+    // This routine automatically reschedules to run on a fixed schedule
     char number[10]; // for conversion of counter to a printable thing
     Serial.print("Ticker says: ");
     Serial.print(itoa(timeoutCounter, number, 10));

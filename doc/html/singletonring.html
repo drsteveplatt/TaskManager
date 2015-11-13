@@ -72,7 +72,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Macros</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Macros</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -134,11 +134,11 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:af9e7132dd81852bc1c20dc8d23e11f2c"><td class="memItemLeft" align="right" valign="top">T &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="singletonring.html#af9e7132dd81852bc1c20dc8d23e11f2c">back</a> () const </td></tr>
 <tr class="memdesc:af9e7132dd81852bc1c20dc8d23e11f2c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a reference to the last stored data element.  <a href="#af9e7132dd81852bc1c20dc8d23e11f2c">More...</a><br /></td></tr>
 <tr class="separator:af9e7132dd81852bc1c20dc8d23e11f2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af16864a4bd729a9b91e4a2fcdec8f737"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af16864a4bd729a9b91e4a2fcdec8f737"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>move_next</b> ()</td></tr>
+<tr class="memitem:af16864a4bd729a9b91e4a2fcdec8f737"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="singletonring.html#af16864a4bd729a9b91e4a2fcdec8f737">move_next</a> ()</td></tr>
+<tr class="memdesc:af16864a4bd729a9b91e4a2fcdec8f737"><td class="mdescLeft">&#160;</td><td class="mdescRight">Moves the ring to the next element in sequence.  <a href="#af16864a4bd729a9b91e4a2fcdec8f737">More...</a><br /></td></tr>
 <tr class="separator:af16864a4bd729a9b91e4a2fcdec8f737"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad682fc47814540b7c492dfb3a65123b3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad682fc47814540b7c492dfb3a65123b3"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>move_prev</b> ()</td></tr>
+<tr class="memitem:ad682fc47814540b7c492dfb3a65123b3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="singletonring.html#ad682fc47814540b7c492dfb3a65123b3">move_prev</a> ()</td></tr>
+<tr class="memdesc:ad682fc47814540b7c492dfb3a65123b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Moves the ring to the previous element in sequence.  <a href="#ad682fc47814540b7c492dfb3a65123b3">More...</a><br /></td></tr>
 <tr class="separator:ad682fc47814540b7c492dfb3a65123b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae80ea4b9a29d7efa7bb5f110904ac3c4"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="singletonring.html#ae80ea4b9a29d7efa7bb5f110904ac3c4">empty</a> () const </td></tr>
 <tr class="memdesc:ae80ea4b9a29d7efa7bb5f110904ac3c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tells whether or not a ring is empty.  <a href="#ae80ea4b9a29d7efa7bb5f110904ac3c4">More...</a><br /></td></tr>
@@ -398,6 +398,62 @@ template&lt;class T&gt; </div>
 
 </div>
 </div>
+<a class="anchor" id="af16864a4bd729a9b91e4a2fcdec8f737"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="singletonring.html">ring</a>&lt; T &gt;::move_next </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Moves the ring to the next element in sequence. </p>
+<p>This moves the ring to the next element in sequence. If the ring is empty (or has only one member), it will be unchanged. The previous first element will now be the last element. </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="singletonring.html#ad682fc47814540b7c492dfb3a65123b3" title="Moves the ring to the previous element in sequence. ">move_prev</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ad682fc47814540b7c492dfb3a65123b3"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="singletonring.html">ring</a>&lt; T &gt;::move_prev </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Moves the ring to the previous element in sequence. </p>
+<p>This moves the ring to the previous element in sequence. If the ring is empty (or has only one member), it will be unchanged. The previous last element will now be the first element. </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="singletonring.html#af16864a4bd729a9b91e4a2fcdec8f737" title="Moves the ring to the next element in sequence. ">move_next</a> </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a52e785fb89c3e8ca7f4c5824f51f3532"></a>
 <div class="memitem">
 <div class="memproto">
@@ -608,7 +664,7 @@ template&lt;class T&gt; </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun Jan 18 2015 14:26:20 for TaskManager by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Nov 13 2015 11:15:14 for TaskManager by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.8
 </small></address>

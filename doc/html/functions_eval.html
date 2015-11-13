@@ -82,7 +82,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Macros</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Macros</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -93,59 +93,41 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <div class="contents">
 &#160;<ul>
-<li>AutoReWaitMessage
-: <a class="el" href="class___task_manager_task.html#a78e7f482a01af21bc297690062a90f1ca2f8283cbe157f583c41d07c075b7d106">_TaskManagerTask</a>
+<li>tmrAck
+: <a class="el" href="class_task_manager.html#a638d32d0be889ee21ef5492997952148a0f0150880c9376d181ae7865527ec041">TaskManager</a>
 </li>
-<li>AutoReWaitSignal
-: <a class="el" href="class___task_manager_task.html#a78e7f482a01af21bc297690062a90f1ca3b41361741f3731c72df37a27330dc21">_TaskManagerTask</a>
+<li>tmrMessage
+: <a class="el" href="class_task_manager.html#a638d32d0be889ee21ef5492997952148a86e43074dd0c9e3c7a4a726bd4a4b373">TaskManager</a>
 </li>
-<li>AutoReWaitUntil
-: <a class="el" href="class___task_manager_task.html#a78e7f482a01af21bc297690062a90f1cafbfe131f0c1b8626e0902881073a8220">_TaskManagerTask</a>
+<li>tmrNoop
+: <a class="el" href="class_task_manager.html#a638d32d0be889ee21ef5492997952148ae9995de4e57be879829f032d3e9710e5">TaskManager</a>
 </li>
-<li>Suspended
-: <a class="el" href="class___task_manager_task.html#a78e7f482a01af21bc297690062a90f1ca63fc27ad643a3c7a2277e028be885fe6">_TaskManagerTask</a>
+<li>tmrResume
+: <a class="el" href="class_task_manager.html#a638d32d0be889ee21ef5492997952148a47d407f4a333fdbe2192cc3e8d6a6a6e">TaskManager</a>
 </li>
-<li>TimedOut
-: <a class="el" href="class___task_manager_task.html#a78e7f482a01af21bc297690062a90f1cac792a0a13ffb72cbf93e337c99b2ffb6">_TaskManagerTask</a>
+<li>tmrSignal
+: <a class="el" href="class_task_manager.html#a638d32d0be889ee21ef5492997952148ab07c41eec2e1c0e2fef71480086a2005">TaskManager</a>
 </li>
-<li>WaitMessage
-: <a class="el" href="class___task_manager_task.html#a78e7f482a01af21bc297690062a90f1ca4df9285226d4fef10c8ef63b5aed0b13">_TaskManagerTask</a>
+<li>tmrSignalAll
+: <a class="el" href="class_task_manager.html#a638d32d0be889ee21ef5492997952148aa9c831f35dc37421c5bf126eedc7ccf7">TaskManager</a>
 </li>
-<li>WaitSignal
-: <a class="el" href="class___task_manager_task.html#a78e7f482a01af21bc297690062a90f1ca25926b6030a410cbba2b3f8032cee0e2">_TaskManagerTask</a>
+<li>tmrStatus
+: <a class="el" href="class_task_manager.html#a638d32d0be889ee21ef5492997952148a4d49e7162ae4f750ec8aac1e688c2da5">TaskManager</a>
 </li>
-<li>WaitUntil
-: <a class="el" href="class___task_manager_task.html#a78e7f482a01af21bc297690062a90f1ca23b1817dae80c1e2a1ff75ede60228de">_TaskManagerTask</a>
+<li>tmrSuspend
+: <a class="el" href="class_task_manager.html#a638d32d0be889ee21ef5492997952148a017105901d183a52fd7ff8f3e62a9862">TaskManager</a>
 </li>
-<li>YtYield
-: <a class="el" href="class_task_manager.html#a36210e786c8b94e0858c0df948521318aaa83b744b431450c40569fb787a9cc62">TaskManager</a>
+<li>tmrTaskAck
+: <a class="el" href="class_task_manager.html#a638d32d0be889ee21ef5492997952148a5707dd1dd4fcc4cb855e8bbd64402345">TaskManager</a>
 </li>
-<li>YtYieldKill
-: <a class="el" href="class_task_manager.html#a36210e786c8b94e0858c0df948521318a5c95246258ae22a052d55e6effc4f8dc">TaskManager</a>
-</li>
-<li>YtYieldMessage
-: <a class="el" href="class_task_manager.html#a36210e786c8b94e0858c0df948521318a021639087baa77a364842df6e78d66fb">TaskManager</a>
-</li>
-<li>YtYieldMessageTimeout
-: <a class="el" href="class_task_manager.html#a36210e786c8b94e0858c0df948521318ab3132706adb88e8931bcf3caf9c90182">TaskManager</a>
-</li>
-<li>YtYieldSignal
-: <a class="el" href="class_task_manager.html#a36210e786c8b94e0858c0df948521318a5520a5cc62f59a79ac9df855695b2aee">TaskManager</a>
-</li>
-<li>YtYieldSignalTimeout
-: <a class="el" href="class_task_manager.html#a36210e786c8b94e0858c0df948521318a8ba72bfec1db82ac312c46a4db617e0e">TaskManager</a>
-</li>
-<li>YtYieldSuspend
-: <a class="el" href="class_task_manager.html#a36210e786c8b94e0858c0df948521318a7e2896dba2a019465d5f08dc5216d5eb">TaskManager</a>
-</li>
-<li>YtYieldUntil
-: <a class="el" href="class_task_manager.html#a36210e786c8b94e0858c0df948521318a89e00019d0ccda9139d6599e4c9c83c5">TaskManager</a>
+<li>tmrTaskStatus
+: <a class="el" href="class_task_manager.html#a638d32d0be889ee21ef5492997952148ad054fe2093aeeed9b8917052e2d45a63">TaskManager</a>
 </li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun Jan 18 2015 14:26:20 for TaskManager by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Sep 11 2015 09:36:28 for TaskManager by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.8
 </small></address>

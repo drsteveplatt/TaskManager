@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.8"/>
-<title>TaskManager: Main Page</title>
+<title>TaskManager: TaskManger - Cooperative Multitasking System for Arduino</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -65,7 +65,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Macros</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Macros</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -76,13 +76,98 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <div class="header">
   <div class="headertitle">
-<div class="title">TaskManager Documentation</div>  </div>
+<div class="title">TaskManger - Cooperative Multitasking System for Arduino </div>  </div>
 </div><!--header-->
 <div class="contents">
-</div><!-- contents -->
+<div class="textblock"><h1><a class="anchor" id="Overview"></a>
+Overview</h1>
+<p><a class="el" href="class_task_manager.html" title="A cooperative multitasking manager. ">TaskManager</a> is a cooperative task manager for the Arduino family of processors. It replaces the single user <code>loop()</code> routine with an environment in which the user can write many independent <code>loop()</code> -style routines. These user routines are run in a round-robin manner. In addition, routines can </p><ul>
+<li>Delay &ndash; suspending their operation for a specified period while allowing other routines to make use of the time </li>
+<li>Signal &ndash; suspend action until they receive a signal, or send a signal allowing a different task to resume </li>
+<li>Message &ndash; suspend action until a message has been received, or send messages to different tasks to pass them information.</li>
+</ul>
+<h1><a class="anchor" id="News"></a>
+News</h1>
+<p>2015/11/13: Release 1.0: Initial full release. <br />
+More code cleanup, improved documentation. Added routines so tasks could ID where messages/signals came from.</p>
+<p>2015/10/15: Prerelease 0.2.1: RF24 routines added. Code cleaned up. <br />
+Routines include <code>beginRadio()</code> and versions of <code>sendSignal()</code>, <code>sendSignalAll()</code>, and <code>sendMessage()</code>. The <code>send*</code>() routines add a parameter to specify the <code>nodeId</code> the signal/message is being sent to. <br />
+Additionally, the code was refactored for clarity.</p>
+<p>2015/07/30: Prerelease 0.2: Updated functionality of <code>addAutoWaitDelay()</code>. <br />
+The <code>addAutoWaitDelay()</code> routine will operate on a repeat time based on the original start time, not on the end time. For example, if the task starts at 1000 with addAutoDelay(500) and it takes 100 (all ms), it will start at 1000, 1500, 2000, etc. If it used yieldDelay, the yield is based on the end-time of the task, so it will start at 1000, 1600 (1000+100(run)+500(delay)), 2200 (1600+100(run)+500(delay)), etc. <br />
+An excellent suggestion from the alpha user group.</p>
+<p>2015/01/15: Internal (SA-28) Pre-release: Core functionality complete. <br />
+This is an alpha release for a small group of users. Most of the non-RF functionality has been implemeented. <br />
+<code>suspend()</code> and <code>resume()</code> not implemented yet. It may be a while until they are...</p>
+<h1><a class="anchor" id="Summary"></a>
+Summary</h1>
+<p><a class="el" href="class_task_manager.html" title="A cooperative multitasking manager. ">TaskManager</a> is a cooperative multitasking task-swapper. It allows the developer to create many independent tasks, which are called in a round-robin manner. <br />
+<a class="el" href="class_task_manager.html" title="A cooperative multitasking manager. ">TaskManager</a> offers the following: </p><ul>
+<li>Any number of tasks. </li>
+<li>Extends the Arduino "setup/loop" paradigm &ndash; the programmer creates several "loop" routines (tasks) instead of one. So programming is simple and straightforward. </li>
+<li>Tasks can communicate through signals or messages. A signal is an information-free "poke" sent to whatever task is waiting for the poke. A message has information (string or data), and is passed to a particular task. </li>
+<li><a class="el" href="class_task_manager.html" title="A cooperative multitasking manager. ">TaskManager</a> programs can use RF24 2.4GHz radios to communicate between nodes. So tasks running on different nodes can communicate through signals and messages in the same manner as if they were on the same node.</li>
+</ul>
+<h1><a class="anchor" id="Example"></a>
+Example</h1>
+<p>The following is a <a class="el" href="class_task_manager.html" title="A cooperative multitasking manager. ">TaskManager</a> program. </p><div class="fragment"><div class="line"><span class="comment">//</span></div>
+<div class="line"><span class="comment">// Blink two LEDs at different rates</span></div>
+<div class="line"><span class="comment">//</span></div>
+<div class="line"></div>
+<div class="line"><span class="preprocessor">#include &lt;SPI.h&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;RF24.h&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;<a class="code" href="_task_manager_8h.html">TaskManager.h</a>&gt;</span></div>
+<div class="line"></div>
+<div class="line"><span class="preprocessor">#define LED_1_PORT  2</span></div>
+<div class="line"><span class="keywordtype">bool</span> led_1_state;</div>
+<div class="line"></div>
+<div class="line"><span class="preprocessor">#define LED_2_PORT  3</span></div>
+<div class="line"><span class="keywordtype">bool</span> led_2_state;</div>
+<div class="line"></div>
+<div class="line"><span class="keywordtype">void</span> setup() {</div>
+<div class="line">  pinMode(LED_1_PORT, OUTPUT);</div>
+<div class="line">  digitalWrite(LED_1_PORT, LOW);</div>
+<div class="line">  led_1_state = LOW;</div>
+<div class="line"></div>
+<div class="line">  pinMode(LED_2_PORT, OUTPUT);</div>
+<div class="line">  digitalWrite(LED_2_PORT, LOW);</div>
+<div class="line">  led_2_state = LOW;</div>
+<div class="line"></div>
+<div class="line">  TaskMgr.<a class="code" href="class_task_manager.html#a65196b3d3d327a203ec51b9b68a39b4a">add</a>(1, loop_led_1);</div>
+<div class="line">  TaskMgr.<a class="code" href="class_task_manager.html#a65196b3d3d327a203ec51b9b68a39b4a">add</a>(2, loop_led_2);</div>
+<div class="line">}</div>
+<div class="line"></div>
+<div class="line"><span class="keywordtype">void</span> loop_led_1() {</div>
+<div class="line">    led_1_state = (led_1_state==LOW) ? HIGH : LOW;</div>
+<div class="line">    digitalWrite(LED_1_PORT, led_1_state);</div>
+<div class="line">    TaskMgr.<a class="code" href="class_task_manager.html#a2123fa0af84c3a1373b9437e2157e872">yieldDelay</a>(500);</div>
+<div class="line">}</div>
+<div class="line"></div>
+<div class="line"><span class="keywordtype">void</span> loop_led_2() {</div>
+<div class="line">    led_2_state = (led_2_state==LOW) ? HIGH : LOW;</div>
+<div class="line">    digitalWrite(LED_2_PORT, led_2_state);</div>
+<div class="line">    TaskMgr.<a class="code" href="class_task_manager.html#a2123fa0af84c3a1373b9437e2157e872">yieldDelay</a>(100);</div>
+<div class="line">}</div>
+</div><!-- fragment --><p>Note the following; this is all that is needed for <a class="el" href="class_task_manager.html" title="A cooperative multitasking manager. ">TaskManager</a>: </p><ul>
+<li>You need to '#include' three files. Since <a class="el" href="class_task_manager.html" title="A cooperative multitasking manager. ">TaskManager</a> (which is a class) uses RF, you need to include them whether or not you use the RF/radio routines. </li>
+<li><a class="el" href="class_task_manager.html" title="A cooperative multitasking manager. ">TaskManager</a> routines are accessed through the 'TaskMgr' object. </li>
+<li>There is no 'void loop()'. Instead, you write a routine for each independent task as if it were its own 'loop()'. </li>
+<li>You tell 'TaskMgr' about your routines through the 'void <a class="el" href="class_task_manager.html#a65196b3d3d327a203ec51b9b68a39b4a" title="Add a simple task. ">TaskManager::add</a>(byte taskId, void (*) task);' method. This is shown in the two calls to 'TaskMgr.add(...);'. </li>
+<li>You do not use 'delay();'. Never use 'delay();'. 'delay();' delays all things; nothing will run. Instead use <a class="el" href="class_task_manager.html#a2123fa0af84c3a1373b9437e2157e872" title="Exit from the task manager and do not restart this task until after a specified period. ">TaskManager::yieldDelay()</a>'. 'yieldDelay()' will return from the current routine and guarantee it won't be restarted for the specified time. However, other routines will be allowed to run during this time.</li>
+</ul>
+<h1><a class="anchor" id="future"></a>
+Future Work</h1>
+<p>Here are the upcoming/future plans for <a class="el" href="class_task_manager.html" title="A cooperative multitasking manager. ">TaskManager</a>. Some are short term, some are longer term. </p><ul>
+<li><a class="el" href="class_task_manager.html" title="A cooperative multitasking manager. ">TaskManager</a>: The Book. I have a draft of a more in-depth set of tutorials, examples, and programmer's documentation. This needs to be finalized and added to the <a class="el" href="class_task_manager.html" title="A cooperative multitasking manager. ">TaskManager</a> release tree. </li>
+<li>RF Extension. Add a method 'getStatus(nodeId)' that returns the status (including whether or not exists) for a given node. This will also require the creation of a task in the system task group. </li>
+<li>RF Extension. Right now, 'nodeId' values of 1..254 are available for general use. 'nodeId' value 255 has been reserved for "all". I need to add a routine 'findNodes()' that finds all available nodes. After this, specifying 'nodeId' of 255 in a 'sendSignal()', 'sendSignalAll()', or 'sendMessage()' will send the signal/message to every node that has been found. 'getStatus()' will be needed for this. </li>
+<li>SPI investigation/certification. Running RF in a multi-SPI environment is "fraught with peril". The SPI routines <code>beginTransaction()</code> and <code>endTransaction()</code> allow different SPI devices to share the MOSI/MISO interface even if they use different serial settings. However, most SPI libraries do not use currently use these routines. (Note that the RF library recommended for <a class="el" href="class_task_manager.html" title="A cooperative multitasking manager. ">TaskManager</a> does.) We need to investigate the different SPI libraries and identify the transaction-safety of each. </li>
+<li>Suspend, resume, and kill. These routines haven't been implemented. </li>
+</ul>
+</div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun Jan 18 2015 14:26:20 for TaskManager by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Nov 13 2015 11:15:14 for TaskManager by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.8
 </small></address>

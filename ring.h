@@ -213,7 +213,7 @@ template<class T> inline T& ring<T>::back() const {
     return (m_cur->m_prev->m_val);
 }
 
-/*	\brief Moves the ring to the next element in sequence.
+/*!	\brief Moves the ring to the next element in sequence.
 
 	This moves the ring to the next element in sequence.  If the ring is empty (or has only one member),
 	it will be unchanged.  The previous first element will now be the last element.
@@ -223,7 +223,7 @@ template<class T>inline void ring<T>::move_next() {
     if(m_cur!=NULL) m_cur = m_cur->m_next;
 }
 
-/*	\brief Moves the ring to the previous element in sequence.
+/*!	\brief Moves the ring to the previous element in sequence.
 
 	This moves the ring to the previous element in sequence.  If the ring is empty (or has only one member),
 	it will be unchanged.  The previous last element will now be the first element.

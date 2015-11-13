@@ -1,5 +1,8 @@
 var searchData=
 [
-  ['map',['map',['../singletonring.html#aada527f64532b1710d200953bfbabf2a',1,'ring::map(void(*fn)(T &amp;))'],['../singletonring.html#ac47cf27eccf2ffdbcc102e16b139c459',1,'ring::map(void(*fn)(T &amp;, void *), void *)']]],
-  ['myid',['myID',['../class_task_manager.html#adfc36e6ef3cf0dff1e201a2c6d411f97',1,'TaskManager']]]
+  ['pop_5fback',['pop_back',['../singletonring.html#ad000e92398391abc8958e0fc5595c329',1,'ring']]],
+  ['pop_5ffront',['pop_front',['../singletonring.html#a8bd49b76e56686927dcfd78cb5172690',1,'ring']]],
+  ['printto',['printTo',['../singletonring.html#a47da5ddc64219bbf5937f10bfb1d9f36',1,'ring::printTo()'],['../class_task_manager.html#a261cd53a22a9d260c64141b1c2d71364',1,'TaskManager::printTo()']]],
+  ['push_5fback',['push_back',['../singletonring.html#ab13c5ad32f0ccd338400dd16c3259f9b',1,'ring']]],
+  ['push_5ffront',['push_front',['../singletonring.html#ad9de090ad384e32e39337c85a9a21549',1,'ring']]]
 ];

@@ -1,18 +1,18 @@
 //
-// Standard "blink" program
+// Standard "blink" program (slightly rewritten)
 
-int led_1=2;
+#define LED_1_PORT  2
 bool led_1_state;
 
 void setup() {
-  pinMode(led_1, OUTPUT);
+  pinMode(LED_1_PORT, OUTPUT);
   led_1_state = LOW;
-  digitalWrite(led_1, led_1_state);
+  digitalWrite(LED_1_PORT, led_1_state);
 }
 
 void loop() {
   led_1_state = (led_1_state==LOW) ? HIGH : LOW;
-  digitalWrite(led_1, led_1_state);
+  digitalWrite(LED_1_PORT, led_1_state);
   delay(500);
 }
 

@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['loop',['loop',['../class_task_manager.html#a2b88a62f061cbc8159a101844d8e5469',1,'TaskManager']]]
+  ['operator_3d',['operator=',['../singletonring.html#a52e785fb89c3e8ca7f4c5824f51f3532',1,'ring']]],
+  ['operator_3d_3d',['operator==',['../singletonring.html#aced639cf6769387b733d6455f86d6e2d',1,'ring']]]
 ];
