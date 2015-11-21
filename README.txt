@@ -1,30 +1,42 @@
-TaskManager -- a task manager for Arduino systems
 
-This is a pre-release version.
+TaskManager is a cooperative multitasking task-swapper. It allows the developer to 
+create many independent tasks, which are called in a round-robin manner. 
 
-Right now, it is (C) Copyright 2014 Stephen Platt.
-You are free to use it for noncommercial purposes provided you do
-not modify it or remove any of the files.  You may not redistribute
-it.
+TaskManager offers the following: 
+•	Any number of tasks. 
+•	Extends the Arduino "setup/loop" paradigm – the programmer creates several 
+	"loop" routines (tasks) instead of one. So programming is simple and  
+	straightforward. 
+•	Tasks can communicate through signals or messages. A signal is an information-free  
+	"poke" sent to whatever task is waiting for the poke. A message has information  
+	(string or data), and is passed to a particular task. 
+•	TaskManager programs can use RF24 2.4GHz radios to communicate between nodes.  
+	So tasks running on different nodes can communicate through signals and messages  
+	in the same manner as if they were on the same node.
 
-At some point I'll research common licensing models and loosen things
-up a bit.
+Release History:
+	2015/11/13: Release 1.0: Initial full release.
+	More code cleanup, improved documentation.  Added routines so tasks could ID
+	where messages/signals came from.
 
-Planned enhancements before 1.0:
-* AutoWaitDelay calculation to be based on regular scheduling instead of
-whenever "now" is.  In other words, if a task is 
-    - scheduled to start at 2015
-    - set with a 50ms auto-restart-delay
-    - starts at 2020
-    - takes 7ms before it exits ('now' is 2027 as it exits)
-Right now, it will reschedule itself to start at 2027+50 -> 2077.
-This can lead to irregular and cumulatively delayed start times depending
-on other tasks.  The "regular scheduling" approach will reschedule based
-upon the original scheduled time, so it will be scheduled to start at 2015,
-2065, 2115, 2165, etc.
-* Clean up the documentation and contents of the release directory
-* Better installation instructions.  *Any* installation instructions.
+	2015/10/15: Prerelease 0.2.1:  RF24 routines added.  Code cleaned up.
+	Routines include beginRadio() and versions of sendSignal(), sendSignalAll(),
+	and sendMessage(). The send*() routines add a parameter to specify the nodeId 
+	the signal/message is being sent to.
+	
+	Additionally, the code was refactored for clarity.
 
-Planned enhancements for 2.0:
-* Signalling and message-passing between tasks running on different 
-processors.
+	2015/07/30: Prerelease 0.2:  Updated functionality of addAutoWaitDelay().
+	The addAutoWaitDelay() routine will operate on a repeat time based on the original 
+	start time, not on the end time.  For example, if the task starts at 1000 with 
+	addAutoDelay(500) and it takes 100 (all ms), it will start at 1000, 1500,
+	2000, etc.  If it used yieldDelay, the yield is based on the end-time of the task, 
+	so it will start at 1000, 1600 (1000+100(run)+500(delay)), 2200 (1600+100(run)+500(delay)), 
+	etc.
+	
+	An excellent suggestion from the alpha user group.
+
+	2015/01/15: Internal (SA-28) Pre-release:  Core functionality complete.
+	This is an alpha release for a small group of users.  Most of the non-RF functionality 
+	has been implemeented. suspend() and resume() not implemented yet.  It	may be a 
+	while until they are...
