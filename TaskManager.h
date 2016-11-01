@@ -2,7 +2,7 @@
 #define TASKMANAGER_H_INCLUDED
 
 
-#include "streaming.h"
+#include "Streaming.h"
 #include "ring.h"
 #include <setjmp.h>
 
