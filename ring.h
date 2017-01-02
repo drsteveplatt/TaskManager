@@ -3,6 +3,8 @@
 
 //#include "Streaming.h"
 
+//#define RING_DEBUG
+
 //! \brief An STL-style class that implements rings
 //
 // The ring class implements a templated ring structure.  It implements many of
@@ -20,16 +22,19 @@ protected:
     T m_val;
     _ringNode* m_next;
     _ringNode* m_prev;
+#if defined(RING_DEBUG)
     void DebugDump(Print& p) const;
+#endif
 };
 
+#if defined(RING_DEBUG)
 template<class T> void _ringNode<T>::DebugDump(Print& p) const {
-    p.print("[val: "); p.print(m_val);
-    p.print(" next: 0x"); p.print((int)m_next, HEX);
-    p.print(" prev: 0x"); p.print((int)m_prev, HEX);
-    p.print("]");
+    p.print(F("[val: ")); p.print(m_val);
+    p.print(F(" next: 0x")); p.print((int)m_next, HEX);
+    p.print(F(" prev: 0x")); p.print((int)m_prev, HEX);
+    p.print(F("]"));
 }
-
+#endif
 
 // The ring object.  It contains a pointer to the "current" element of
 // a series of _ringNode objects/
@@ -47,8 +52,12 @@ template<class T> void _ringNode<T>::DebugDump(Print& p) const {
     must have a constructor and a destructor as well as operator=.  It should also
     have the printTo member function if any form of serialization is to be done.
 */
+#if defined(RING_DEBUG)
 template<class T>class ring: public Printable {
-private:
+#else
+template<class T>class ring {
+#endif
+	private:
     _ringNode<T>* m_cur;
     char* m_prefix;
 
@@ -92,11 +101,13 @@ public:
     ring<T>& operator=(ring<T>& r);
     bool operator==(ring<T>& r) const;
 
-    // extension for Printable to allow the class to be serialized/streamed
+#if defined(RING_DEBUG)
+	// extension for Printable to allow the class to be serialized/streamed
     size_t printTo(Print& p) const;
 
     // debugging stuff
     void DebugDump(Print& p) const;
+#endif
 
     // mapping operations
     void map(void (*fn)(T& ));
@@ -277,6 +288,7 @@ template<class T> inline bool ring<T>::operator==(ring<T>& r) const {
     return m_cur==r.m_cur;
 }
 
+#if defined(RING_DEBUG)
 /*!	\brief Implements the Printable interface functionality.
 
 	This prints out the ring in a human-readable form to the given Print stream.
@@ -320,6 +332,7 @@ template<class T>void ring<T>::DebugDump(Print& p) const {
     last->DebugDump(p);
     p.print("]");
 }
+#endif
 
 // Mapping functions
 

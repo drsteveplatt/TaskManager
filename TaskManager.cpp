@@ -1,9 +1,13 @@
 
 #define TASKMANAGER_MAIN
 
-#include <SPI.h>
-#include <RF24.h>
-#include "TaskManager.h"
+//#include <SPI.h>
+//#include <RF24.h>
+#include "TaskManagerCore.h"
+
+// Note that this will generate a warning when using TaskManagerRF.
+// The warning can be ignored.
+//extern TaskManager TaskMgr;
 
 /*! \file TaskManager.cpp
     Implementation file for Arduino Task Manager
@@ -14,13 +18,9 @@ static void nullTask() {
 
 // This is the replacement for the normal loop().
 //!	\private
-void loop() {
-    TaskMgr.loop();
-}
-
-static void radioReceiverTask() {
-	TaskMgr.tmRadioReceiverTask();
-}
+//void loop() {
+//    TaskMgr.loop();
+//}
 
 //
 // Implementation of _TaskManagerTask
@@ -100,26 +100,27 @@ bool _TaskManagerTask::operator==(_TaskManagerTask& rhs) const {
 
 /*! \brief Print out information about the task
 */
+#if defined(TASKMANAGER_DEBUG)
 size_t _TaskManagerTask::printTo(Print& p) const {
     size_t ret = 35;
-    p.print("    [task: ");
+    p.print(F("    [task: "));
     ret += p.print(this->m_id);
-    p.print(" flgs:");
+    p.print(F(" flgs:"));
     ret += p.print(this->m_stateFlags, HEX);
-    p.print(" rstTim:");
+    p.print(F(" rstTim:"));
     ret += p.print(this->m_restartTime);
-    p.print(" period:");
+    p.print(F(" period:"));
     ret += p.print(this->m_period);
-    p.print(" sig:");
+    p.print(F(" sig:"));
     ret += p.print(this->m_sigNum);
-    p.print(" fn:");
+    p.print(F(" fn:"));
     ret += p.print((int)(this->m_fn), HEX);
-    p.print(" now: ");
+    p.print(F(" now: "));
     ret += p.print(millis());
-    p.print("]\n");
+    p.print(F("]\n"));
     return ret;
 }
-
+#endif
 //
 // Implementation of TaskManager
 //
@@ -129,14 +130,10 @@ size_t _TaskManagerTask::printTo(Print& p) const {
 
 TaskManager::TaskManager() {
     add(0xff, nullTask);
-	m_rf24 = NULL;
-	m_myNodeId = 0;
-	m_radioReceiverRunning = false;
     m_startTime = millis();
 }
 
 TaskManager::~TaskManager() {
-	if(m_rf24!=NULL) delete m_rf24;
 }
 
 //
@@ -228,8 +225,11 @@ void TaskManager::yieldForMessage(unsigned long timeout/*=0*/) {
     m_theTasks.front().setWaitMessage(timeout);
     longjmp(taskJmpBuf, YtYieldMessageTimeout);
 }
+
 //
 // Signal functions
+//	Note that TaskManager uses these with nodeID of 0 (=="self") and
+//	TaskManagerRF uses either local or non-local nodeIDs.
 //
 
 void TaskManager::internalSendSignal(byte fromNodeId, byte fromTaskId, byte sigNum) {
@@ -306,6 +306,7 @@ void TaskManager::internalSendMessage(byte fromNodeId, byte fromTaskId, byte tas
     tsk->putMessage(buf, len);
 }
 
+
 // FindNextRunnable
 // Relies on the null task being present and always runnable.
 /*! \brief Find tne next runnable task.  Internal routine.
@@ -334,7 +335,7 @@ _TaskManagerTask* TaskManager::FindNextRunnable() {
     return tmt;
 }
 
-
+#if defined(TASKMANAGER_DEBUG)
 // printTo
 /*! \brief Support routine to allow the printing of the contents of a TaskManager object.
 
@@ -345,6 +346,8 @@ size_t TaskManager::printTo(Print& p) const {
     ret = p.print(m_theTasks);
     return ret;
 }
+#endif
+
 /*! \brief Find a task by its ID
 
     \param id: the ID of the task
@@ -388,31 +391,15 @@ _TaskManagerTask* TaskManager::findTaskById(byte id) {
 void TaskManager::loop() {
     int jmpVal; // return value from setjmp, indicates longjmp type
     _TaskManagerTask* nextTask;
-    nextTask = TaskMgr.FindNextRunnable();
-    if((jmpVal=setjmp(TaskMgr.taskJmpBuf))==0) {
+    nextTask = /*TaskMgr.*/FindNextRunnable();
+    if((jmpVal=setjmp(/*TaskMgr.*/taskJmpBuf))==0) {
         // this is the normal path we use to invoke and process "normal" returns
         (nextTask->m_fn)();
         // Process auto bits
         // AutoReWaitUntil has two interpretations:  If alone, it is periodic and is
         // incremented based on the previous restartTime.  If in conjunction with
         // AutoReSignal/AutoReMessage then it is a timeout and is based on "now"
-#if 0
-        if(nextTask->stateTestBit(_TaskManagerTask::AutoReWaitUntil)) {
-		   unsigned long newRestart = nextTask->m_restartTime;	// the time this one started
-		   unsigned long now = millis();
-		   while(newRestart<now) {
-                newRestart += nextTask->m_period;	// keep bumping til the future
-		   }
-		   nextTask->setWaitUntil(newRestart);
-        }
-        // Note that timeout autorestarts will have AutoReUntil and AutoReSignal/Message set
-        // So to handle this, we process the bits separately and set both if needed.
-        if(nextTask->stateTestBit(_TaskManagerTask::AutoReWaitSignal)) {
-           nextTask->setWaitSignal(nextTask->m_restartSignal);
-        } else if(nextTask->stateTestBit(_TaskManagerTask::AutoReWaitMessage)) {
-           nextTask->setWaitMessage();
-        }
-#else
+
 		// new code to handle different interpretations
 		if(nextTask->stateTestBit(_TaskManagerTask::AutoReWaitSignal) ||
 			nextTask->stateTestBit(_TaskManagerTask::AutoReWaitMessage)) {
@@ -435,7 +422,7 @@ void TaskManager::loop() {
 			   nextTask->setWaitUntil(newRestart);
 			}
         }
-#endif
+
     } else {
         // this is the path executed if a yield was called
         // Yield types (jmpVal values) are from YtYield
@@ -478,7 +465,7 @@ void TaskManager::loop() {
                 // kill: we need to remove the current task from the task ring.  It is gone.
                 // AutoRestart:  The task is being killed.  It will never AutoRestart
                 //**** MEMORY LEAK:  NEED TO DISPOSE OF THE TASK *****
-                TaskMgr.m_theTasks.pop_front();
+                /*TaskMgr.*/m_theTasks.pop_front();
                 break;
             default:
                 // ignore invalid yields
@@ -494,157 +481,6 @@ void TaskManager::suspend(byte taskId) {
 }
 
 void TaskManager::resume(byte taskId) {
-}
-
-// ***************************
-//  All the world's radio code
-// ***************************
-
-
-// General purpose receiver.  Gets a message (varying with the kind of radio)
-// then parses and delivers it
-void TaskManager::tmRadioReceiverTask() {
-	static int cnt=0;
-	// polled receiver -- if there is a packet waiting, grab and process it
-	// receive packet from NRF24.  Poll and process messages
-	// We need to find the destination task and save the fromNode and fromTask.
-	// They are saved on the task instead of the TaskManager object in case several
-	// messages/signals have been received.
-	while(m_rf24->available()) {
-		// read a packet
-		m_rf24->read((void*)(&radioBuf), sizeof(radioBuf));
-		// process it
-		switch(radioBuf.m_cmd) {
-			case tmrNoop:
-				break;
-			case tmrStatus:	// NYI
-				break;
-			case tmrAck:	// NYI
-				break;
-			case tmrTaskStatus:	// NYI
-				break;
-			case tmrTaskAck:	// NYI
-				break;
-			case tmrSignal:
-				internalSendSignal(radioBuf.m_fromNodeId, radioBuf.m_fromTaskId, radioBuf.m_data[0]);
-				break;
-			case tmrSignalAll:
-				sendSignalAll(radioBuf.m_data[0]);
-				break;
-			case tmrMessage:
-				internalSendMessage(radioBuf.m_fromNodeId, radioBuf.m_fromTaskId,
-					radioBuf.m_data[0], &radioBuf.m_data[1], TASKMGR_MESSAGE_SIZE);
-				break;
-			case tmrSuspend:
-				suspend(radioBuf.m_data[0]);
-				break;
-			case tmrResume:
-				resume(radioBuf.m_data[0]);
-				break;
-		}
-	}
-}
-
-// General purpose sender.  Sends a message somewhere (varying with the kind of radio)
-void TaskManager::radioSender(byte destNodeID) {
-	// send packet to NRF24 node "TMGR"+nodeID
-	static byte nodeName[6] = "xTMGR";
-	m_rf24->stopListening(); delay(50);
-	nodeName[0] = destNodeID;
-	m_rf24->openWritingPipe(nodeName);
-	for(int i=0; i<5; i++) {
-		if(!m_rf24->write(&radioBuf, sizeof(radioBuf))) {
-			Serial.print("write fail "); Serial.println(i);
-		}
-		else {
-			break;
-		}
-	}
-	m_rf24->startListening();
-}
-
-// If we have different radio receivers, they will have different instantiation routines.
-
-void TaskManager::radioBegin(byte nodeId, byte cePin, byte csPin) {
-	uint8_t pipeName[6];
-	m_myNodeId = nodeId;
-	m_rf24 = new RF24(cePin, csPin);
-	strcpy((char*)pipeName,"xTMGR");	// R for read
-	pipeName[0] = myNodeId();	// (read pipe preconfigure) not printable, who cares...
-	m_rf24->begin();
-	m_rf24->openReadingPipe(1, pipeName);
-	m_rf24->startListening();
-	pipeName[3] = 'W';	// write
-	m_rf24->openWritingPipe(pipeName);
-	if(!m_radioReceiverRunning) { add(0xfe, radioReceiverTask); m_radioReceiverRunning = true; }
-}
-
-
-void TaskManager::sendSignal(byte nodeId, byte sigNum) {
-	if(nodeId==0 || nodeId==myNodeId()) { sendSignal(sigNum); return; }
-	radioBuf.m_cmd = tmrSignal;
-	radioBuf.m_fromNodeId = myNodeId();
-	radioBuf.m_fromTaskId = myId();
-	radioBuf.m_data[0] = sigNum;
-	radioSender(nodeId);
-}
-
-void TaskManager::sendSignalAll(byte nodeId, byte sigNum) {
-	if(nodeId==0 || nodeId==myNodeId()) { sendSignalAll(sigNum); return; }
-	radioBuf.m_cmd = tmrSignalAll;
-	radioBuf.m_fromNodeId = myNodeId();
-	radioBuf.m_fromTaskId = myId();
-	radioBuf.m_data[0] = sigNum;
-	radioSender(nodeId);
-}
-
-void TaskManager::sendMessage(byte nodeId, byte taskId, char* message) {
-	if(nodeId==0 || nodeId==myNodeId()) { sendMessage(taskId, message); return; }
-	radioBuf.m_cmd = tmrMessage;
-	radioBuf.m_fromNodeId = myNodeId();
-	radioBuf.m_fromTaskId = myId();
-	radioBuf.m_data[0] = taskId;	// who we are sending it to
-	if(strlen(message)>TASKMGR_MESSAGE_SIZE-2) {
-		memcpy(&radioBuf.m_data[1], message, TASKMGR_MESSAGE_SIZE-2);
-		radioBuf.m_data[TASKMGR_MESSAGE_SIZE-2]='\0';
-	} else {
-		strcpy((char*)&radioBuf.m_data[1], message);
-	}
-	radioSender(nodeId);
-}
-
-void TaskManager::sendMessage(byte nodeId, byte taskId, void* buf, int len) {
-	if(nodeId==0 || nodeId==myNodeId()) { sendMessage(taskId, buf, len); return; }
-	if(len>TASKMGR_MESSAGE_SIZE) return;	// reject too-long messages
-	radioBuf.m_cmd = tmrMessage;
-	radioBuf.m_fromNodeId = myNodeId();
-	radioBuf.m_fromTaskId = myId();
-	radioBuf.m_data[0] = taskId;	// who we are sending it to
-	memcpy(&radioBuf.m_data[1], buf, len);
-	radioSender(nodeId);
-}
-
-void TaskManager::suspend(byte nodeId, byte taskId) {
-	if(nodeId==0 || nodeId==myNodeId()) { suspend(taskId); return; }
-	radioBuf.m_cmd = tmrSuspend;
-	radioBuf.m_fromNodeId = myNodeId();
-	radioBuf.m_fromTaskId = myId();
-	radioBuf.m_data[0] = taskId;
-	radioSender(nodeId);
-}
-
-void TaskManager::resume(byte nodeId, byte taskId) {
-	if(nodeId==0 || nodeId==myNodeId()) { resume(taskId); return; }
-	radioBuf.m_cmd = tmrResume;
-	radioBuf.m_fromNodeId = myNodeId();
-	radioBuf.m_fromTaskId = myId();
-	radioBuf.m_data[0] = taskId;
-	radioSender(nodeId);
-}
-
-void TaskManager::getSource(byte& fromNodeId, byte& fromTaskId) {
-	fromNodeId = m_theTasks.front().m_fromNodeId;
-	fromTaskId = m_theTasks.front().m_fromTaskId;
 }
 
 

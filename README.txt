@@ -15,6 +15,13 @@ TaskManager offers the following:
 	in the same manner as if they were on the same node.
 
 Release History:
+
+	2017/1/2:  Release 1.2: Split RF code out of base Taskmanager.
+	This simplifies its use and reduces some memory consumption.
+	Use <TaskManager.h> for basic, single-node functionality
+	Use <TaskManagerRF.h> to include the RF24 routines.
+	The documentation still needs updating.
+
 	2015/11/13: Release 1.0: Initial full release.
 	More code cleanup, improved documentation.  Added routines so tasks could ID
 	where messages/signals came from.
