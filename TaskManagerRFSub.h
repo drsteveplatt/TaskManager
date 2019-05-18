@@ -1,12 +1,8 @@
 #ifndef TASKMANAGER_H_INCLUDED
 #define TASKMANAGER_H_INCLUDED
-#define TASKMANAGERRF_H_INCLUDED
 
 #include <TaskManagerRFCore.h>
-TaskManagerRF TaskMgr;
-void loop() {
-    TaskMgr.loop();
-}
+extern TaskManagerRF TaskMgr;
 #endif // TASKMANAGER_H_INCLUDED
 
 

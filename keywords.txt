@@ -1,7 +1,7 @@
 TaskManager	KEYWORD1
 TaskMgr	KEYWORD1
 #
-add	KEYWORD1
+add	KEYWORD2
 addWaitDelay	KEYWORD2
 addWaitUntil	KEYWORD2
 addWaitMessage	KEYWORD2
@@ -24,6 +24,7 @@ getSource	KEYWORD2
 timedOut	KEYWORD2
 getMessage	KEYWORD2
 sendMessage	KEYWORD2
+#
 runtime	KEYWORD2
 printTo	KEYWORD2
 myId	KEYWORD2

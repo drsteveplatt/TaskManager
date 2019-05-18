@@ -189,8 +189,8 @@ public:
 
 		The task will execute once each cycle through the task list.  Unless the task itself forces itself into a different scheduling
 		model (e.g., through YieldSignal), it will execute again at the next available opportunity
-		\param taskId - the task's ID.  For normal user tasks, this should be a byte value in the range [0 127].
-		System tasks have taskId values in the range [128 255].
+		\param taskId - the task's ID.  For normal user tasks, this should be a byte value in the range [1 239].
+		System tasks have taskId values in the range [240 255].
 		\param fn -- this is a void function with no arguments.  This is the procedure that is called every time
 		the task is invoked.
 		\sa addWaitDelay, addWaitUntil, addAutoWaitDelay
@@ -241,7 +241,7 @@ public:
 	    The task will be added, but will be set to be waiting for the listed signal.  If a nonzero timeout is
 	    specified and ifthe signal does
 	    not arrive before the timeout period (in milliseconds), then the routine will be activated.  The
-	    routine may use TaskManager::timeout() to determine whether it timed our or received the signal.
+	    routine may use TaskManager::timedOut() to determine whether it timed our or received the signal.
 
 	    Note that calling addWaitSignal() with no timeout or startWaiting parmeter, the task will start in a wait
 	    state with no timeout.  To start the task in a non-wait-state (active) with no timeout, the routine must
@@ -259,7 +259,7 @@ public:
     /*! \brief Add a task that will automatically reschedule itself with a delay
 
 		This task will execute once each cycle.  The task will automatically reschedule itself to not execute
-		until the given delay has passed. THe first execution may be delayed using the optional fourth parameter startDelayed.
+		until the given delay has passed. The first execution may be delayed using the optional fourth parameter startDelayed.
 		This delay, if used, will be the same as the period.
 
 		Note that
@@ -275,23 +275,18 @@ public:
     */
     void addAutoWaitDelay(byte taskId, void(*fn)(), unsigned long period, bool startDelayed=false);
 
-	/*! \brief Add a task that waits until a signal arrives or (optionally) timeout occurs. The task
-		automatically reschedules itself
+	/*! \brief Add a task that will be delayed until a set system clock time before its first invocation,
+		and will automatically reschedule itself with the same delay.
 
-		The task will be added, but will be set to be waiting for the listed signal. If the task exits normally
-		(normal return, fall out of the bottom, or yield()), it will reschedule itself to wait for the same
-		signal.  If a timeout (>0) is specified and the signal does
-		not arrive before the timeout period (in milliseconds), then the routine will be activated.  The
-		routine may use TaskManager::timeout() to determine whether it timed our or received the signal.
+		The task will be added, but will be set to be waiting for the specified period. If the task exits normally
+		(normal return, fall out of the bottom, or yield()), it will reschedule itself to wait for the same delay period.
 		\param taskId - the task's ID.  For normal user tasks, this should be a byte value in the range [0 127].
 		System tasks have taskId values in the range [128 255].
 		\param fn -- this is a void function with no arguments.  This is the procedure that is called every time
 		the task is invoked.
-		\param sigNum -- the signal the task will be waiting for
-		\param timeout -- the maximum time to wait (in ms) before timing out.
+		\param period -- the delay between invocations.
 		\param startWaiting -- tells whether the routine will start waiting for the signal (true) or will execute
 		immediately (false).
-		\sa addAutoWaitSignal
 	*/
     void addAutoWaitSignal(byte taskId, void(*fn)(), byte sigNum, unsigned long timeout=0, bool startWaiting=true);
 
@@ -299,7 +294,7 @@ public:
 
 		The task will be added, but will be set to be waiting for the listed signal.  If the signal does
 		not arrive before the timeout period (in milliseconds), then the routine will be activated.  The
-		routine may use TaskManager::timeout() to determine whether it timed our or received the signal.
+		routine may use TaskManager::timedOut() to determine whether it timed our or received the signal.
 		\param taskId - the task's ID.  For normal user tasks, this should be a byte value in the range [0 127].
 		System tasks have taskId values in the range [128 255].
 		\param fn -- this is a void function with no arguments.  This is the procedure that is called every time
@@ -450,14 +445,28 @@ public:
 
 	/*!	\brief Get source node/task of last message/signal
 
-		Returns the nodeId and taskId of the node/task that last sent a signal or message
-		to the current task.  If the current task has never received a signal, returns [0 0].
-		If the last message/signal was from "this" node, returns fromNodeId=0.
+		Returns the taskId of the task that last sent a signal or message
+		to the current task.  If the current task has never received a signal, returns [0].
 
-		\param[out] fromNodeId -- the nodeId that sent the last message or signal
 		\param[out] fromTaskId -- the taskId that sent the last message or signal
 	*/
-	void getSource(byte& fromNodeId, byte& fromTaskId);
+	void getSource(byte& fromTaskId);
+
+	/*! @} */
+
+	/*! @name Changing Task Scheduing Method */
+	/*! @{ */
+	/*! \brief Change task types
+
+		These routines change the scheduling metod for the given task.  FOr example, SetAutoWaitDelay() will change a
+		task so it will automatically wait for the set delay period after yielding (instead of using whatever
+		rescheduling process was defined when it was Add()ed).
+
+		The change will take place immediately.  If it is being performed on the currernt task, it will impact the next
+		yield/return.  If it is performed on a suspended task, the suspended tasks's reawakening constraints will be
+		reset to the new method.
+
+	*/
 
 	/*! @} */
 
@@ -497,7 +506,8 @@ public:
 #if defined(TASKMANAGER_DEBUG)
     size_t printTo(Print& p) const;
 #endif
-    /*! \brief Tell if the current task has timed out
+    /*! \brief Tell if the current task has timed out while waiting for a signal or message
+    	\return true if the task started due to timing out while waiting for a signal or message; false otherwise.
 	*/
 	bool timedOut();
 
@@ -535,17 +545,6 @@ public:
     _TaskManagerTask* findTaskById(byte id);
 
 };
-
-//
-// Defining our global TaskMgr
-//
-/*!	\brief The global object used to access TaskManager functionality
-*/
-//#if !defined(TASKMANAGER_MAIN)
-//extern TaskManager TaskMgr;
-//#else
-//TaskManager TaskMgr;
-//#endif
 
 //
 // Inline stuff
@@ -777,6 +776,10 @@ inline void TaskManager::sendMessage(byte taskId, void* buf, int len) {
 
 inline void* TaskManager::getMessage() {
     return (void*)(&(m_theTasks.front().m_message));
+}
+
+inline void TaskManager::getSource(byte& fromTaskId) {
+	fromTaskId = m_theTasks.front().m_fromTaskId;
 }
 
 inline unsigned long TaskManager::runtime() const { return millis()-m_startTime; }
