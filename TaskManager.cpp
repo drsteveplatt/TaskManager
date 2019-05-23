@@ -478,9 +478,14 @@ void TaskManager::loop() {
 // Status tasks
 
 void TaskManager::suspend(byte taskId) {
+    _TaskManagerTask* tsk;
+    tsk = findTaskById(taskId);
+    tsk->setSuspended();
 }
 
 void TaskManager::resume(byte taskId) {
+    _TaskManagerTask* tsk;
+    tsk = findTaskById(taskId);
+    tsk->clearSuspended();
 }
-
 

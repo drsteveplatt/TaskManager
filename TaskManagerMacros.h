@@ -32,6 +32,7 @@
 	static unsigned int __tmNext__ = 0;			\
 	switch(__tmNext__) {					\
 		case 0:
+#define TM_BEGIN()	TM_INIT()
 
 #define TM_BEGIN() TM_INIT()
 
@@ -45,6 +46,7 @@
 		default:	break;					\
 	}										\
 	__tmNext__ = 0;
+#define TM_END()	TM_CLEANUP()
 
 #define TM_END()	TM_CLEANUP()
 

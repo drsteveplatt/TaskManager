@@ -99,6 +99,8 @@ protected:
 
     // Setting its state
     void setRunnable();
+	void setSuspended();
+	void clearSuspended();
     void setWaitUntil(unsigned long);
     void setWaitDelay(unsigned int);
     void setAutoDelay(unsigned int);
@@ -578,6 +580,17 @@ inline _TaskManagerTask::~_TaskManagerTask() {
 */
 inline void _TaskManagerTask::setRunnable() {
     stateClear(WaitSignal+WaitMessage+WaitUntil+Suspended);
+}
+/*! \brief Set the task to a generic suspended state.  That is, it will not be run until it is set runnable
+*/
+inline void _TaskManagerTask::setSuspended() {
+	stateSet(Suspended);
+}
+/*! \brief Clear the task's suspended'ness, if it was suspended.  Note, if it is still waiting on a messagel etc.,
+	it will keep waiting.
+*/
+inline void _TaskManagerTask::clearSuspended() {
+	stateClear(Suspended);
 }
 /*! \brief Setting the task to wait until a specific time
 
