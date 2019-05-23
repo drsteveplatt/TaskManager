@@ -33,6 +33,8 @@
 	switch(__tmNext__) {					\
 		case 0:
 
+#define TM_BEGIN() TM_INIT()
+
 /*!	\brief	Close out the TM macro component
 
 	TM_CLEANUP() balances TM_INIT(), closing the control structures TM_INIT() had
@@ -43,6 +45,8 @@
 		default:	break;					\
 	}										\
 	__tmNext__ = 0;
+
+#define TM_END()	TM_CLEANUP()
 
 /*!	\brief	Yield and return to the next statement
 
