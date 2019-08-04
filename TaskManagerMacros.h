@@ -24,31 +24,29 @@
 
 /*!	\brief Prepare the procedure for the TM macros
 
-	TM_INIT() creates the initial code enabling the macros to execute correctly.
+	TM_BEGIN() creates the initial code enabling the macros to execute correctly.
 	It should be placed at/near the start of the procedure.  No TM_YIELD*() calls
 	can come before it
 */
-#define TM_INIT()							\
+#define TM_BEGIN()							\
 	static unsigned int __tmNext__ = 0;			\
 	switch(__tmNext__) {					\
 		case 0:
-#define TM_BEGIN()	TM_INIT()
-
-#define TM_BEGIN() TM_INIT()
+// for compatibility with older code
+#define TM_INIT() TM_BEGIN()
 
 /*!	\brief	Close out the TM macro component
 
-	TM_CLEANUP() balances TM_INIT(), closing the control structures TM_INIT() had
+	TM_END() balances TM_BEGIN(), closing the control structures TM_INIT() had
 	created.  It should be placed near the bottom of the procedure.  No TM_YIELD*()
 	calls can come after it.
 */
-#define TM_CLEANUP()						\
+#define TM_END()						\
 		default:	break;					\
 	}										\
 	__tmNext__ = 0;
-#define TM_END()	TM_CLEANUP()
-
-#define TM_END()	TM_CLEANUP()
+// Compatibility with older code
+#define	TM_CLEANUP() TM_END()
 
 /*!	\brief	Yield and return to the next statement
 

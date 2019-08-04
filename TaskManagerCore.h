@@ -2,8 +2,8 @@
 #define TASKMANAGERCORE_H_INCLUDED
 
 
-#include "Streaming.h"
-#include "ring.h"
+//#include <Streaming.h>
+#include <ring.h>
 #include <setjmp.h>
 
 /*! \file TaskManagerCore.h
