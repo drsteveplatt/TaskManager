@@ -1,10 +1,11 @@
 
 #define TASKMANAGER_MAIN
 
+#include <arduino.h>
 #include <SPI.h>
 #include <RF24.h>
-#include "TaskManagerCore.h"
-#include "TaskManagerRFCore.h"
+#include <TaskManagerCore.h>
+#include <TaskManagerRFCore.h>
 
 extern TaskManagerRF TaskMgr;
 

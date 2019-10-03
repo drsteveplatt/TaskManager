@@ -1,9 +1,8 @@
 
 #define TASKMANAGER_MAIN
 
-//#include <SPI.h>
-//#include <RF24.h>
-#include "TaskManagerCore.h"
+#include <arduino.h>
+#include <TaskManagerCore.h>
 
 // Note that this will generate a warning when using TaskManagerRF.
 // The warning can be ignored.
