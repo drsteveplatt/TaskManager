@@ -22,6 +22,26 @@
 
 #define TASKMGR_MESSAGE_SIZE (32-3)
 
+/*! \def Null Task ID
+	The TaskID of the null task
+*/
+#define TASKMGR_NULL_TASK 255
+
+/*! \def RF Monitor Task
+	The TaskID of the task that monitors the inter-node radio link
+*/
+#define TASKMGR_RF_MONITOR_TASK 254
+
+/*! \def PING Responder Task
+	The TaskID that monitors RF PING requests
+*/
+#define TASKMGR_PING_MONITOR_TASK 253
+
+/*! \def Menu System Button Monitor Task
+	The task that monitors button presses for the LCD menu subsystem
+*/
+#define TASKMGR_MENU_MONITOR_TASK 252
+
 /*! \class _TaskManagerTask
     \brief Internal class to manage a single active task
 
