@@ -230,7 +230,7 @@ void TaskManager::yieldForMessage(unsigned long timeout/*=0*/) {
 //	TaskManagerRF uses either local or non-local nodeIDs.
 //
 
-void TaskManager::internalSendSignal(byte fromNodeId, byte fromTaskId, byte sigNum) {
+void TaskManager::internalSendSignal(tm_nodeId_t fromNodeId, byte fromTaskId, byte sigNum) {
     ring<_TaskManagerTask> tmpTasks;
     _TaskManagerTask* tmt;
     _TaskManagerTask* last;
@@ -258,7 +258,7 @@ void TaskManager::internalSendSignal(byte fromNodeId, byte fromTaskId, byte sigN
     }
 }
 
-void TaskManager::internalSendSignalAll(byte fromNodeId, byte fromTaskId, byte sigNum) {
+void TaskManager::internalSendSignalAll(tm_nodeId_t fromNodeId, byte fromTaskId, byte sigNum) {
     ring<_TaskManagerTask> tmpTasks;
     _TaskManagerTask* tmt;
     _TaskManagerTask* last;
@@ -284,7 +284,7 @@ void TaskManager::internalSendSignalAll(byte fromNodeId, byte fromTaskId, byte s
     }
 }
 
-void TaskManager::internalSendMessage(byte fromNodeId, byte fromTaskId, byte taskId, char* message) {
+void TaskManager::internalSendMessage(tm_nodeId_t fromNodeId, byte fromTaskId, byte taskId, char* message) {
     _TaskManagerTask* tsk;
     if(strlen(message)>TASKMGR_MESSAGE_SIZE-1) return;
     tsk = findTaskById(taskId);
@@ -294,7 +294,7 @@ void TaskManager::internalSendMessage(byte fromNodeId, byte fromTaskId, byte tas
     tsk->putMessage((void*)message, strlen(message)+1);
 }
 
-void TaskManager::internalSendMessage(byte fromNodeId, byte fromTaskId, byte taskId, void* buf, int len) {
+void TaskManager::internalSendMessage(tm_nodeId_t fromNodeId, byte fromTaskId, byte taskId, void* buf, int len) {
     _TaskManagerTask* tsk;
     if(len>TASKMGR_MESSAGE_SIZE) return;
     tsk = findTaskById(taskId);

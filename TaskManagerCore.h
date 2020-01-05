@@ -17,10 +17,17 @@
     This defines the maximum size for an inter-task message.  It is constrained, in part,
     by plans for RFI communication between tasks running on different devices.
 
-    Note that the NRF24's max payload size is 32.  Message overhead is 3 bytes.
+    Note that the NRF24's max payload size is 32.  Message overhead is 3 bytes for cmd/src and 1 for target.
+    ESP-NOW max payload is 250, overhead is 4 for cmd/src and 1 for target.
 */
-
-#define TASKMGR_MESSAGE_SIZE (32-3)
+#if defined(__AVR__)
+#define TASKMGR_MESSAGE_SIZE (32-3-1)
+typedef byte tm_nodeId_t;
+#elif defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
+#define TASKMGR_MESSAGE_SIZE (250-4-1)
+typedef uint16_t tm_nodeId_t;
+#else
+#endif
 
 /*! \def Null Task ID
 	The TaskID of the null task
@@ -75,7 +82,7 @@ protected:
 	/* \} */
 public:
     byte m_sigNum;      //!< The signal this task is waiting for (if waiting for a signal).
-	byte	m_fromNodeId;		// where the signal/message came from
+	tm_nodeId_t	m_fromNodeId;		// where the signal/message came from
 	byte	m_fromTaskId;
 protected:
     byte m_stateFlags; //!< The task's state information
@@ -552,10 +559,10 @@ public:
     void loop();
 
 protected:
-	void internalSendSignal(byte fromNodeId, byte fromTaskId, byte sigNum);
-	void internalSendSignalAll(byte fromNodeId, byte fromTaskId, byte sigNum);
-	void internalSendMessage(byte fromNodeId, byte fromTaskId, byte taskId, char* message);
-	void internalSendMessage(byte fromNodeId, byte fromTaskId, byte taskId, void* buf, int len);
+	void internalSendSignal(tm_nodeId_t fromNodeId, byte fromTaskId, byte sigNum);
+	void internalSendSignalAll(tm_nodeId_t fromNodeId, byte fromTaskId, byte sigNum);
+	void internalSendMessage(tm_nodeId_t fromNodeId, byte fromTaskId, byte taskId, char* message);
+	void internalSendMessage(tm_nodeId_t fromNodeId, byte fromTaskId, byte taskId, void* buf, int len);
 
 private:
     // Find the next active task
