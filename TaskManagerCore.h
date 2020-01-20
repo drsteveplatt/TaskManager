@@ -95,7 +95,7 @@ protected:
 
     char m_message[TASKMGR_MESSAGE_SIZE];   //!<  The message sent to this task (if waiting for a message)
 
-    unsigned int m_reTimeout;   //!< The timeout to use during auto restarts.  0 means no timeout.
+    //NOT USED??? unsigned int m_reTimeout;   //!< The timeout to use during auto restarts.  0 means no timeout.
 
     // Autorestart information.  If a task has autorestart, here is the information to use at the restart
     unsigned long m_period; //!< If it is auto-reschedule, the rescheduling period
@@ -120,6 +120,7 @@ protected:
     bool stateTestBit(byte);
     void stateSet(byte);
     void stateClear(byte bits);
+    void resetCurrentStateBits();
 
     // Querying its state and other info
     bool isRunnable();
@@ -786,6 +787,12 @@ inline void _TaskManagerTask::stateSet(byte bits) {
 */
 inline void _TaskManagerTask::stateClear(byte bits) {
     m_stateFlags &= (~bits);
+}
+
+/*	\brief Copy the auto state bits to the current state bits
+*/
+inline void _TaskManagerTask::resetCurrentStateBits() {
+	m_stateFlags = (m_stateFlags&0xf8) + ((m_stateFlags>>3)&0x07);
 }
 
 inline byte TaskManager::myId() {

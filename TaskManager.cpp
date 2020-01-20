@@ -2,6 +2,9 @@
 
 #include <arduino.h>
 #include <TaskManagerCore.h>
+#include <Streaming.h>
+
+#define DEBUG false
 
 // Note that this will generate a warning when using TaskManagerRF.
 // The warning can be ignored.
@@ -44,6 +47,66 @@ bool _TaskManagerTask::isRunnable()  {
     // Also, if a process has been (WaitUntil+WaitMessage/Signal) and it
     // times out, the accompanying WaitMessage/Signal will be cleared.
     bool ret;
+    //if(DEBUG && (my_Id==1 || my_Id==20)) Serial << "-->isRunnable, task " << my_Id << " status " << m_stateFlags << endl;
+    if(stateTestBit(Suspended)) {
+		//if(DEBUG && (my_Id==1 || my_Id==20)) Serial << "...suspended\n";
+		ret = false;
+	} else if(stateTestBit(WaitSignal)) {
+		if(stateTestBit(WaitUntil)) {
+			// waiting for signal or timeout, act based on timeout
+			if(m_restartTime<millis()) {
+				//if(DEBUG && (my_Id==1 || my_Id==20)) Serial << "...signal not rc'd, timeout wait, timeout\n";
+				// timed out
+				stateClear(WaitUntil);
+				stateSet(TimedOut);
+				ret = true;
+			} else {
+				// neither timeout nor signal
+				//if(DEBUG && (my_Id==1 || my_Id==20)) Serial << "...signal not received, timeout wait, no timeout\n"
+				ret = false;
+			}
+		} else {
+			// just waiting for signal, no timeout
+			//if(DEBUG && (my_Id==1 || my_Id==20)) Serial << "...signal not received, no timeout wait\n"
+			ret = false;
+		}
+	} else if(stateTestBit(WaitMessage)) {
+		if(stateTestBit(WaitUntil)) {
+			// waiting for message or timeout, act based on timeout
+			if(m_restartTime<millis()) {
+				//if(DEBUG && (my_Id==1 || my_Id==20)) Serial << "...msg not received, timeout wait, timeout\n";
+				// timed out
+				stateClear(WaitUntil);
+				stateSet(TimedOut);
+				ret = true;
+			} else {
+				// neither timeout nor message
+				//if(DEBUG && (my_Id==1 || my_Id==20)) Serial << "...msg not received, timeout wait, no timeout";
+				ret = false;
+			}
+		} else {
+			// just waiting for message, no timeout
+			//if(DEBUG && (my_Id==1 || my_Id==20)) Serial << "...msg not received, no timeout wait\n"
+			ret = false;
+		}
+	} else if(stateTestBit(WaitUntil)) {
+		if(m_restartTime<millis()) {
+			// yes waiting for a time and the time has passed
+			//if(DEBUG && (my_Id==1 || my_Id==20)) Serial << "wait for time " << m_restart << ", time has passed\n";
+			stateClear(WaitUntil);
+			ret = true;
+		} else {
+			// waiting for a time, time hasn't passed yet
+			//if(DEBUG && (my_Id==1 || my_Id==20)) Serial << "wait for time " << m_restart << ", time has not passed\n";
+			ret = false;
+		}
+	} else {
+		// was not waiting for signal or message or time passage
+		//if(DEBUG && (my_Id==1 || my_Id==20)) Serial << "not waiting for anything\n";
+		ret = true;
+	}
+	return ret;
+#if false
     // new isRunnable
     // handles message/signal with timeout
     stateClear(TimedOut);
@@ -65,6 +128,7 @@ bool _TaskManagerTask::isRunnable()  {
         ret = true;
     }
     return ret;
+#endif
 }
 
 /*! \brief Assign the value of one task to another
@@ -386,18 +450,36 @@ _TaskManagerTask* TaskManager::findTaskById(byte id) {
 
     This routine is for internal use only.
 */
+#define T1	20
+#define	T2	20
 void TaskManager::loop() {
     int jmpVal; // return value from setjmp, indicates longjmp type
     _TaskManagerTask* nextTask;
     nextTask = /*TaskMgr.*/FindNextRunnable();
+    // pre-stage the next startup time based on the current time.  This'll be overwritten if a Yield*(time)
+    // is encountered.  It'll be ignored anyway unless we are auto-yielddelay, which is the only one
+    // that focuses on the start-start measurement of the period.  (All others are end-start.)
+    nextTask->m_restartTime = millis() + nextTask->m_period;
+    if(DEBUG && (nextTask->m_id==T1 || nextTask->m_id==T2)) Serial << "-->TaskManager::loop\n";
     if((jmpVal=setjmp(/*TaskMgr.*/taskJmpBuf))==0) {
         // this is the normal path we use to invoke and process "normal" returns
+    	if(DEBUG && (nextTask->m_id==T1 || nextTask->m_id==T2)) Serial << "about to run task " << nextTask->m_id
+    	  << " at " << millis() << " status is " << _HEX(nextTask->m_stateFlags) << endl;
         (nextTask->m_fn)();
+        if(DEBUG && (nextTask->m_id==T1 || nextTask->m_id==T2))
+        	Serial << "normal return at " << millis() << " pre-set status is " << _HEX(nextTask->m_stateFlags) << endl;
+		// If we've gotten here, we got here through a normal "fall out the bottom or 'return'" return.
+		// As such, we reset according to the auto bits.
         // Process auto bits
         // AutoReWaitUntil has two interpretations:  If alone, it is periodic and is
         // incremented based on the previous restartTime.  If in conjunction with
         // AutoReSignal/AutoReMessage then it is a timeout and is based on "now"
-
+        if(nextTask->anyStateSet(_TaskManagerTask::AutoReWaitMessage+_TaskManagerTask::AutoReWaitMessage)
+        	&& nextTask->stateTestBit(_TaskManagerTask::AutoReWaitUntil)) {
+			nextTask->setWaitUntil(millis()+nextTask->m_period);
+		}
+		nextTask->resetCurrentStateBits();
+#if false
 		// new code to handle different interpretations
 		if(nextTask->stateTestBit(_TaskManagerTask::AutoReWaitSignal) ||
 			nextTask->stateTestBit(_TaskManagerTask::AutoReWaitMessage)) {
@@ -408,7 +490,8 @@ void TaskManager::loop() {
 			   nextTask->setWaitMessage();
 			}
 			// set up next timing
-			nextTask->setWaitUntil(millis()+nextTask->m_period);
+			if(nextTask->stateTestBit(_TaskManagerTask::AutoReWaitUntil))
+				nextTask->setWaitUntil(millis()+nextTask->m_period);
 		} else {
 			// just check for AutoReWaitUntil and process periodic timing
 			if(nextTask->stateTestBit(_TaskManagerTask::AutoReWaitUntil)) {
@@ -417,10 +500,13 @@ void TaskManager::loop() {
 			   while(newRestart<now) {
 					newRestart += nextTask->m_period;	// keep bumping til the future
 			   }
+			   if(DEBUG && nextTask->m_id==1) Serial << "task next schedule is " << newRestart << endl;
 			   nextTask->setWaitUntil(newRestart);
 			}
         }
-
+#endif
+		if(DEBUG && (nextTask->m_id==T1 || nextTask->m_id==T2))
+			Serial << "post-set status is " << _HEX(nextTask->m_stateFlags) << endl;
     } else {
         // this is the path executed if a yield was called
         // Yield types (jmpVal values) are from YtYield
@@ -430,6 +516,7 @@ void TaskManager::loop() {
         //
         // In each case, the yield*(...) routine will have set the appropriate flag bit(s)
         // and if needed, stuffed a m_restartTime value if a delay/timeout was specified.
+        if(DEBUG && (nextTask->m_id==T1 || nextTask->m_id==T2)) Serial << "exited with yield type " << jmpVal << endl;
         switch(jmpVal) {
             case YtYield:
                 // normal yield, just exit cleanly
@@ -471,6 +558,7 @@ void TaskManager::loop() {
                 break;
         }
      }
+     if(DEBUG && (nextTask->m_id==T1 || nextTask->m_id==T2)) Serial << "<--TaskManager::loop\n";
 }
 
 // Status tasks
