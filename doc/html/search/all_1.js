@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['back',['back',['../singletonring.html#af9e7132dd81852bc1c20dc8d23e11f2c',1,'ring']]]
+  ['back_8',['back',['../classring.html#afc322bf07d7bdcc65888e604581202d0',1,'ring']]]
 ];

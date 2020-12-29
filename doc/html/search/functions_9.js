@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['operator_3d',['operator=',['../singletonring.html#a52e785fb89c3e8ca7f4c5824f51f3532',1,'ring']]],
-  ['operator_3d_3d',['operator==',['../singletonring.html#aced639cf6769387b733d6455f86d6e2d',1,'ring']]]
+  ['resume_95',['resume',['../class_task_manager.html#aa5f938f2b80ae5cb0bb3365fa5ddaa0a',1,'TaskManager']]],
+  ['ring_96',['ring',['../classring.html#a289cfd3a4d5885e43351277b1d3fb9d9',1,'ring']]],
+  ['runtime_97',['runtime',['../class_task_manager.html#a966e7f218ea93bfb36020814ed489517',1,'TaskManager']]]
 ];

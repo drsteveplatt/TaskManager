@@ -139,35 +139,73 @@
 /*! @{ */
 
 /*!	\brief	Define a callable subtask
-	TM_ADD_SUBTASK() defines the task and prepares it to wait for activation.
+	TM_ADDSUBTASK() defines the task and prepares it to wait for activation.
 	It should be used instead of any of the TaskManager.add*() routines.
 	Note that the 'void subtask(){...}' will need to be defined elsewhere.
 */
-#define TM_ADD_SUBTASK(id, task) TaskMgr.addAutoWaitSignal(id, task, id);
+#define TM_ADDSUBTASK(id, task) TaskMgr.addAutoWaitMessage(id, task);
 
 /*!	\brief Procedure definition header for subtask
-	TM_BEGINSUB(id) is used at the start of a subtask procedure
-	\param id -
+	TM_BEGINSUB() is used at the start of a subtask procedure.
+	This procedure should be called using TM_CALL().
+
 */
-#define TM_BEGINSUB(id)	TM_BEGIN()
+#define TM_BEGINSUB()						\
+	static byte __callingTask__; 			\
+	TM_BEGIN();								\
+	TaskMgr.getSource(__callingTask__);
+
+/*!	\brief Procedure definition header for a subtask with parameters.
+	TM_BEGINSUB_P(vtype, vlocal) is used at the start of a subtask procedure that is
+	expecting a parameter of type vtype.  This procedure should be called using
+	TM_CALL_P().
+	\param vtype - the type of the parameter (normally a struct/class)
+	\param vlocal - the name of the procedure-local variable of type vtype.
+
+	Note that TM_BEGINSUB_P() will define a variable vlocal of type vtype.
+*/
+#define TM_BEGINSUB_P(vtype, vlocal)		\
+	static vtype vlocal;					\
+	TM_BEGINSUB();							\
+	memcpy((void*)&vlocal, TaskMgr.getMessage(), sizeof(vtype));
 
 /*!	\brief Return from a subtask
 	TM_RETURNSUB() is used to return from a procedure.  Note that all subtasks MUST use
 	TM_RETURNSUB() -- bare returns are not allowed.  TM_RETURNSUB() can be used
 	from multiple places within a subtask
 */
-#define TM_RETURNSUB(id)  { TaskMgr.sendSignal(0, id); return; }
+#define TM_RETURNSUB()  { TaskMgr.sendMessage(__callingTask__, NULL, 0); return; }
 
 /*!	\brief Call a subtask
 	TM_CALL() calls a subtask.  When the subtask has been completed (via TM_SUBTASK_RETURN()), the
 	calling routine will resume.
+	\param n - a unique (within the procedure) value
+	\param taskId - the taskId that is to be called
 */
-#define TM_CALL(localId, taskId) { TaskMgr.sendSignal(0, taskId); TM_YIELDSIGNAL(localId, taskId); }
+#define TM_CALL(n, taskId) { TaskMgr.sendMessage(taskId, NULL, 0); TM_YIELDMESSAGE(n); }
 
+/*!	\brief Call a subtask, passing a parameter block
+	TM_CALL_P() calls a subtask.  When the subtask has been completed (via TM_SUBTASK_RETURN()), the
+	calling routine will resume.  This version of CALL allows a single parameter, normally a
+	struct/class object.  The size of the object must be less than or equal to the size of
+	a message.
+
+	Both input and output parameters may be specified.  Output parameters (return values) can be
+	specified by including a pointer to a different object within the passed parameter, and manipulating
+	this object through the pointer.
+	\param n - a unique (within the procedure) value
+	\param taskId - the taskId that is to be called
+	\param vparam - the object being passed
+*/
+#define TM_CALL_P(n, taskId, vparam)										\
+	{ 	TaskMgr.sendMessage(taskId, (void*)&vparam, sizeof(vparam));		\
+		TM_YIELDMESSAGE(n);													\
+	}
 
 /*! \brief End a subtask
-	TM_ENDSUB(parentId)
+	TM_ENDSUB()
 	Used at the bottom of a subtask.
 */
+#define TM_ENDSUB() { TaskMgr.sendMessage(__callingTask__, NULL, 0); TM_END(); }
 /*! @} */
 #endif

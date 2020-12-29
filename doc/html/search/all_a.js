@@ -1,8 +1,8 @@
 var searchData=
 [
-  ['pop_5fback',['pop_back',['../singletonring.html#ad000e92398391abc8958e0fc5595c329',1,'ring']]],
-  ['pop_5ffront',['pop_front',['../singletonring.html#a8bd49b76e56686927dcfd78cb5172690',1,'ring']]],
-  ['printto',['printTo',['../singletonring.html#a47da5ddc64219bbf5937f10bfb1d9f36',1,'ring::printTo()'],['../class_task_manager.html#a261cd53a22a9d260c64141b1c2d71364',1,'TaskManager::printTo()']]],
-  ['push_5fback',['push_back',['../singletonring.html#ab13c5ad32f0ccd338400dd16c3259f9b',1,'ring']]],
-  ['push_5ffront',['push_front',['../singletonring.html#ad9de090ad384e32e39337c85a9a21549',1,'ring']]]
+  ['sendmessage_30',['sendMessage',['../class_task_manager.html#afa64288296449953f690b50935891f07',1,'TaskManager::sendMessage(byte taskId, char *message)'],['../class_task_manager.html#af332a07dcf5a649aabd22e57b2038e58',1,'TaskManager::sendMessage(byte taskId, void *buf, int len)']]],
+  ['sendsignal_31',['sendSignal',['../class_task_manager.html#a7498109c70ab6189c18565c633533404',1,'TaskManager']]],
+  ['sendsignalall_32',['sendSignalAll',['../class_task_manager.html#ab8a7b2a2c2f92f97da186bb3f2f19f9b',1,'TaskManager']]],
+  ['size_33',['size',['../classring.html#ad8424513e6933cfd2cf7629f32a56252',1,'ring']]],
+  ['suspend_34',['suspend',['../class_task_manager.html#af7ffb2b405dc4b78ec918345367509c0',1,'TaskManager']]]
 ];

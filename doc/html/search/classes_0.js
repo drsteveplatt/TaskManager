@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['ring',['ring',['../singletonring.html',1,'']]],
-  ['ring_3c_20_5ftaskmanagertask_20_3e',['ring&lt; _TaskManagerTask &gt;',['../singletonring.html',1,'']]]
+  ['ring_64',['ring',['../classring.html',1,'']]],
+  ['ring_3c_20_5ftaskmanagertask_20_3e_65',['ring&lt; _TaskManagerTask &gt;',['../classring.html',1,'']]]
 ];

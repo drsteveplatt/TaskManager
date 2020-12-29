@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['debugdump',['DebugDump',['../singletonring.html#a3497290cecc0b8d3a3df53bdf6db5bae',1,'ring']]]
+  ['empty_10',['empty',['../classring.html#a1800422d7f49e93354e0f8e7730bdcb6',1,'ring']]]
 ];
