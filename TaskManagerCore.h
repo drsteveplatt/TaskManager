@@ -23,9 +23,11 @@
 #if defined(__AVR__)
 #define TASKMGR_MESSAGE_SIZE (32-3-1)
 typedef byte tm_nodeId_t;
+typedef byte tm_taskId_t;
 #elif defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
 #define TASKMGR_MESSAGE_SIZE (250-4-1)
 typedef uint16_t tm_nodeId_t;
+typedef byte tm_taskId_t;
 #else
 #endif
 

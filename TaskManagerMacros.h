@@ -141,7 +141,9 @@
 /*!	\brief	Define a callable subtask
 	TM_ADDSUBTASK() defines the task and prepares it to wait for activation.
 	It should be used instead of any of the TaskManager.add*() routines.
+
 	Note that the 'void subtask(){...}' will need to be defined elsewhere.
+	Note that this is an internal function and may not be available in later releases
 */
 #define TM_ADDSUBTASK(id, task) TaskMgr.addAutoWaitMessage(id, task);
 
@@ -206,6 +208,10 @@
 	TM_ENDSUB()
 	Used at the bottom of a subtask.
 */
-#define TM_ENDSUB() { TaskMgr.sendMessage(__callingTask__, NULL, 0); TM_END(); }
+#define TM_ENDSUB() 								\
+		default:	break;							\
+	}												\
+	TaskMgr.sendMessage(__callingTask__, NULL, 0);	\
+	__tmNext__ = 0;
 /*! @} */
 #endif
