@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_class__ring" xml:lang="en-US">
+<title>_ring Class Reference</title>
+<indexterm><primary>_ring</primary></indexterm>
+<para>
+
+<para>Implements a templated ring data structure. </para>
+ 
+</para>
+<para>
+<computeroutput>#include &lt;TaskManagerCore_2.h&gt;</computeroutput>
+</para>
+<section>
+<title>Detailed Description</title>
+
+<para>Implements a templated ring data structure. </para>
+
+
+
+<para>This is a templated class that implements a ring of arbitrary objects. Each object must have a constructor and a destructor as well as operator=. It should also have the printTo member function if any form of serialization is to be done.</para>
+
+<para>This implements ring traversal (move to next/prev), insertion/deletion, etc. </para>
+<para>
+The documentation for this class was generated from the following file:</para>
+TaskManagerCore_2.h</section>
+</section>

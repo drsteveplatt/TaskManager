@@ -1,8 +1,6 @@
 var searchData=
 [
-  ['yield_105',['yield',['../class_task_manager.html#abc4f2e57cdc1fd1d3051b58dc816de98',1,'TaskManager']]],
-  ['yielddelay_106',['yieldDelay',['../class_task_manager.html#a2123fa0af84c3a1373b9437e2157e872',1,'TaskManager']]],
-  ['yieldformessage_107',['yieldForMessage',['../class_task_manager.html#a4f368a9141c55b085aefdc8833aeaeec',1,'TaskManager']]],
-  ['yieldforsignal_108',['yieldForSignal',['../class_task_manager.html#a887541b9c53d4dab1e28779098f68ce2',1,'TaskManager']]],
-  ['yielduntil_109',['yieldUntil',['../class_task_manager.html#aa3f827ee35d80bc4faa2f7d438163e78',1,'TaskManager']]]
+  ['sendmessage_0',['sendMessage',['../group__send.html#ga79227d756bef8d23a2be42ff60f1c606',1,'TaskManager::sendMessage(tm_taskId_t taskId, char *message)'],['../group__send.html#ga2668163bdcc5cd6057041cf766ed5e68',1,'TaskManager::sendMessage(tm_taskId_t taskId, void *buf, int len)']]],
+  ['size_1',['size',['../group__ring.html#gad8424513e6933cfd2cf7629f32a56252',1,'ring']]],
+  ['suspend_2',['suspend',['../group___task_manager.html#ga0b85b2e38baa808ad06b039adff9142c',1,'TaskManager::suspend(tm_taskId_t taskId)'],['../group__task.html#ga9bb954eabd1933e6e846285210fff088',1,'TaskManager::suspend(tm_nodeId_t nodeId, tm_taskId_t taskId)']]]
 ];

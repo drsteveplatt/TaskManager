@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['operator_3d_89',['operator=',['../classring.html#a52e785fb89c3e8ca7f4c5824f51f3532',1,'ring']]],
-  ['operator_3d_3d_90',['operator==',['../classring.html#ab47d8aac67ce284fc004bb88da21862f',1,'ring']]]
+  ['loop_0',['loop',['../group___task_manager.html#ga2b88a62f061cbc8159a101844d8e5469',1,'TaskManager']]]
 ];

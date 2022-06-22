@@ -1,103 +1,73 @@
 #define TASKMANAGER_MAIN
 
 #include <arduino.h>
-#include <TaskManagerCore.h>
+#include <TaskManagerCore_2.h>
 #include <Streaming.h>
 
 #define DEBUG false
-
-// Note that this will generate a warning when using TaskManagerRF.
-// The warning can be ignored.
-//extern TaskManager TaskMgr;
 
 /*! \file TaskManager.cpp
     Implementation file for Arduino Task Manager
 */
 
+/*!	\addtogroup _TaskManagerTask _TaskManagerTask
+*/
+
+/*! \addtogroup TaskManager TaskManager
+*/
+
 static void nullTask() {
 }
 
-// This is the replacement for the normal loop().
-//!	\private
-//void loop() {
-//    TaskMgr.loop();
-//}
-
-//
+// *******************************************************************
 // Implementation of _TaskManagerTask
 //
-
+/*! \ingroup _TaskManagerTask
+	@{
+*/
 /*! \brief Determine whether or not a task can be run NOW
 
     Determine whether or not a task is runnable.  A task can be run if and only if all of
     the following are true:
         (a) it is not suspended,
-        (b) it is not waiting for a signal,
-        (c) it is not waiting for a message, and
-        (d) either it is not waiting for a time or
-    that time has passed.
+        (b) it is not waiting for a message, and
+        (c) either it is not waiting for a time or that time has passed.
     */
 bool _TaskManagerTask::isRunnable()  {
     // if isRunnable returns TRUE, it should not be called again on the
     // task until the task is run.  Otherwise, internal state descriptions
     // for the task may be mangled.
     //
-    // Note that WaitMessage and WaitSignal will have been cleared if a
-    // process has received a message/signal.  We will clear WaitUntil here.
-    // Also, if a process has been (WaitUntil+WaitMessage/Signal) and it
-    // times out, the accompanying WaitMessage/Signal will be cleared.
+    // Note that WaitMessage will have been cleared if a
+    // process has received a message.  We will clear WaitUntil here.
+    // Also, if a process has been (WaitUntil+WaitMessage) and it
+    // times out, the accompanying WaitMessage will be cleared.
     bool ret;
-    //if(DEBUG && (my_Id==1 || my_Id==20)) Serial << "-->isRunnable, task " << my_Id << " status " << m_stateFlags << endl;
     if(stateTestBit(Suspended)) {
-		//if(DEBUG && (my_Id==1 || my_Id==20)) Serial << "...suspended\n";
 		ret = false;
-	} else if(stateTestBit(WaitSignal)) {
-		if(stateTestBit(WaitUntil)) {
-			// waiting for signal or timeout, act based on timeout
-			if(m_restartTime<millis()) {
-				//if(DEBUG && (my_Id==1 || my_Id==20)) Serial << "...signal not rc'd, timeout wait, timeout\n";
-				// timed out
-				stateClear(WaitUntil);
-				stateSet(TimedOut);
-				ret = true;
-			} else {
-				// neither timeout nor signal
-				//if(DEBUG && (my_Id==1 || my_Id==20)) Serial << "...signal not received, timeout wait, no timeout\n"
-				ret = false;
-			}
-		} else {
-			// just waiting for signal, no timeout
-			//if(DEBUG && (my_Id==1 || my_Id==20)) Serial << "...signal not received, no timeout wait\n"
-			ret = false;
-		}
 	} else if(stateTestBit(WaitMessage)) {
 		if(stateTestBit(WaitUntil)) {
 			// waiting for message or timeout, act based on timeout
 			if(m_restartTime<millis()) {
-				//if(DEBUG && (my_Id==1 || my_Id==20)) Serial << "...msg not received, timeout wait, timeout\n";
 				// timed out
 				stateClear(WaitUntil);
 				stateSet(TimedOut);
 				ret = true;
 			} else {
 				// neither timeout nor message
-				//if(DEBUG && (my_Id==1 || my_Id==20)) Serial << "...msg not received, timeout wait, no timeout";
 				ret = false;
 			}
 		} else {
 			// just waiting for message, no timeout
-			//if(DEBUG && (my_Id==1 || my_Id==20)) Serial << "...msg not received, no timeout wait\n"
 			ret = false;
 		}
 	} else if(stateTestBit(WaitUntil)) {
 		if(m_restartTime<millis()) {
 			// yes waiting for a time and the time has passed
-			//if(DEBUG && (my_Id==1 || my_Id==20)) Serial << "wait for time " << m_restart << ", time has passed\n";
 			stateClear(WaitUntil);
 			ret = true;
 		} else {
 			// waiting for a time, time hasn't passed yet
-			//if(DEBUG && (my_Id==1 || my_Id==20)) Serial << "wait for time " << m_restart << ", time has not passed\n";
 			ret = false;
 		}
 	} else {
@@ -119,11 +89,9 @@ _TaskManagerTask& _TaskManagerTask::operator=(_TaskManagerTask& rhs){
     m_stateFlags = rhs.m_stateFlags;
 
     m_restartTime = rhs.m_restartTime;
-    m_sigNum = rhs.m_sigNum;
     memcpy(m_message, rhs.m_message, TASKMGR_MESSAGE_SIZE);
 
     m_period = rhs.m_period;
-    m_restartSignal = rhs.m_restartSignal;
 
     m_id = rhs.m_id;
     m_fn = rhs.m_fn;
@@ -160,25 +128,46 @@ size_t _TaskManagerTask::printTo(Print& p) const {
     return ret;
 }
 #endif
-//
+/*!	@}
+*/
+
+// ***********************************************************************
 // Implementation of TaskManager
 //
 
 // Constructor and Destructor
 
+/*!	\ingroup TaskManager
+	@{
+*/
 
 TaskManager::TaskManager() {
-    add(0xff, nullTask);
+    add(TASKMGR_NULL_TASK, nullTask);
     m_startTime = millis();
+
+#if (defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24)) 
+	m_rf24 = NULL;
+	m_myNodeId = 0;
+	m_radioReceiverRunning = false;
+#elif defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
+	m_myNodeId = 0;
+	m_radioReceiverRunning = false;
+	m_TaskManagerMessageQueueSemaphore = xSemaphoreCreateBinary();
+#endif	
+
 }
 
 TaskManager::~TaskManager() {
+#if (defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24)) 
+	if(m_rf24!=NULL) delete m_rf24;
+#elif defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
+	vSemaphoreDelete(m_TaskManagerMessageQueueSemaphore);
+#endif
 }
 
 //
 //  Add a new task
 //
-
 
 void TaskManager::add(tm_taskId_t taskId, void (*fn)()) {
     _TaskManagerTask newTask(taskId, fn);
@@ -200,24 +189,6 @@ void TaskManager::addAutoWaitDelay(tm_taskId_t taskId, void(*fn)(), unsigned lon
     _TaskManagerTask newTask(taskId, fn);
     if(startWaiting) newTask.setWaitDelay(period); else newTask.m_restartTime = millis();
     newTask.setAutoDelay(period);
-    m_theTasks.push_back(newTask);
-}
-
-
-void TaskManager::addWaitSignal(tm_taskId_t taskId, void(*fn)(), byte sigNum, unsigned long timeout/*=0*/){
-    _TaskManagerTask newTask(taskId, fn);
-    newTask.setWaitSignal(sigNum, timeout);
-    m_theTasks.push_back(newTask);
-}
-
-
-void TaskManager::addAutoWaitSignal(tm_taskId_t taskId, void(*fn)(), byte sigNum, unsigned long timeout/*=0*/, bool startWaiting/*=true*/) {
-    _TaskManagerTask newTask(taskId, fn);
-    if(startWaiting) {
-        newTask.setWaitSignal(sigNum, timeout);
-        if(timeout>0) newTask.setWaitUntil(millis()+timeout);
-    }
-    newTask.setAutoSignal(sigNum, timeout);
     m_theTasks.push_back(newTask);
 }
 
@@ -254,76 +225,16 @@ void TaskManager::yieldUntil(unsigned long when) {
     longjmp(taskJmpBuf, YtYieldUntil);
 }
 
-void TaskManager::yieldForSignal(byte sigNum, unsigned long timeout/*=0*/) {
-    m_theTasks.front().setWaitSignal(sigNum, timeout);
-    longjmp(taskJmpBuf, YtYieldSignalTimeout);
-}
-
-
 void TaskManager::yieldForMessage(unsigned long timeout/*=0*/) {
     m_theTasks.front().setWaitMessage(timeout);
     longjmp(taskJmpBuf, YtYieldMessageTimeout);
 }
 
 //
-// Signal functions
+// Message functions
 //	Note that TaskManager uses these with nodeID of 0 (=="self") and
-//	TaskManagerRF uses either local or non-local nodeIDs.
+//	inter-node functions for TaskManagerRF and ESP uses either local or non-local nodeIDs.
 //
-
-void TaskManager::internalSendSignal(tm_nodeId_t fromNodeId, tm_taskId_t fromTaskId, byte sigNum) {
-    ring<_TaskManagerTask> tmpTasks;
-    _TaskManagerTask* tmt;
-    _TaskManagerTask* last;
-
-    tmpTasks = m_theTasks;
-    bool found = false;
-    last = &(m_theTasks.back());
-
-    // scan for the first thing that will receive the listed signal.
-    while(&(tmpTasks.front())!=last && !found) {
-        tmt = &(tmpTasks.front());
-        if(tmt->stateTestBit(_TaskManagerTask::WaitSignal) && tmt->m_sigNum==sigNum) {
-			tmt->m_fromNodeId = fromNodeId;
-			tmt->m_fromTaskId = fromTaskId;
-            tmt->signal();
-            found = true;
-        }
-        tmpTasks.move_next();
-    }
-    if(!found && last->stateTestBit(_TaskManagerTask::WaitSignal) && last->m_sigNum==sigNum) {
-        // the last task is the one we want to signal
-        last->m_fromNodeId = fromNodeId;
-        last->m_fromTaskId = fromTaskId;
-        last->signal();
-    }
-}
-
-void TaskManager::internalSendSignalAll(tm_nodeId_t fromNodeId, tm_taskId_t fromTaskId, byte sigNum) {
-    ring<_TaskManagerTask> tmpTasks;
-    _TaskManagerTask* tmt;
-    _TaskManagerTask* last;
-
-    tmpTasks = m_theTasks;
-    last = &(m_theTasks.back());
-
-    // scan for all things that will receive the listed signal.
-    while(&(tmpTasks.front())!=last) {
-        tmt = &(tmpTasks.front());
-        if(tmt->stateTestBit(_TaskManagerTask::WaitSignal) && tmt->m_sigNum==sigNum) {
-			tmt->m_fromNodeId = fromNodeId;
-			tmt->m_fromTaskId = fromTaskId;
-            tmt->signal();
-        }
-        tmpTasks.move_next();
-    }
-    if(last->stateTestBit(_TaskManagerTask::WaitSignal) && last->m_sigNum==sigNum) {
-        // the last task is the one we want to signal
-        last->m_fromNodeId = fromNodeId;
-        last->m_fromTaskId = fromTaskId;
-        last->signal();
-    }
-}
 
 void TaskManager::internalSendMessage(tm_nodeId_t fromNodeId, tm_taskId_t fromTaskId, tm_taskId_t taskId, char* message) {
     _TaskManagerTask* tsk;
@@ -345,7 +256,6 @@ void TaskManager::internalSendMessage(tm_nodeId_t fromNodeId, tm_taskId_t fromTa
     tsk->putMessage(buf, len);
 }
 
-
 // FindNextRunnable
 // Relies on the null task being present and always runnable.
 /*! \brief Find tne next runnable task.  Internal routine.
@@ -353,7 +263,8 @@ void TaskManager::internalSendMessage(tm_nodeId_t fromNodeId, tm_taskId_t fromTa
     Finds the next runnaable task on the task ring.  This routine assumes that the task ring is on the
     most-recently-run task.  It moves the task ring to the next task that is ready to run.  Since there
     is a null task and it is always runnable, FindNextRunnable() is guaranteed to find a runnable task.
-    For internal use only.
+	
+    This routine is for internal use only.
 */
 _TaskManagerTask* TaskManager::FindNextRunnable() {
     // Note:  This is the ONLY routine that should modify the m_theTasks ring's position pointer.
@@ -387,7 +298,9 @@ size_t TaskManager::printTo(Print& p) const {
 }
 #endif
 
-/*! \brief Find a task by its ID
+/*! \brief Find a task by its ID.  
+
+    This routine is for internal use only.
 
     \param id: the ID of the task
     \return A pointer to the _TaskManagerTask or NULL if not found
@@ -427,8 +340,8 @@ _TaskManagerTask* TaskManager::findTaskById(tm_taskId_t id) {
 
     This routine is for internal use only.
 */
-#define T1	20
-#define	T2	20
+//??delete??  #define T1	20
+//??delete??  #define	T2	20
 void TaskManager::loop() {
     int jmpVal; // return value from setjmp, indicates longjmp type
     _TaskManagerTask* nextTask;
@@ -437,27 +350,27 @@ void TaskManager::loop() {
     // is encountered.  It'll be ignored anyway unless we are auto-yielddelay, which is the only one
     // that focuses on the start-start measurement of the period.  (All others are end-start.)
     nextTask->m_restartTime = millis() + nextTask->m_period;
-    if(DEBUG && (nextTask->m_id==T1 || nextTask->m_id==T2)) Serial << "-->TaskManager::loop\n";
+    //??delete??if(DEBUG && (nextTask->m_id==T1 || nextTask->m_id==T2)) Serial << "-->TaskManager::loop\n";
     if((jmpVal=setjmp(/*TaskMgr.*/taskJmpBuf))==0) {
         // this is the normal path we use to invoke and process "normal" returns
-    	if(DEBUG && (nextTask->m_id==T1 || nextTask->m_id==T2)) Serial << "about to run task " << nextTask->m_id
-    	  << " at " << millis() << " status is " << _HEX(nextTask->m_stateFlags) << endl;
+    	//??delete??if(DEBUG && (nextTask->m_id==T1 || nextTask->m_id==T2)) Serial << "about to run task " << nextTask->m_id
+    	//??delete??  << " at " << millis() << " status is " << _HEX(nextTask->m_stateFlags) << endl;
         (nextTask->m_fn)();
-        if(DEBUG && (nextTask->m_id==T1 || nextTask->m_id==T2))
-        	Serial << "normal return at " << millis() << " pre-set status is " << _HEX(nextTask->m_stateFlags) << endl;
+        //??delete??if(DEBUG && (nextTask->m_id==T1 || nextTask->m_id==T2))
+        //??delete??	Serial << "normal return at " << millis() << " pre-set status is " << _HEX(nextTask->m_stateFlags) << endl;
 		// If we've gotten here, we got here through a normal "fall out the bottom or 'return'" return.
 		// As such, we reset according to the auto bits.
         // Process auto bits
         // AutoReWaitUntil has two interpretations:  If alone, it is periodic and is
         // incremented based on the previous restartTime.  If in conjunction with
-        // AutoReSignal/AutoReMessage then it is a timeout and is based on "now"
-        if(nextTask->anyStateSet(_TaskManagerTask::AutoReWaitMessage+_TaskManagerTask::AutoReWaitMessage)
+        // AutoReMessage then it is a timeout and is based on "now"
+        if(nextTask->anyStateSet(_TaskManagerTask::AutoReWaitMessage)
         	&& nextTask->stateTestBit(_TaskManagerTask::AutoReWaitUntil)) {
 			nextTask->setWaitUntil(millis()+nextTask->m_period);
 		}
 		nextTask->resetCurrentStateBits();
-		if(DEBUG && (nextTask->m_id==T1 || nextTask->m_id==T2))
-			Serial << "post-set status is " << _HEX(nextTask->m_stateFlags) << endl;
+		//??delete??if(DEBUG && (nextTask->m_id==T1 || nextTask->m_id==T2))
+		//??delete??	Serial << "post-set status is " << _HEX(nextTask->m_stateFlags) << endl;
     } else {
         // this is the path executed if a yield was called
         // Yield types (jmpVal values) are from YtYield
@@ -467,7 +380,7 @@ void TaskManager::loop() {
         //
         // In each case, the yield*(...) routine will have set the appropriate flag bit(s)
         // and if needed, stuffed a m_restartTime value if a delay/timeout was specified.
-        if(DEBUG && (nextTask->m_id==T1 || nextTask->m_id==T2)) Serial << "exited with yield type " << jmpVal << endl;
+        //??delete??if(DEBUG && (nextTask->m_id==T1 || nextTask->m_id==T2)) Serial << "exited with yield type " << jmpVal << endl;
         switch(jmpVal) {
             case YtYield:
                 // normal yield, just exit cleanly
@@ -475,14 +388,6 @@ void TaskManager::loop() {
                 break;
             case YtYieldUntil:
                 // yieldUntil/yieldDelay will have marked the next completion time so exit cleanly
-                // Autorestart is ignored
-                break;
-            case YtYieldSignal:
-                // yieldSignal will have stuffed the signal marker and flag so exit cleanly
-                // Autorestart is ignored
-                break;
-            case YtYieldSignalTimeout:
-                // yieldSignalTimeout will have stuffed the signal marker and timeout and flag so exit cleanly
                 // Autorestart is ignored
                 break;
             case YtYieldMessage:
@@ -509,20 +414,87 @@ void TaskManager::loop() {
                 break;
         }
      }
-     if(DEBUG && (nextTask->m_id==T1 || nextTask->m_id==T2)) Serial << "<--TaskManager::loop\n";
+     //??delete??if(DEBUG && (nextTask->m_id==T1 || nextTask->m_id==T2)) Serial << "<--TaskManager::loop\n";
 }
 
 // Status tasks
 
-void TaskManager::suspend(tm_taskId_t taskId) {
+bool TaskManager::suspend(tm_taskId_t taskId) {
     _TaskManagerTask* tsk;
     tsk = findTaskById(taskId);
     tsk->setSuspended();
+	return true;
 }
 
-void TaskManager::resume(tm_taskId_t taskId) {
+bool TaskManager::resume(tm_taskId_t taskId) {
     _TaskManagerTask* tsk;
     tsk = findTaskById(taskId);
     tsk->clearSuspended();
+	return true;
 }
 
+//
+// Network/Mesh tasks
+//
+
+#if (defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24)) || defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
+
+bool TaskManager::sendMessage(tm_nodeId_t nodeId, tm_taskId_t taskId, char* message) {
+	if(nodeId==0 || nodeId==myNodeId()) { TaskManager::sendMessage(taskId, message); return true; }
+	radioBuf.m_cmd = tmrMessage;
+	radioBuf.m_fromNodeId = myNodeId();
+	radioBuf.m_fromTaskId = myId();
+	radioBuf.m_data[0] = taskId;	// who we are sending it to
+	if(strlen(message)>TASKMGR_MESSAGE_SIZE-2) {
+		memcpy(&radioBuf.m_data[1], message, TASKMGR_MESSAGE_SIZE-2);
+		radioBuf.m_data[TASKMGR_MESSAGE_SIZE-2]='\0';
+	} else {
+		strcpy((char*)&radioBuf.m_data[1], message);
+	}
+	return radioSender(nodeId);
+}
+
+bool TaskManager::sendMessage(tm_nodeId_t nodeId, tm_taskId_t taskId, void* buf, int len) {
+	if(nodeId==0 || nodeId==myNodeId()) {
+		TaskManager::sendMessage(taskId, buf, len);
+		return true;
+	}
+	if(len>TASKMGR_MESSAGE_SIZE) {
+		return false;	// reject too-long messages
+	}
+	radioBuf.m_cmd = tmrMessage;
+	radioBuf.m_fromNodeId = myNodeId();
+	radioBuf.m_fromTaskId = myId();
+	radioBuf.m_data[0] = taskId;	// who we are sending it to
+	memcpy(&radioBuf.m_data[1], buf, len);
+	bool ret = radioSender(nodeId);
+	return ret;
+}
+
+bool TaskManager::suspend(tm_nodeId_t nodeId, tm_taskId_t taskId) {
+	if(nodeId==0 || nodeId==myNodeId()) { TaskManager::suspend(taskId); return true; }
+	radioBuf.m_cmd = tmrSuspend;
+	radioBuf.m_fromNodeId = myNodeId();
+	radioBuf.m_fromTaskId = myId();
+	radioBuf.m_data[0] = taskId;
+	return radioSender(nodeId);
+}
+
+bool TaskManager::resume(tm_nodeId_t nodeId, tm_taskId_t taskId) {
+	if(nodeId==0 || nodeId==myNodeId()) { TaskManager::resume(taskId); return true; }
+	radioBuf.m_cmd = tmrResume;
+	radioBuf.m_fromNodeId = myNodeId();
+	radioBuf.m_fromTaskId = myId();
+	radioBuf.m_data[0] = taskId;
+	return radioSender(nodeId);
+}
+
+void TaskManager::getSource(tm_nodeId_t& fromNodeId, tm_taskId_t& fromTaskId) {
+	fromNodeId = m_theTasks.front().m_fromNodeId;
+	fromTaskId = m_theTasks.front().m_fromTaskId;
+}
+
+#endif
+/*!	@}
+*/
+	

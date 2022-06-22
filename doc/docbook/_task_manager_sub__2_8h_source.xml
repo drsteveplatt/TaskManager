@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="__task_manager_sub__2_8h_source" xml:lang="en-US">
+<title>TaskManagerSub_2.h</title>
+<programlisting linenumbering="unnumbered">1 <emphasis role="preprocessor">#ifndef&#32;TASKMANAGER_H_INCLUDED</emphasis>
+2 <emphasis role="preprocessor">#define&#32;TASKMANAGER_H_INCLUDED</emphasis>
+3 
+4 <emphasis role="preprocessor">#include&#32;&lt;TaskManagerMacros_2.h&gt;</emphasis>
+5 <emphasis role="preprocessor">#include&#32;&lt;TaskManagerCore_2.h&gt;</emphasis>
+6 <emphasis role="keyword">extern</emphasis>&#32;<link linkend="_class_task_manager">TaskManager</link>&#32;TaskMgr;
+7 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">//&#32;TASKMANAGER_H_INCLUDED</emphasis>
+8 
+9 
+</programlisting></section>

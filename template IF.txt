@@ -1,0 +1,9 @@
+#if defined(ARDUINO_ARCH_AVR)
+ 
+#elif defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
+  
+#else
+#endif
+
+#if (defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24)) || defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
+#endif

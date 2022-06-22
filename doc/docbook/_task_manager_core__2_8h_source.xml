@@ -1,0 +1,656 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="__task_manager_core__2_8h_source" xml:lang="en-US">
+<title>TaskManagerCore_2.h</title>
+<programlisting linenumbering="unnumbered">1 <emphasis role="preprocessor">#ifndef&#32;TASKMANAGERCORE_H_INCLUDED</emphasis>
+2 <emphasis role="preprocessor">#define&#32;TASKMANAGERCORE_H_INCLUDED</emphasis>
+3 
+4 <emphasis role="comment">/*&#32;AVR&#32;Networking&#32;(RF24)&#32;Note:</emphasis>
+5 <emphasis role="comment">&#32;&#32;&#32;Uncomment&#32;this&#32;#define&#32;ONLY&#32;IF&#32;you&#32;wish&#32;the&#32;ACR&#32;RF24&#32;networking&#32;code&#32;to&#32;be&#32;included.</emphasis>
+6 <emphasis role="comment">&#32;&#32;&#32;This&#32;will&#32;incorporate&#32;RF24&#32;components&#32;into&#32;AVR&#32;compilations.</emphasis>
+7 <emphasis role="comment">&#32;&#32;&#32;Any&#32;AVR&#32;program&#32;using&#32;this&#32;will&#32;also&#32;have&#32;to&#32;#include&#32;&lt;RF24.h&gt;&#32;prior&#32;#include&#32;&lt;TaskManagerRF24.h&gt;</emphasis>
+8 <emphasis role="comment">*/</emphasis>
+9 <emphasis role="comment">//#define&#32;TASKMGR_AVR_RF24</emphasis>
+10 
+11 <emphasis role="comment">//#include&#32;&lt;Streaming.h&gt;</emphasis>
+12 <emphasis role="comment">//#include&#32;&lt;ring_2.h&gt;</emphasis>
+13 
+14 <emphasis role="comment">//&#32;Process&#32;includes&#32;for&#32;networking&#32;code</emphasis>
+15 <emphasis role="preprocessor">#if&#32;defined(ARDUINO_ARCH_AVR)&#32;&amp;&amp;&#32;defined(TASKMGR_AVR_RF24)</emphasis>
+16 <emphasis role="preprocessor">#elif&#32;defined(ARDUINO_ARCH_ESP8266)&#32;||&#32;defined(ARDUINO_ARCH_ESP32)</emphasis>
+17 <emphasis role="preprocessor">#include&#32;&lt;esp_now.h&gt;</emphasis>
+18 <emphasis role="preprocessor">#include&#32;&lt;WiFi.h&gt;</emphasis>
+19 <emphasis role="preprocessor">#include&#32;&lt;esp_wifi.h&gt;</emphasis>
+20 <emphasis role="preprocessor">#endif</emphasis>
+21 
+22 <emphasis role="preprocessor">#include&#32;&lt;setjmp.h&gt;</emphasis>
+23 
+28 <emphasis role="comment">/**********************************************/</emphasis>
+29 <emphasis role="comment">/*&#32;&#32;Class&#32;ring&#32;--&#32;an&#32;stl-like&#32;ring&#32;of&#32;objects&#32;*/</emphasis>
+30 <emphasis role="comment">/*&#32;&#32;Implementation&#32;at&#32;the&#32;end&#32;of&#32;this&#32;file&#32;&#32;&#32;&#32;*/</emphasis>
+35 <emphasis role="comment">//</emphasis>
+36 <emphasis role="comment">//&#32;The&#32;ring&#32;class&#32;implements&#32;a&#32;templated&#32;ring&#32;structure.&#32;&#32;It&#32;implements&#32;many&#32;of</emphasis>
+37 <emphasis role="comment">//&#32;the&#32;methods&#32;of&#32;an&#32;STL&#32;collection.</emphasis>
+38 
+39 <emphasis role="keyword">template</emphasis>&lt;<emphasis role="keyword">class</emphasis>&#32;T&gt;&#32;<emphasis role="keyword">class&#32;</emphasis><link linkend="_classring">ring</link>;&#32;&#32;&#32;<emphasis role="comment">//&#32;forward&#32;declaration</emphasis>
+40 
+41 <emphasis role="comment">//&#32;Definition&#32;of&#32;a&#32;single&#32;node&#32;in&#32;the&#32;ring.&#32;&#32;This&#32;is&#32;the&#32;actual&#32;data.</emphasis>
+42 <emphasis role="comment">//&#32;It&#32;is&#32;a&#32;doubly-linked&#32;list&#32;that&#32;loops&#32;in&#32;both&#32;directions.&#32;&#32;A&#32;pointer&#32;to</emphasis>
+43 <emphasis role="comment">//&#32;one&#32;of&#32;the&#32;elements&#32;defines&#32;the&#32;&quot;current&quot;&#32;element&#32;in&#32;the&#32;ring.</emphasis>
+48 <emphasis role="comment"></emphasis><emphasis role="keyword">template</emphasis>&lt;<emphasis role="keyword">class</emphasis>&#32;T&gt;<emphasis role="keyword">class&#32;</emphasis>_ringNode&#32;{
+49 &#32;&#32;&#32;&#32;<emphasis role="keyword">friend</emphasis>&#32;<emphasis role="keyword">class&#32;</emphasis><link linkend="_classring">ring</link>&lt;T&gt;;
+50 <emphasis role="keyword">protected</emphasis>:
+51 &#32;&#32;&#32;&#32;T&#32;m_val;
+52 &#32;&#32;&#32;&#32;_ringNode*&#32;m_next;
+53 &#32;&#32;&#32;&#32;_ringNode*&#32;m_prev;
+54 };
+55 
+56 <emphasis role="comment">//&#32;The&#32;ring&#32;object.&#32;&#32;It&#32;contains&#32;a&#32;pointer&#32;to&#32;the&#32;&quot;current&quot;&#32;element&#32;of</emphasis>
+57 <emphasis role="comment">//&#32;a&#32;series&#32;of&#32;_ringNode&#32;objects/</emphasis>
+58 <emphasis role="comment">//</emphasis>
+59 <emphasis role="comment">//&#32;Note&#32;that&#32;front()&#32;and&#32;back()&#32;return&#32;a&#32;reference&#32;to&#32;the&#32;first&#32;data&#32;element.</emphasis>
+60 <emphasis role="comment">//&#32;This&#32;allows&#32;operations&#32;like&#32;myRing-&gt;front()++&#32;to&#32;increment&#32;the&#32;value&#32;in</emphasis>
+61 <emphasis role="comment">//&#32;a&#32;ring&#32;of&#32;ints,&#32;for&#32;example.&#32;&#32;front()&#32;and&#32;back()&#32;do&#32;not&#32;remove&#32;values.</emphasis>
+62 <emphasis role="comment">//&#32;If&#32;the&#32;ring&#32;is&#32;empty,&#32;front()&#32;and&#32;back()&#32;will&#32;blow&#32;up.&#32;&#32;This&#32;is&#32;keeping</emphasis>
+63 <emphasis role="comment">//&#32;with&#32;STL&#32;standard:&#32;&#32;these&#32;operations&#32;are&#32;not&#32;defined&#32;on&#32;empty&#32;collections.</emphasis>
+64 
+74 <emphasis role="keyword">template</emphasis>&lt;<emphasis role="keyword">class</emphasis>&#32;T&gt;<emphasis role="keyword">class&#32;</emphasis><link linkend="_classring">ring</link>&#32;{
+75 &#32;&#32;&#32;&#32;<emphasis role="keyword">private</emphasis>:
+76 &#32;&#32;&#32;&#32;_ringNode&lt;T&gt;*&#32;m_cur;
+77 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">char</emphasis>*&#32;m_prefix;
+78 
+79 <emphasis role="keyword">public</emphasis>:
+80 &#32;&#32;&#32;&#32;<emphasis role="comment">//*****&#32;Constructor,&#32;destructor</emphasis>
+82 <emphasis role="comment"></emphasis>&#32;&#32;&#32;&#32;<link linkend="_classring_1a289cfd3a4d5885e43351277b1d3fb9d9">ring</link>():&#32;m_cur(NULL),&#32;m_prefix((char*)<emphasis role="stringliteral">&quot;r:&#32;&quot;</emphasis>)&#32;{}
+88 &#32;&#32;&#32;&#32;<link linkend="_classring_1aa208bdbd13da76233bfb0edb3e460fa5">~ring</link>()&#32;{}
+89 
+90 
+91 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;<link linkend="_classring_1ad9de090ad384e32e39337c85a9a21549">push_front</link>(T&#32;val);
+92 
+93 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;<link linkend="_classring_1ab13c5ad32f0ccd338400dd16c3259f9b">push_back</link>(T&#32;val);
+94 
+95 &#32;&#32;&#32;&#32;<emphasis role="comment">//*****&#32;removal</emphasis>
+96 
+97 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;<link linkend="_classring_1a8bd49b76e56686927dcfd78cb5172690">pop_front</link>();
+98 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;<link linkend="_classring_1ad000e92398391abc8958e0fc5595c329">pop_back</link>();
+99 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;<link linkend="_classring_1a65033722386b6afe9d7cd03e5dc95bb5">clear</link>();
+100 
+101 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;access</emphasis>
+102 
+103 &#32;&#32;&#32;&#32;T&amp;&#32;<link linkend="_classring_1a18c99d7c346c2ac99a91e49c28f8a7af">front</link>()&#32;<emphasis role="keyword">const</emphasis>;
+104 &#32;&#32;&#32;&#32;T&amp;&#32;<link linkend="_classring_1afc322bf07d7bdcc65888e604581202d0">back</link>()&#32;<emphasis role="keyword">const</emphasis>;
+105 
+106 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;moving&#32;around</emphasis>
+107 
+108 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;<link linkend="_classring_1af16864a4bd729a9b91e4a2fcdec8f737">move_next</link>();
+109 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;<link linkend="_classring_1ad682fc47814540b7c492dfb3a65123b3">move_prev</link>();
+110 
+111 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;query&#32;for&#32;info</emphasis>
+112 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">bool</emphasis>&#32;<link linkend="_classring_1a1800422d7f49e93354e0f8e7730bdcb6">empty</link>()&#32;<emphasis role="keyword">const</emphasis>;
+113 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">size_t</emphasis>&#32;<link linkend="_classring_1ad8424513e6933cfd2cf7629f32a56252">size</link>()&#32;<emphasis role="keyword">const</emphasis>;
+114 
+115 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;assignment&#32;and&#32;comparison&#32;(equality)</emphasis>
+116 &#32;&#32;&#32;&#32;<link linkend="_classring">ring&lt;T&gt;</link>&amp;&#32;<link linkend="_classring_1a52e785fb89c3e8ca7f4c5824f51f3532">operator=</link>(<link linkend="_classring">ring&lt;T&gt;</link>&amp;&#32;r);
+117 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">bool</emphasis>&#32;<link linkend="_classring_1ab47d8aac67ce284fc004bb88da21862f">operator==</link>(<link linkend="_classring">ring&lt;T&gt;</link>&amp;&#32;r)&#32;<emphasis role="keyword">const</emphasis>;
+118 
+119 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;mapping&#32;operations</emphasis>
+120 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;<link linkend="_classring_1aada527f64532b1710d200953bfbabf2a">map</link>(<emphasis role="keywordtype">void</emphasis>&#32;(*fn)(T&amp;&#32;));
+121 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;<link linkend="_classring_1aada527f64532b1710d200953bfbabf2a">map</link>(<emphasis role="keywordtype">void</emphasis>&#32;(*fn)(T&amp;&#32;,&#32;<emphasis role="keywordtype">void</emphasis>*&#32;),&#32;<emphasis role="keywordtype">void</emphasis>*&#32;);
+122 };
+125 <emphasis role="comment">/*&#32;&#32;End&#32;of&#32;class&#32;ring&#32;*/</emphasis>
+126 <emphasis role="comment">/**********************/</emphasis>
+127 
+141 <emphasis role="preprocessor">#if&#32;defined(ARDUINO_ARCH_AVR)</emphasis>
+142 <emphasis role="keyword">typedef</emphasis>&#32;uint8_t&#32;tm_nodeId_t;
+143 <emphasis role="keyword">typedef</emphasis>&#32;uint8_t&#32;tm_taskId_t;
+144 <emphasis role="preprocessor">#define&#32;TASKMGR_MESSAGE_SIZE&#32;(32-1-sizeof(tm_nodeId_t)-2*sizeof(tm_taskId_t))</emphasis>
+145 <emphasis role="preprocessor">#elif&#32;defined(ARDUINO_ARCH_ESP8266)&#32;||&#32;defined(ARDUINO_ARCH_ESP32)</emphasis>
+146 <emphasis role="keyword">typedef</emphasis>&#32;uint16_t&#32;tm_nodeId_t;
+147 <emphasis role="keyword">typedef</emphasis>&#32;uint8_t&#32;tm_taskId_t;
+148 <emphasis role="preprocessor">#define&#32;TASKMGR_MESSAGE_SIZE&#32;(250-1-sizeof(tm_nodeId_t)-2*sizeof(tm_taskId_t))</emphasis>
+149 <emphasis role="preprocessor">#else</emphasis>
+150 <emphasis role="preprocessor">#endif</emphasis>
+151 
+155 <emphasis role="comment">/**********************************************/</emphasis>
+156 <emphasis role="comment">/*&#32;class&#32;_TaskManagerRadioPacket&#32;--&#32;the&#32;info&#32;&#32;*/</emphasis>
+157 <emphasis role="comment">/*&#32;transmitted&#32;between&#32;nodes&#32;to&#32;pass&#32;messages&#32;*/</emphasis>
+158 <emphasis role="preprocessor">#if&#32;(defined(ARDUINO_ARCH_AVR)&#32;&amp;&amp;&#32;defined(TASKMGR_AVR_RF24))&#32;||&#32;defined(ARDUINO_ARCH_ESP8266)&#32;||&#32;defined(ARDUINO_ARCH_ESP32)</emphasis>
+165 <emphasis role="keyword">struct&#32;</emphasis>_TaskManagerRadioPacket&#32;{
+166 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">byte</emphasis>&#32;&#32;&#32;&#32;m_cmd;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;
+167 &#32;&#32;&#32;&#32;tm_nodeId_t&#32;m_fromNodeId;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;source&#32;node</emphasis>
+168 &#32;&#32;&#32;&#32;tm_taskId_t&#32;m_fromTaskId;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;source&#32;task</emphasis>
+169 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">byte</emphasis>&#32;&#32;&#32;&#32;m_data[TASKMGR_MESSAGE_SIZE];&#32;&#32;&#32;
+170 }&#32;__attribute__((packed));
+171 <emphasis role="preprocessor">#if&#32;defined(ARDUINO_ARCH_ESP8266)&#32;||&#32;defined(ARDUINO_ARCH_ESP32)</emphasis>
+172 <emphasis role="comment">//&#32;This&#32;is&#32;where&#32;we&#32;build&#32;MAC&#32;data&#32;for&#32;setting&#32;our&#32;MAC&#32;and&#32;pairing&#32;setup</emphasis>
+173 <emphasis role="comment">//&#32;It&#32;has&#32;enough&#32;constant&#32;data&#32;that&#32;it&#32;is&#32;easier&#32;to&#32;just&#32;keep&#32;one&#32;around.</emphasis>
+174 <emphasis role="keyword">static</emphasis>&#32;<emphasis role="keywordtype">byte</emphasis>&#32;_TaskManagerMAC[]&#32;=&#32;{&#32;0xA6,&#32;<emphasis role="charliteral">&apos;T&apos;</emphasis>,&#32;<emphasis role="charliteral">&apos;M&apos;</emphasis>,&#32;&#32;0,&#32;0x00,&#32;0x00&#32;};
+175 <emphasis role="preprocessor">#endif</emphasis>
+176 <emphasis role="preprocessor">#endif</emphasis>
+177 
+178 <emphasis role="comment">/*&#32;&#32;FIXED&#32;TASKS&#32;*/</emphasis>
+182 <emphasis role="preprocessor">#if&#32;defined(ARDUINO_ARCH_AVR)</emphasis>
+183 <emphasis role="preprocessor">#define&#32;TASKMGR_NULL_TASK&#32;255</emphasis>
+184 <emphasis role="preprocessor">#elif&#32;defined(ARDUINO_ARCH_ESP8266)&#32;||&#32;defined(ARDUINO_ARCH_ESP32)</emphasis>
+185 <emphasis role="preprocessor">#define&#32;TASKMGR_NULL_TASK&#32;255</emphasis>
+186 <emphasis role="preprocessor">#endif</emphasis>
+190 <emphasis role="preprocessor">#define&#32;TASKMGR_RF_MONITOR_TASK&#32;(TASKMGR_NULL_TASK-1)</emphasis>
+191 
+195 <emphasis role="preprocessor">#define&#32;TASKMGR_PING_MONITOR_TASK&#32;(TASKMGR_NULL_TASK-2)</emphasis>
+196 
+200 <emphasis role="preprocessor">#define&#32;TASKMGR_MENU_MONITOR_TASK&#32;(TASKMGR_NULL_TASK-3)</emphasis>
+201 
+215 <emphasis role="keyword">class&#32;</emphasis><link linkend="_class_task_manager">TaskManager</link>;&#32;&#32;<emphasis role="comment">//&#32;forward&#32;declaration</emphasis>
+216 
+217 <emphasis role="preprocessor">#if&#32;defined(TASKMANAGER_DEBUG)</emphasis>
+218 <emphasis role="keyword">class&#32;</emphasis>_TaskManagerTask:&#32;<emphasis role="keyword">public</emphasis>&#32;Printable&#32;{
+219 <emphasis role="preprocessor">#else</emphasis>
+220 <emphasis role="keyword">class&#32;</emphasis>_TaskManagerTask&#32;{
+221 <emphasis role="preprocessor">#endif</emphasis>
+222 &#32;&#32;&#32;&#32;<emphasis role="keyword">friend</emphasis>&#32;<emphasis role="keyword">class&#32;</emphasis><link linkend="_class_task_manager">TaskManager</link>;
+223 <emphasis role="keyword">protected</emphasis>:
+226 &#32;&#32;&#32;&#32;<emphasis role="comment">/*&#32;\@&#32;*/</emphasis>
+230 &#32;&#32;&#32;&#32;<emphasis role="keyword">enum</emphasis>&#32;TaskStates&#32;{UNUSED01=0x01,&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;RFU</emphasis>
+231 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;WaitMessage=0x02,&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;
+232 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;WaitUntil=0x04,&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;
+233 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;UNUSED08&#32;=&#32;0x08,&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;RFU</emphasis>
+234 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;AutoReWaitMessage&#32;=&#32;0x10,&#32;&#32;&#32;&#32;&#32;&#32;&#32;
+235 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;AutoReWaitUntil&#32;=&#32;0x20,&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;
+236 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;TimedOut&#32;=&#32;0x40,&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;
+237 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;Suspended=0x80&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;
+238 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;};
+239 &#32;&#32;&#32;&#32;<emphasis role="comment">/*&#32;\}&#32;*/</emphasis>
+240 <emphasis role="keyword">public</emphasis>:
+241 &#32;&#32;&#32;&#32;tm_nodeId_t&#32;m_fromNodeId;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;where&#32;the&#32;signal/message&#32;came&#32;from</emphasis>
+242 &#32;&#32;&#32;&#32;tm_taskId_t&#32;m_fromTaskId;
+243 <emphasis role="keyword">protected</emphasis>:
+244 &#32;&#32;&#32;&#32;uint8_t&#32;m_stateFlags;&#32;
+245 
+246 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Active&#32;delay&#32;information.&#32;&#32;If&#32;a&#32;task&#32;is&#32;waiting,&#32;here&#32;is&#32;the&#32;reason&#32;(or&#32;in&#32;the</emphasis>
+247 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;case&#32;of&#32;messaging,&#32;the&#32;response)</emphasis>
+248 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">unsigned</emphasis>&#32;<emphasis role="keywordtype">long</emphasis>&#32;m_restartTime;&#32;&#32;
+250 
+251 
+252 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">char</emphasis>&#32;m_message[TASKMGR_MESSAGE_SIZE];&#32;&#32;&#32;
+253 &#32;&#32;&#32;&#32;uint16_t&#32;m_messageLength;
+254 
+255 &#32;&#32;&#32;&#32;<emphasis role="comment">//NOT&#32;USED???&#32;unsigned&#32;int&#32;m_reTimeout;&#32;&#32;&#32;//!&lt;&#32;The&#32;timeout&#32;to&#32;use&#32;during&#32;auto&#32;restarts.&#32;&#32;0&#32;means&#32;no&#32;timeout.</emphasis>
+256 
+257 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Autorestart&#32;information.&#32;&#32;If&#32;a&#32;task&#32;has&#32;autorestart,&#32;here&#32;is&#32;the&#32;information&#32;to&#32;use&#32;at&#32;the&#32;restart</emphasis>
+258 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">unsigned</emphasis>&#32;<emphasis role="keywordtype">long</emphasis>&#32;m_period;&#32;
+259 
+260 &#32;&#32;&#32;&#32;tm_taskId_t&#32;&#32;&#32;&#32;m_id;&#32;
+261 &#32;&#32;&#32;&#32;void&#32;&#32;&#32;&#32;(*m_fn)();&#32;
+262 
+263 <emphasis role="keyword">public</emphasis>:
+267 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Constructors&#32;and&#32;destructors</emphasis>
+268 &#32;&#32;&#32;&#32;_TaskManagerTask();
+269 &#32;&#32;&#32;&#32;_TaskManagerTask(tm_taskId_t&#32;<emphasis role="keywordtype">id</emphasis>,&#32;<emphasis role="keywordtype">void</emphasis>&#32;(*fn)());
+270 &#32;&#32;&#32;&#32;~_TaskManagerTask();
+272 <emphasis role="keyword">protected</emphasis>:
+273 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;State&#32;bit&#32;manipulation&#32;methods</emphasis>
+274 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">bool</emphasis>&#32;anyStateSet(<emphasis role="keywordtype">byte</emphasis>);
+275 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">bool</emphasis>&#32;allStateSet(<emphasis role="keywordtype">byte</emphasis>);
+276 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">bool</emphasis>&#32;stateTestBit(<emphasis role="keywordtype">byte</emphasis>);
+277 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;stateSet(<emphasis role="keywordtype">byte</emphasis>);
+278 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;stateClear(<emphasis role="keywordtype">byte</emphasis>&#32;bits);
+279 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;resetCurrentStateBits();
+280 
+281 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Querying&#32;its&#32;state&#32;and&#32;other&#32;info</emphasis>
+282 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">bool</emphasis>&#32;isRunnable();
+283 
+284 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Setting&#32;its&#32;state</emphasis>
+285 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;setRunnable();
+286 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;setSuspended();
+287 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;clearSuspended();
+288 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;setWaitUntil(<emphasis role="keywordtype">unsigned</emphasis>&#32;<emphasis role="keywordtype">long</emphasis>);
+289 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;setWaitDelay(<emphasis role="keywordtype">unsigned</emphasis>&#32;<emphasis role="keywordtype">int</emphasis>);
+290 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;setAutoDelay(<emphasis role="keywordtype">unsigned</emphasis>&#32;<emphasis role="keywordtype">int</emphasis>);
+291 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;setWaitMessage(<emphasis role="keywordtype">unsigned</emphasis>&#32;<emphasis role="keywordtype">int</emphasis>&#32;msTimeout=0);
+292 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;setAutoMessage(<emphasis role="keywordtype">unsigned</emphasis>&#32;<emphasis role="keywordtype">int</emphasis>&#32;msTimeout=0);
+293 
+294 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;How&#32;to&#32;receive&#32;a&#32;signal/message</emphasis>
+295 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;signal();
+296 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;putMessage(<emphasis role="keywordtype">void</emphasis>*&#32;buf,&#32;<emphasis role="keywordtype">int</emphasis>&#32;len);
+297 
+298 <emphasis role="keyword">public</emphasis>:
+299 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Things&#32;that&#32;make&#32;the&#32;ring&#32;of&#32;_TaskManagerTask&#32;work</emphasis>
+300 &#32;&#32;&#32;&#32;_TaskManagerTask&amp;&#32;operator=(_TaskManagerTask&amp;&#32;rhs);
+301 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">bool</emphasis>&#32;operator==(_TaskManagerTask&amp;&#32;rhs)&#32;<emphasis role="keyword">const</emphasis>;
+302 
+303 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Miscellaneous&#32;methods</emphasis>
+304 <emphasis role="preprocessor">#if&#32;defined(TASKMANAGER_DEBUG)</emphasis>
+305 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">size_t</emphasis>&#32;printTo(Print&amp;&#32;p)&#32;<emphasis role="keyword">const</emphasis>;
+306 <emphasis role="preprocessor">#endif</emphasis>
+307 };
+311 <emphasis role="comment">/**********************************************************************************************************/</emphasis>
+312 
+325 <emphasis role="preprocessor">#if&#32;defined(TASKMANAGER_PRINTABLE)</emphasis>
+326 <emphasis role="keyword">class&#32;</emphasis><link linkend="_class_task_manager">TaskManager</link>:&#32;<emphasis role="keyword">public</emphasis>&#32;Printable&#32;{
+327 <emphasis role="preprocessor">#else</emphasis>
+328 <emphasis role="keyword">class&#32;</emphasis><link linkend="_class_task_manager">TaskManager</link>&#32;{
+329 <emphasis role="preprocessor">#endif</emphasis>
+330 <emphasis role="preprocessor">#if&#32;defined(ARDUINO_ARCH_ESP8266)&#32;||&#32;defined(ARDUINO_ARCH_ESP32)</emphasis>
+331 <emphasis role="keyword">private</emphasis>:
+332 &#32;&#32;&#32;&#32;RF24*&#32;&#32;&#32;m_rf24;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Our&#32;radio&#32;(dynamically&#32;allocated)&#32;&#32;&#32;&#32;</emphasis>
+333 <emphasis role="preprocessor">#endif</emphasis>
+334 <emphasis role="keyword">public</emphasis>:
+335 &#32;&#32;&#32;&#32;<link linkend="_classring">ring&lt;_TaskManagerTask&gt;</link>&#32;<link linkend="_class_task_manager_1a01f290a48b9f1f9ad4fdb08cffddaca5">m_theTasks</link>;&#32;
+336 
+337 <emphasis role="keyword">private</emphasis>:
+338 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">unsigned</emphasis>&#32;<emphasis role="keywordtype">long</emphasis>&#32;m_startTime;&#32;&#32;<emphasis role="comment">//&#32;Start&#32;clock&#32;time.&#32;&#32;Used&#32;to&#32;calcualte&#32;runtime.&#32;For&#32;internal&#32;use&#32;only.</emphasis>
+339 <emphasis role="keyword">public</emphasis>:
+340 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Constructor&#32;and&#32;destructor</emphasis>
+341 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Not&#32;included&#32;in&#32;doxygen&#32;documentation&#32;because&#32;the</emphasis>
+342 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;user&#32;never&#32;constructs&#32;or&#32;destructs&#32;a&#32;TaskManager&#32;object</emphasis>
+345 <emphasis role="comment"></emphasis>&#32;&#32;&#32;&#32;<link linkend="_class_task_manager">TaskManager</link>();
+346 &#32;&#32;&#32;&#32;
+352 &#32;&#32;&#32;&#32;<link linkend="_class_task_manager">~TaskManager</link>();
+353 
+354 
+355 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Things&#32;used&#32;by&#32;yield</emphasis>
+356 <emphasis role="keyword">private</emphasis>:
+357 &#32;&#32;&#32;&#32;<emphasis role="comment">/*&#32;Defines&#32;the&#32;different&#32;methods&#32;a&#32;process&#32;may&#32;yield&#32;control.</emphasis>
+358 <emphasis role="comment"></emphasis>
+359 <emphasis role="comment">&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;This&#32;is&#32;the&#32;return&#32;value&#32;passsed&#32;back&#32;by&#32;the&#32;different&#32;yield*()&#32;routines&#32;to&#32;the&#32;control&#32;`loop()`.</emphasis>
+360 <emphasis role="comment">&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;It&#32;indicates&#32;which&#32;form&#32;of&#32;yield*()&#32;was&#32;called.</emphasis>
+361 <emphasis role="comment"></emphasis>
+362 <emphasis role="comment">&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;This&#32;is&#32;for&#32;internal&#32;use&#32;only.</emphasis>
+363 <emphasis role="comment">&#32;&#32;&#32;&#32;*/</emphasis>
+364 &#32;&#32;&#32;&#32;<emphasis role="keyword">enum</emphasis>&#32;YieldTypes&#32;{&#32;YtYield,
+365 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;YtYieldUntil,
+366 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;YtYieldMessage,
+367 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;YtYieldMessageTimeout,
+368 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;YtYieldSuspend,
+369 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;YtYieldKill
+370 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;};
+371 &#32;&#32;&#32;&#32;jmp_buf&#32;&#32;taskJmpBuf;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Jump&#32;buffer&#32;used&#32;by&#32;yield.&#32;&#32;For&#32;internal&#32;use&#32;only.</emphasis>
+372 
+373 <emphasis role="keyword">public</emphasis>:
+390 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;add(tm_taskId_t&#32;taskId,&#32;<emphasis role="keywordtype">void</emphasis>&#32;(*fn)());
+391 
+404 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;addWaitDelay(tm_taskId_t&#32;taskId,&#32;<emphasis role="keywordtype">void</emphasis>(*fn)(),&#32;<emphasis role="keywordtype">unsigned</emphasis>&#32;<emphasis role="keywordtype">long</emphasis>&#32;msDelay);
+405 
+418 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;addWaitUntil(tm_taskId_t&#32;taskId,&#32;<emphasis role="keywordtype">void</emphasis>(*fn)(),&#32;<emphasis role="keywordtype">unsigned</emphasis>&#32;<emphasis role="keywordtype">long</emphasis>&#32;msWhen);
+419 
+429 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;addWaitMessage(tm_taskId_t&#32;taskId,&#32;<emphasis role="keywordtype">void</emphasis>(*fn)(),&#32;<emphasis role="keywordtype">unsigned</emphasis>&#32;<emphasis role="keywordtype">long</emphasis>&#32;timeout=0);
+430 
+448 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;addAutoWaitDelay(tm_taskId_t&#32;taskId,&#32;<emphasis role="keywordtype">void</emphasis>(*fn)(),&#32;<emphasis role="keywordtype">unsigned</emphasis>&#32;<emphasis role="keywordtype">long</emphasis>&#32;period,&#32;<emphasis role="keywordtype">bool</emphasis>&#32;startDelayed=<emphasis role="keyword">false</emphasis>);
+449 
+464 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;addAutoWaitMessage(tm_taskId_t&#32;taskId,&#32;<emphasis role="keywordtype">void</emphasis>(*fn)(),&#32;<emphasis role="keywordtype">unsigned</emphasis>&#32;<emphasis role="keywordtype">long</emphasis>&#32;timeout=0,&#32;<emphasis role="keywordtype">bool</emphasis>&#32;startWaiting=<emphasis role="keyword">true</emphasis>);&#32;
+484 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;yield();
+485 
+496 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;yieldDelay(<emphasis role="keywordtype">unsigned</emphasis>&#32;<emphasis role="keywordtype">long</emphasis>&#32;ms);
+497 
+508 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;yieldUntil(<emphasis role="keywordtype">unsigned</emphasis>&#32;<emphasis role="keywordtype">long</emphasis>&#32;when);
+509 
+523 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;yieldForMessage(<emphasis role="keywordtype">unsigned</emphasis>&#32;<emphasis role="keywordtype">long</emphasis>&#32;timeout=0);
+553 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;sendMessage(tm_taskId_t&#32;taskId,&#32;<emphasis role="keywordtype">char</emphasis>*&#32;message);&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;string</emphasis>
+554 
+574 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;sendMessage(tm_taskId_t&#32;taskId,&#32;<emphasis role="keywordtype">void</emphasis>*&#32;buf,&#32;<emphasis role="keywordtype">int</emphasis>&#32;len);
+575 &#32;&#32;&#32;&#32;
+594 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">bool</emphasis>&#32;<link linkend="_class_task_manager_1ae5ba60f8681afab4cc32d16759262760">sendMessage</link>(tm_nodeId_t&#32;nodeId,&#32;tm_taskId_t&#32;taskId,&#32;<emphasis role="keywordtype">char</emphasis>*&#32;message);
+595 
+596 <emphasis role="preprocessor">#if&#32;(defined(ARDUINO_ARCH_AVR)&#32;&amp;&amp;&#32;defined(TASKMGR_AVR_RF24))&#32;||&#32;defined(ARDUINO_ARCH_ESP8266)&#32;||&#32;defined(ARDUINO_ARCH_ESP32)</emphasis>
+614 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">bool</emphasis>&#32;sendMessage(tm_nodeId_t&#32;nodeId,&#32;tm_taskId_t&#32;taskId,&#32;<emphasis role="keywordtype">void</emphasis>*&#32;buf,&#32;<emphasis role="keywordtype">int</emphasis>&#32;len);
+615 <emphasis role="preprocessor">#endif</emphasis>
+616 
+624 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;getSource(tm_taskId_t&amp;&#32;fromTaskId);
+625 <emphasis role="preprocessor">#if&#32;(defined(ARDUINO_ARCH_AVR)&#32;&amp;&amp;&#32;defined(TASKMGR_AVR_RF24))&#32;||&#32;defined(ARDUINO_ARCH_ESP8266)&#32;||&#32;defined(ARDUINO_ARCH_ESP32)</emphasis>
+637 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;getSource(tm_nodeId_t&amp;&#32;fromNodeId,&#32;tm_taskId_t&amp;&#32;fromTaskId);
+638 <emphasis role="preprocessor">#endif</emphasis>
+639 
+669 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;suspend(tm_taskId_t&#32;taskId);&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;task</emphasis>
+670 &#32;&#32;&#32;&#32;
+671 <emphasis role="preprocessor">#if&#32;(defined(ARDUINO_ARCH_AVR)&#32;&amp;&amp;&#32;defined(TASKMGR_AVR_RF24))&#32;||&#32;defined(ARDUINO_ARCH_ESP8266)&#32;||&#32;defined(ARDUINO_ARCH_ESP32)</emphasis>
+684 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">bool</emphasis>&#32;suspend(tm_nodeId_t&#32;nodeId,&#32;tm_taskId_t&#32;taskId);&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;node,&#32;task</emphasis>
+685 <emphasis role="preprocessor">#endif&#32;&#32;</emphasis>
+686 
+696 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;resume(tm_taskId_t&#32;taskId);&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;task</emphasis>
+697 &#32;&#32;&#32;&#32;
+698 <emphasis role="preprocessor">#if&#32;(defined(ARDUINO_ARCH_AVR)&#32;&amp;&amp;&#32;defined(TASKMGR_AVR_RF24))&#32;||&#32;defined(ARDUINO_ARCH_ESP8266)&#32;||&#32;defined(ARDUINO_ARCH_ESP32)</emphasis>
+709 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">bool</emphasis>&#32;resume(tm_nodeId_t&#32;nodeId,&#32;tm_taskId_t&#32;taskId);&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;node,&#32;task</emphasis>
+710 <emphasis role="preprocessor">#endif</emphasis>
+711 
+714 &#32;&#32;&#32;&#32;<emphasis role="comment">/*&#32;****&#32;Mesh/Radio&#32;Internal&#32;Routines&#32;*/</emphasis>
+715 <emphasis role="preprocessor">#if&#32;(defined(ARDUINO_ARCH_AVR)&#32;&amp;&amp;&#32;defined(TASKMGR_AVR_RF24))&#32;||&#32;defined(ARDUINO_ARCH_ESP8266)&#32;||&#32;defined(ARDUINO_ARCH_ESP32)</emphasis>
+716 <emphasis role="keyword">private</emphasis>:
+717 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">bool</emphasis>&#32;radioSender(tm_nodeId_t);&#32;&#32;<emphasis role="comment">//&#32;generic&#32;packet&#32;sender</emphasis>
+718 
+719 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;status&#32;requests/</emphasis>
+720 &#32;&#32;&#32;&#32;<emphasis role="comment">//void&#32;yieldPingNode(byte);&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;//&#32;node&#32;-&gt;&#32;status&#32;(responding/not&#32;responding)</emphasis>
+721 &#32;&#32;&#32;&#32;<emphasis role="comment">//void&#32;yieldPingTask(byte,&#32;byte);&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;//&#32;node,&#32;task&#32;-&gt;&#32;status</emphasis>
+722 &#32;&#32;&#32;&#32;<emphasis role="comment">//bool&#32;radioFree();&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;//&#32;Is&#32;the&#32;radio&#32;available&#32;for&#32;use?</emphasis>
+723 
+724 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;radio</emphasis>
+725 <emphasis role="keyword">private</emphasis>:
+726 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;notes&#32;on&#32;parameters&#32;to&#32;the&#32;commands</emphasis>
+727 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;&#32;signal,&#32;signalAll:&#32;m_data[0]&#32;=&#32;sigNum</emphasis>
+728 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;&#32;message:&#32;m_data[0]&#32;=&#32;taskID,&#32;m_data[1+]&#32;=&#32;message</emphasis>
+729 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;&#32;suspend,&#32;resume:&#32;m_data[0]&#32;=&#32;taskID</emphasis>
+730 &#32;&#32;&#32;&#32;<emphasis role="keyword">enum</emphasis>&#32;RadioCmd&#32;{
+731 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;tmrNoop,&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;
+732 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;tmrStatus,&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;
+733 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;tmrAck,&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;
+734 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;tmrTaskStatus,&#32;&#32;&#32;&#32;&#32;&#32;
+735 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;tmrTaskAck,&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;
+736 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;tmrMessage,&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;
+737 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;tmrSuspend,&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;
+738 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;tmrResume&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;
+739 &#32;&#32;&#32;&#32;};
+740 &#32;&#32;&#32;&#32;_TaskManagerRadioPacket&#32;radioBuf;
+741 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">bool</emphasis>&#32;&#32;&#32;&#32;m_radioReceiverRunning;
+742 <emphasis role="keyword">public</emphasis>:
+743 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;tmRadioReceiverTask();
+744 
+745 <emphasis role="preprocessor">#if&#32;defined(ARDUINO_ARCH_ESP8266)&#32;||&#32;defined(ARDUINO_ARCH_ESP32)</emphasis>
+746 <emphasis role="keyword">private</emphasis>:
+747 &#32;&#32;&#32;&#32;esp_err_t&#32;m_lastESPError;
+748 <emphasis role="preprocessor">#endif</emphasis>
+749 <emphasis role="preprocessor">#endif</emphasis>
+750 
+764 <emphasis role="preprocessor">#if&#32;(defined(ARDUINO_ARCH_AVR)&#32;&amp;&amp;&#32;defined(TASKMGR_AVR_RF24))</emphasis>
+765 <emphasis role="keyword">public</emphasis>:
+777 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;radioBegin(tm_nodeId_t&#32;nodeId,&#32;<emphasis role="keywordtype">byte</emphasis>&#32;cePin,&#32;<emphasis role="keywordtype">byte</emphasis>&#32;csPin);
+778 <emphasis role="preprocessor">#elif&#32;defined(ARDUINO_ARCH_ESP8266)&#32;||&#32;defined(ARDUINO_ARCH_ESP32)</emphasis>
+779 <emphasis role="keyword">public</emphasis>:
+802 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">bool</emphasis>&#32;radioBegin(tm_nodeId_t&#32;nodeId,&#32;<emphasis role="keyword">const</emphasis>&#32;<emphasis role="keywordtype">char</emphasis>*&#32;ssid=NULL,&#32;<emphasis role="keyword">const</emphasis>&#32;<emphasis role="keywordtype">char</emphasis>*&#32;pw=NULL);
+803 
+804 &#32;&#32;&#32;&#32;<emphasis role="comment">/*&#32;\brief&#32;Add&#32;a&#32;peer&#32;for&#32;ESP-Now&#32;communications</emphasis>
+805 <emphasis role="comment"></emphasis>
+806 <emphasis role="comment">&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;\param&#32;nodeID&#32;--&#32;A&#32;peer&#32;node&#32;for&#32;future&#32;communications.</emphasis>
+807 <emphasis role="comment">&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;\note&#32;This&#32;routine&#32;is&#32;only&#32;available&#32;on&#32;ESP&#32;environments.</emphasis>
+808 <emphasis role="comment">&#32;&#32;&#32;&#32;*/</emphasis>
+809 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">bool</emphasis>&#32;registerPeer(tm_nodeId_t&#32;nodeId);
+810 
+811 &#32;&#32;&#32;&#32;<emphasis role="comment">/*&#32;&#32;\brief&#32;Remove&#32;a&#32;peer&#32;from&#32;ESP-Now&#32;communications</emphasis>
+812 <emphasis role="comment">&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;\param&#32;nodeID&#32;--&#32;A&#32;peer&#32;node&#32;that&#32;will&#32;no&#32;longer&#32;be&#32;usable&#32;as&#32;a&#32;peer</emphasis>
+813 <emphasis role="comment">&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;\note&#32;This&#32;routine&#32;is&#32;only&#32;available&#32;on&#32;ESP&#32;environments.</emphasis>
+814 <emphasis role="comment">&#32;&#32;&#32;&#32;*/</emphasis>
+815 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">bool</emphasis>&#32;unRegisterPeer(tm_nodeId_t&#32;nodeId);
+816 <emphasis role="preprocessor">#endif</emphasis>
+817 
+818 <emphasis role="preprocessor">#if&#32;(defined(ARDUINO_ARCH_AVR)&#32;&amp;&amp;&#32;defined(TASKMGR_AVR_RF24))&#32;||&#32;defined(ARDUINO_ARCH_ESP8266)&#32;||&#32;defined(ARDUINO_ARCH_ESP32)</emphasis>
+824 &#32;&#32;&#32;&#32;tm_nodeId_t&#32;myNodeId();
+825 <emphasis role="preprocessor">#endif</emphasis>
+833 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">unsigned</emphasis>&#32;<emphasis role="keywordtype">long</emphasis>&#32;runtime()&#32;<emphasis role="keyword">const</emphasis>;
+834 <emphasis role="preprocessor">#if&#32;defined(TASKMANAGER_DEBUG)</emphasis>
+835 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">size_t</emphasis>&#32;printTo(Print&amp;&#32;p)&#32;<emphasis role="keyword">const</emphasis>;
+836 <emphasis role="preprocessor">#endif</emphasis>
+840 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">bool</emphasis>&#32;timedOut();
+841 
+846 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>*&#32;getMessage();
+847 
+852 &#32;&#32;&#32;&#32;uint16_t&#32;getMessageLength();
+853 
+857 &#32;&#32;&#32;&#32;tm_taskId_t&#32;myId();
+858 
+861 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;We&#32;need&#32;a&#32;publicly&#32;available&#32;TaskManager::loop()&#32;so&#32;our&#32;global&#32;loop()&#32;can&#32;use&#32;it</emphasis>
+862 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;loop();
+863 
+864 <emphasis role="keyword">protected</emphasis>:
+865 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;internalSendMessage(tm_nodeId_t&#32;fromNodeId,&#32;tm_taskId_t&#32;fromTaskId,&#32;tm_taskId_t&#32;taskId,&#32;<emphasis role="keywordtype">char</emphasis>*&#32;message);
+866 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">void</emphasis>&#32;internalSendMessage(tm_nodeId_t&#32;fromNodeId,&#32;tm_taskId_t&#32;fromTaskId,&#32;tm_taskId_t&#32;taskId,&#32;<emphasis role="keywordtype">void</emphasis>*&#32;buf,&#32;<emphasis role="keywordtype">int</emphasis>&#32;len);
+867 
+868 <emphasis role="keyword">private</emphasis>:
+869 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Find&#32;the&#32;next&#32;active&#32;task</emphasis>
+870 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Note:&#32;there&#32;will&#32;always&#32;be&#32;a&#32;runnable&#32;task&#32;(tne&#32;null&#32;task)&#32;on&#32;the&#32;list.</emphasis>
+871 &#32;&#32;&#32;&#32;_TaskManagerTask*&#32;FindNextRunnable();
+872 
+873 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;internal&#32;utility</emphasis>
+874 <emphasis role="keyword">public</emphasis>:
+875 &#32;&#32;&#32;&#32;_TaskManagerTask*&#32;findTaskById(tm_taskId_t&#32;<emphasis role="keywordtype">id</emphasis>);
+876 
+877 };
+881 <emphasis role="comment">//</emphasis>
+882 <emphasis role="comment">//&#32;Inline&#32;stuff</emphasis>
+883 <emphasis role="comment">//</emphasis>
+884 
+888 <emphasis role="comment">//&#32;_TaskManagerTask&#32;Things</emphasis>
+889 
+890 <emphasis role="comment">//&#32;Constructor&#32;and&#32;destructor</emphasis>
+896 <emphasis role="comment"></emphasis><emphasis role="keyword">inline</emphasis>&#32;_TaskManagerTask::_TaskManagerTask():&#32;m_id(0),&#32;m_fn(NULL),&#32;m_stateFlags(0)
+897 {
+898 }
+899 
+904 <emphasis role="keyword">inline</emphasis>&#32;_TaskManagerTask::_TaskManagerTask(tm_taskId_t&#32;taskId,&#32;<emphasis role="keywordtype">void</emphasis>&#32;(*fn)()):&#32;m_id(taskId),&#32;m_fn(fn),&#32;m_stateFlags(0)&#32;{
+905 }
+908 <emphasis role="keyword">inline</emphasis>&#32;_TaskManagerTask::~_TaskManagerTask()&#32;{
+909 }
+910 
+911 <emphasis role="comment">//&#32;Setting&#32;the&#32;task&apos;s&#32;state</emphasis>
+914 <emphasis role="comment"></emphasis><emphasis role="keyword">inline</emphasis>&#32;<emphasis role="keywordtype">void</emphasis>&#32;_TaskManagerTask::setRunnable()&#32;{
+915 &#32;&#32;&#32;&#32;stateClear(WaitMessage+WaitUntil+Suspended);
+916 }
+919 <emphasis role="keyword">inline</emphasis>&#32;<emphasis role="keywordtype">void</emphasis>&#32;_TaskManagerTask::setSuspended()&#32;{
+920 &#32;&#32;&#32;&#32;stateSet(Suspended);
+921 }
+925 <emphasis role="keyword">inline</emphasis>&#32;<emphasis role="keywordtype">void</emphasis>&#32;_TaskManagerTask::clearSuspended()&#32;{
+926 &#32;&#32;&#32;&#32;stateClear(Suspended);
+927 }
+935 <emphasis role="keyword">inline</emphasis>&#32;<emphasis role="keywordtype">void</emphasis>&#32;_TaskManagerTask::setWaitUntil(<emphasis role="keywordtype">unsigned</emphasis>&#32;<emphasis role="keywordtype">long</emphasis>&#32;when)&#32;{
+936 &#32;&#32;&#32;&#32;m_restartTime=when;
+937 &#32;&#32;&#32;&#32;stateSet(WaitUntil);
+938 }
+945 <emphasis role="keyword">inline</emphasis>&#32;<emphasis role="keywordtype">void</emphasis>&#32;_TaskManagerTask::setWaitDelay(<emphasis role="keywordtype">unsigned</emphasis>&#32;<emphasis role="keywordtype">int</emphasis>&#32;ms)&#32;&#32;{
+946 &#32;&#32;&#32;&#32;setWaitUntil(millis()+ms);
+947 }
+962 <emphasis role="keyword">inline</emphasis>&#32;<emphasis role="keywordtype">void</emphasis>&#32;_TaskManagerTask::setAutoDelay(<emphasis role="keywordtype">unsigned</emphasis>&#32;<emphasis role="keywordtype">int</emphasis>&#32;ms)&#32;{
+963 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>(ms&gt;0)&#32;{
+964 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;m_period&#32;=&#32;ms;
+965 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;stateSet(AutoReWaitUntil);
+966 &#32;&#32;&#32;&#32;}
+967 }
+968 
+976 <emphasis role="keyword">inline</emphasis>&#32;<emphasis role="keywordtype">void</emphasis>&#32;_TaskManagerTask::setWaitMessage(<emphasis role="keywordtype">unsigned</emphasis>&#32;<emphasis role="keywordtype">int</emphasis>&#32;msTimeout<emphasis role="comment">/*=0*/</emphasis>)&#32;&#32;{
+977 &#32;&#32;&#32;&#32;stateSet(WaitMessage);
+978 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>(msTimeout&gt;0)&#32;setWaitDelay(msTimeout);
+979 }
+996 <emphasis role="keyword">inline</emphasis>&#32;<emphasis role="keywordtype">void</emphasis>&#32;_TaskManagerTask::setAutoMessage(<emphasis role="keywordtype">unsigned</emphasis>&#32;<emphasis role="keywordtype">int</emphasis>&#32;msTimeout<emphasis role="comment">/*=0*/</emphasis>)&#32;&#32;{
+997 &#32;&#32;&#32;&#32;stateSet(AutoReWaitMessage);
+998 &#32;&#32;&#32;&#32;setAutoDelay(msTimeout);
+999 }
+1000 
+1001 <emphasis role="comment">//</emphasis>
+1002 <emphasis role="comment">//&#32;Sending&#32;messages&#32;to&#32;a&#32;task</emphasis>
+1003 <emphasis role="comment">//</emphasis>
+1004 
+1012 <emphasis role="keyword">inline</emphasis>&#32;<emphasis role="keywordtype">void</emphasis>&#32;_TaskManagerTask::putMessage(<emphasis role="keywordtype">void</emphasis>*&#32;buf,&#32;<emphasis role="keywordtype">int</emphasis>&#32;len)&#32;{
+1013 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>(len&lt;=TASKMGR_MESSAGE_SIZE)&#32;{
+1014 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;memcpy(m_message,&#32;buf,&#32;len);
+1015 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;m_messageLength&#32;=&#32;len;
+1016 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;stateClear(WaitMessage+WaitUntil+TimedOut);
+1017 &#32;&#32;&#32;&#32;}
+1018 }
+1019 
+1020 <emphasis role="comment">//</emphasis>
+1021 <emphasis role="comment">//&#32;Testing&#32;the&#32;status&#32;bits&#32;of&#32;the&#32;task</emphasis>
+1022 <emphasis role="comment">//</emphasis>
+1027 <emphasis role="comment"></emphasis><emphasis role="keyword">inline</emphasis>&#32;<emphasis role="keywordtype">bool</emphasis>&#32;_TaskManagerTask::anyStateSet(<emphasis role="keywordtype">byte</emphasis>&#32;bits)&#32;{
+1028 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;(m_stateFlags&amp;bits)&#32;!=&#32;0;
+1029 }
+1034 <emphasis role="keyword">inline</emphasis>&#32;<emphasis role="keywordtype">bool</emphasis>&#32;_TaskManagerTask::allStateSet(<emphasis role="keywordtype">byte</emphasis>&#32;bits)&#32;{
+1035 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;(m_stateFlags&amp;bits)&#32;==&#32;bits;
+1036 }
+1041 <emphasis role="keyword">inline</emphasis>&#32;<emphasis role="keywordtype">bool</emphasis>&#32;_TaskManagerTask::stateTestBit(<emphasis role="keywordtype">byte</emphasis>&#32;bit)&#32;{
+1042 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;anyStateSet(bit);
+1043 }
+1047 <emphasis role="keyword">inline</emphasis>&#32;<emphasis role="keywordtype">void</emphasis>&#32;_TaskManagerTask::stateSet(<emphasis role="keywordtype">byte</emphasis>&#32;bits)&#32;{
+1048 &#32;&#32;&#32;&#32;m_stateFlags&#32;|=&#32;bits;
+1049 }
+1053 <emphasis role="keyword">inline</emphasis>&#32;<emphasis role="keywordtype">void</emphasis>&#32;_TaskManagerTask::stateClear(<emphasis role="keywordtype">byte</emphasis>&#32;bits)&#32;{
+1054 &#32;&#32;&#32;&#32;m_stateFlags&#32;&amp;=&#32;(~bits);
+1055 }
+1058 <emphasis role="keyword">inline</emphasis>&#32;<emphasis role="keywordtype">void</emphasis>&#32;_TaskManagerTask::resetCurrentStateBits()&#32;{
+1059 &#32;&#32;&#32;&#32;m_stateFlags&#32;=&#32;(m_stateFlags&amp;0xf8)&#32;+&#32;((m_stateFlags&gt;&gt;3)&amp;0x07);
+1060 }
+1063 <emphasis role="comment">&#32;/***************&#32;TaskManager&#32;Implementation&#32;****************/</emphasis>
+1067 <emphasis role="comment">/*&#32;&#32;\brief&#32;Copy&#32;the&#32;auto&#32;state&#32;bits&#32;to&#32;the&#32;current&#32;state&#32;bits</emphasis>
+1068 <emphasis role="comment">*/</emphasis>
+1069 
+1070 
+1071 <emphasis role="keyword">inline</emphasis>&#32;tm_taskId_t&#32;<link linkend="_group___task_manager_1ga087a0368a1dc5670757f56000b906e22">TaskManager::myId</link>()&#32;{
+1072 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;<link linkend="_class_task_manager_1a01f290a48b9f1f9ad4fdb08cffddaca5">m_theTasks</link>.front().m_id;
+1073 };
+1074 
+1075 <emphasis role="keyword">inline</emphasis>&#32;<emphasis role="keywordtype">bool</emphasis>&#32;<link linkend="_class_task_manager_1ae7641b79a5efb0a5e640daa8f623fa5c">TaskManager::timedOut</link>()&#32;{
+1076 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;<link linkend="_class_task_manager_1a01f290a48b9f1f9ad4fdb08cffddaca5">m_theTasks</link>.front().stateTestBit(_TaskManagerTask::TimedOut);
+1077 }
+1078 
+1079 <emphasis role="keyword">inline</emphasis>&#32;<emphasis role="keywordtype">void</emphasis>&#32;<link linkend="_class_task_manager_1a25bc2f7572add6b5f3a1ed033aa14f41">TaskManager::sendMessage</link>(tm_taskId_t&#32;taskId,&#32;<emphasis role="keywordtype">char</emphasis>*&#32;message)&#32;{
+1080 &#32;&#32;&#32;&#32;internalSendMessage(0,&#32;<link linkend="_group___task_manager_1ga087a0368a1dc5670757f56000b906e22">myId</link>(),&#32;taskId,&#32;message);
+1081 }
+1082 
+1083 <emphasis role="keyword">inline</emphasis>&#32;<emphasis role="keywordtype">void</emphasis>&#32;<link linkend="_class_task_manager_1a25bc2f7572add6b5f3a1ed033aa14f41">TaskManager::sendMessage</link>(tm_taskId_t&#32;taskId,&#32;<emphasis role="keywordtype">void</emphasis>*&#32;buf,&#32;<emphasis role="keywordtype">int</emphasis>&#32;len)&#32;{
+1084 &#32;&#32;&#32;&#32;internalSendMessage(0,&#32;<link linkend="_group___task_manager_1ga087a0368a1dc5670757f56000b906e22">myId</link>(),&#32;taskId,&#32;buf,&#32;len);
+1085 }
+1086 
+1087 <emphasis role="keyword">inline</emphasis>&#32;<emphasis role="keywordtype">void</emphasis>*&#32;<link linkend="_class_task_manager_1ab7a70749690f57b64c4db036abf1fa9d">TaskManager::getMessage</link>()&#32;{
+1088 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;(<emphasis role="keywordtype">void</emphasis>*)(&amp;(<link linkend="_class_task_manager_1a01f290a48b9f1f9ad4fdb08cffddaca5">m_theTasks</link>.front().m_message));
+1089 }
+1090 
+1091 <emphasis role="keyword">inline</emphasis>&#32;uint16_t&#32;<link linkend="_class_task_manager_1a2512563ba937a3542cbe564830ce1ae0">TaskManager::getMessageLength</link>()&#32;{
+1092 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;<link linkend="_class_task_manager_1a01f290a48b9f1f9ad4fdb08cffddaca5">m_theTasks</link>.front().m_messageLength;
+1093 }
+1094 
+1095 <emphasis role="keyword">inline</emphasis>&#32;<emphasis role="keywordtype">void</emphasis>&#32;<link linkend="_class_task_manager_1a0f4e11619ef42339d1a20fa2d31b2b72">TaskManager::getSource</link>(tm_taskId_t&amp;&#32;fromTaskId)&#32;{
+1096 &#32;&#32;&#32;&#32;fromTaskId&#32;=&#32;<link linkend="_class_task_manager_1a01f290a48b9f1f9ad4fdb08cffddaca5">m_theTasks</link>.front().m_fromTaskId;
+1097 }
+1098 
+1099 <emphasis role="keyword">inline</emphasis>&#32;<emphasis role="keywordtype">unsigned</emphasis>&#32;<emphasis role="keywordtype">long</emphasis>&#32;<link linkend="_class_task_manager_1a966e7f218ea93bfb36020814ed489517">TaskManager::runtime</link>()<emphasis role="keyword">&#32;const&#32;</emphasis>{&#32;<emphasis role="keywordflow">return</emphasis>&#32;millis()-m_startTime;&#32;}
+1104 <emphasis role="comment">/****************&#32;ring&#32;implemenation&#32;********************/</emphasis>
+1115 <emphasis role="keyword">template</emphasis>&lt;<emphasis role="keyword">class</emphasis>&#32;T&gt;<emphasis role="keywordtype">void</emphasis>&#32;<link linkend="_classring_1ad9de090ad384e32e39337c85a9a21549">ring&lt;T&gt;::push_front</link>(T&#32;val)&#32;{
+1116 &#32;&#32;&#32;&#32;_ringNode&lt;T&gt;*&#32;newNode;
+1117 &#32;&#32;&#32;&#32;newNode&#32;=&#32;<emphasis role="keyword">new</emphasis>&#32;_ringNode&lt;T&gt;();
+1118 &#32;&#32;&#32;&#32;newNode-&gt;m_val&#32;=&#32;val;
+1119 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>(m_cur==NULL)&#32;{
+1120 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;newNode-&gt;m_next&#32;=&#32;newNode;
+1121 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;newNode-&gt;m_prev&#32;=&#32;newNode;
+1122 &#32;&#32;&#32;&#32;}&#32;<emphasis role="keywordflow">else</emphasis>&#32;{
+1123 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;newNode-&gt;m_next&#32;=&#32;m_cur;
+1124 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;newNode-&gt;m_prev&#32;=&#32;m_cur-&gt;m_prev;
+1125 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;m_cur-&gt;m_prev-&gt;m_next&#32;=&#32;newNode;
+1126 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;m_cur-&gt;m_prev&#32;=&#32;newNode;
+1127 &#32;&#32;&#32;&#32;}
+1128 &#32;&#32;&#32;&#32;m_cur&#32;=&#32;newNode;
+1129 }
+1130 
+1139 <emphasis role="keyword">template</emphasis>&lt;<emphasis role="keyword">class</emphasis>&#32;T&gt;&#32;<emphasis role="keyword">inline</emphasis>&#32;<emphasis role="keywordtype">void</emphasis>&#32;<link linkend="_classring_1ab13c5ad32f0ccd338400dd16c3259f9b">ring&lt;T&gt;::push_back</link>(T&#32;val)&#32;{
+1140 &#32;&#32;&#32;&#32;this-&gt;push_front(val);
+1141 &#32;&#32;&#32;&#32;this-&gt;move_next();
+1142 }
+1143 
+1151 <emphasis role="keyword">template</emphasis>&lt;<emphasis role="keyword">class</emphasis>&#32;T&gt;&#32;<emphasis role="keywordtype">void</emphasis>&#32;<link linkend="_classring_1a8bd49b76e56686927dcfd78cb5172690">ring&lt;T&gt;::pop_front</link>()&#32;{
+1152 &#32;&#32;&#32;&#32;_ringNode&lt;T&gt;*&#32;toGo;&#32;<emphasis role="comment">//&#32;node&#32;being&#32;deleted</emphasis>
+1153 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>(m_cur==NULL)&#32;<emphasis role="keywordflow">return</emphasis>;
+1154 &#32;&#32;&#32;&#32;toGo&#32;=&#32;m_cur;
+1155 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>(m_cur=m_cur-&gt;m_next)&#32;{&#32;m_cur=NULL;&#32;}
+1156 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">else</emphasis>&#32;{
+1157 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;m_cur-&gt;m_prev-&gt;m_next&#32;=&#32;m_cur-&gt;m_next;
+1158 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;m_cur-&gt;m_next-&gt;m_prev&#32;=&#32;m_cur-&gt;m_prev;
+1159 &#32;&#32;&#32;&#32;}
+1160 &#32;&#32;&#32;&#32;m_cur&#32;=&#32;m_cur-&gt;m_next;
+1161 &#32;&#32;&#32;&#32;<emphasis role="keyword">delete</emphasis>&#32;toGo;
+1162 }
+1163 
+1171 <emphasis role="keyword">template</emphasis>&lt;<emphasis role="keyword">class</emphasis>&#32;T&gt;<emphasis role="keyword">inline</emphasis>&#32;<emphasis role="keywordtype">void</emphasis>&#32;<link linkend="_classring_1ad000e92398391abc8958e0fc5595c329">ring&lt;T&gt;::pop_back</link>()&#32;{
+1172 &#32;&#32;&#32;&#32;move_prev();
+1173 &#32;&#32;&#32;&#32;pop_front();
+1174 }
+1175 
+1183 <emphasis role="keyword">template</emphasis>&lt;<emphasis role="keyword">class</emphasis>&#32;T&gt;<emphasis role="keywordtype">void</emphasis>&#32;<link linkend="_classring_1a65033722386b6afe9d7cd03e5dc95bb5">ring&lt;T&gt;::clear</link>()&#32;{
+1184 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;temmpting&#32;to&#32;do&#32;this,&#32;but&#32;it&#32;wastes&#32;time&#32;copying&#32;pointers...</emphasis>
+1185 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;&#32;while(!empty()&#32;pop_front();</emphasis>
+1186 &#32;&#32;&#32;&#32;_ringNode&lt;T&gt;*&#32;cur;
+1187 &#32;&#32;&#32;&#32;_ringNode&lt;T&gt;*&#32;last;
+1188 &#32;&#32;&#32;&#32;_ringNode&lt;T&gt;*&#32;toGo;
+1189 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>(empty())&#32;<emphasis role="keywordflow">return</emphasis>;
+1190 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">for</emphasis>(cur=m_cur,&#32;last=m_cur-&gt;m_prev;&#32;cur!=last;&#32;)&#32;{
+1191 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;toGo&#32;=&#32;cur;
+1192 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;cur&#32;=&#32;cur-&gt;m_next;
+1193 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keyword">delete</emphasis>&#32;toGo;
+1194 &#32;&#32;&#32;&#32;}
+1195 &#32;&#32;&#32;&#32;<emphasis role="keyword">delete</emphasis>&#32;cur;
+1196 &#32;&#32;&#32;&#32;m_cur&#32;=&#32;NULL;
+1197 }
+1198 
+1205 <emphasis role="keyword">template</emphasis>&lt;<emphasis role="keyword">class</emphasis>&#32;T&gt;&#32;<emphasis role="keyword">inline</emphasis>&#32;T&amp;&#32;<link linkend="_classring_1a18c99d7c346c2ac99a91e49c28f8a7af">ring&lt;T&gt;::front</link>()<emphasis role="keyword">&#32;const&#32;</emphasis>{
+1206 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;(m_cur-&gt;m_val);
+1207 }
+1208 
+1215 <emphasis role="keyword">template</emphasis>&lt;<emphasis role="keyword">class</emphasis>&#32;T&gt;&#32;<emphasis role="keyword">inline</emphasis>&#32;T&amp;&#32;<link linkend="_classring_1afc322bf07d7bdcc65888e604581202d0">ring&lt;T&gt;::back</link>()<emphasis role="keyword">&#32;const&#32;</emphasis>{
+1216 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;(m_cur-&gt;m_prev-&gt;m_val);
+1217 }
+1218 
+1225 <emphasis role="keyword">template</emphasis>&lt;<emphasis role="keyword">class</emphasis>&#32;T&gt;<emphasis role="keyword">inline</emphasis>&#32;<emphasis role="keywordtype">void</emphasis>&#32;<link linkend="_classring_1af16864a4bd729a9b91e4a2fcdec8f737">ring&lt;T&gt;::move_next</link>()&#32;{
+1226 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>(m_cur!=NULL)&#32;m_cur&#32;=&#32;m_cur-&gt;m_next;
+1227 }
+1228 
+1235 <emphasis role="keyword">template</emphasis>&lt;<emphasis role="keyword">class</emphasis>&#32;T&gt;<emphasis role="keyword">inline</emphasis>&#32;<emphasis role="keywordtype">void</emphasis>&#32;<link linkend="_classring_1ad682fc47814540b7c492dfb3a65123b3">ring&lt;T&gt;::move_prev</link>()&#32;{
+1236 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>(m_cur!=NULL)&#32;m_cur=m_cur-&gt;m_prev;
+1237 }
+1238 
+1243 <emphasis role="keyword">template</emphasis>&lt;<emphasis role="keyword">class</emphasis>&#32;T&gt;&#32;<emphasis role="keyword">inline</emphasis>&#32;<emphasis role="keywordtype">bool</emphasis>&#32;<link linkend="_classring_1a1800422d7f49e93354e0f8e7730bdcb6">ring&lt;T&gt;::empty</link>()<emphasis role="keyword">&#32;const</emphasis>{
+1244 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;m_cur==NULL;
+1245 }
+1246 
+1251 <emphasis role="keyword">template</emphasis>&lt;<emphasis role="keyword">class</emphasis>&#32;T&gt;&#32;<emphasis role="keywordtype">size_t</emphasis>&#32;<link linkend="_classring_1ad8424513e6933cfd2cf7629f32a56252">ring&lt;T&gt;::size</link>()<emphasis role="keyword">&#32;const&#32;</emphasis>{
+1252 &#32;&#32;&#32;&#32;_ringNode&lt;T&gt;*&#32;cur;
+1253 &#32;&#32;&#32;&#32;_ringNode&lt;T&gt;*&#32;last;
+1254 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">size_t</emphasis>&#32;ret;
+1255 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>(m_cur==NULL)&#32;<emphasis role="keywordflow">return</emphasis>&#32;0;
+1256 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">for</emphasis>(cur=m_cur,&#32;last=m_cur-&gt;m_prev,&#32;ret=1;&#32;cur!=last;&#32;cur=cur-&gt;m_next)
+1257 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;ret++;
+1258 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;ret;
+1259 }
+1260 
+1268 <emphasis role="keyword">template</emphasis>&lt;<emphasis role="keyword">class</emphasis>&#32;T&gt;&#32;<emphasis role="keyword">inline</emphasis>&#32;<link linkend="_classring">ring&lt;T&gt;</link>&amp;&#32;<link linkend="_classring_1a52e785fb89c3e8ca7f4c5824f51f3532">ring&lt;T&gt;::operator=</link>(<link linkend="_classring">ring&lt;T&gt;</link>&amp;&#32;r)&#32;{
+1269 &#32;&#32;&#32;&#32;m_cur&#32;=&#32;r.m_cur;
+1270 }
+1271 
+1281 <emphasis role="keyword">template</emphasis>&lt;<emphasis role="keyword">class</emphasis>&#32;T&gt;&#32;<emphasis role="keyword">inline</emphasis>&#32;<emphasis role="keywordtype">bool</emphasis>&#32;<link linkend="_classring_1ab47d8aac67ce284fc004bb88da21862f">ring&lt;T&gt;::operator==</link>(<link linkend="_classring">ring&lt;T&gt;</link>&amp;&#32;r)<emphasis role="keyword">&#32;const&#32;</emphasis>{
+1282 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;m_cur==r.m_cur;
+1283 }
+1284 
+1285 <emphasis role="comment">//&#32;Mapping&#32;functions</emphasis>
+1286 
+1294 <emphasis role="keyword">template</emphasis>&lt;<emphasis role="keyword">class</emphasis>&#32;T&gt;<emphasis role="keywordtype">void</emphasis>&#32;<link linkend="_classring_1aada527f64532b1710d200953bfbabf2a">ring&lt;T&gt;::map</link>(<emphasis role="keywordtype">void</emphasis>&#32;(*fn)(T&amp;))&#32;{
+1295 &#32;&#32;&#32;&#32;_ringNode&lt;T&gt;*&#32;cur;
+1296 &#32;&#32;&#32;&#32;_ringNode&lt;T&gt;*&#32;last;
+1297 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>(empty())&#32;<emphasis role="keywordflow">return</emphasis>;
+1298 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">for</emphasis>(cur=m_cur,&#32;last=m_cur-&gt;m_prev;&#32;cur!=last;&#32;cur=cur-&gt;m_next)&#32;{
+1299 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;(fn)(cur-&gt;m_val);
+1300 &#32;&#32;&#32;&#32;}
+1301 &#32;&#32;&#32;&#32;(fn)(cur-&gt;m_val);
+1302 }
+1303 
+1315 <emphasis role="keyword">template</emphasis>&lt;<emphasis role="keyword">class</emphasis>&#32;T&gt;<emphasis role="keywordtype">void</emphasis>&#32;<link linkend="_classring_1aada527f64532b1710d200953bfbabf2a">ring&lt;T&gt;::map</link>(<emphasis role="keywordtype">void</emphasis>&#32;(*fn)(T&amp;,&#32;<emphasis role="keywordtype">void</emphasis>*),&#32;<emphasis role="keywordtype">void</emphasis>*&#32;p)&#32;{
+1316 &#32;&#32;&#32;&#32;_ringNode&lt;T&gt;*&#32;cur;
+1317 &#32;&#32;&#32;&#32;_ringNode&lt;T&gt;*&#32;last;
+1318 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>(empty())&#32;<emphasis role="keywordflow">return</emphasis>;
+1319 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">for</emphasis>(cur=m_cur,&#32;last=m_cur-&gt;m_prev;&#32;cur!=last;&#32;cur=cur-&gt;m_next)&#32;{
+1320 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;(fn)(cur-&gt;m_val,&#32;p);
+1321 &#32;&#32;&#32;&#32;}
+1322 &#32;&#32;&#32;&#32;(fn)(cur-&gt;m_val,&#32;p);
+1323 }
+1327 <emphasis role="comment">/***************&#32;end&#32;of&#32;ring&#32;implementation&#32;*************/</emphasis>
+1328 
+1329 <emphasis role="comment">/****************&#32;ESP32&#32;Network&#32;************************/</emphasis>
+1333 <emphasis role="preprocessor">#if&#32;(defined(ARDUINO_ARCH_AVR)&#32;&amp;&amp;&#32;defined(TASKMGR_AVR_RF24))&#32;||&#32;defined(ARDUINO_ARCH_ESP8266)&#32;||&#32;defined(ARDUINO_ARCH_ESP32)</emphasis>
+1334 <emphasis role="keyword">inline</emphasis>&#32;tm_nodeId_t&#32;TaskManagerESP::myNodeId()&#32;{
+1335 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;m_myNodeId;
+1336 }
+1337 <emphasis role="preprocessor">#endif</emphasis>
+1338 
+1339 <emphasis role="comment">/*&#32;This&#32;defines&#32;the&#32;ESP32&#32;networking&#32;routines.&#32;&#32;They&#32;are&#32;only&#32;available&#32;on&#32;ESP32&#32;compilations&#32;*/</emphasis>
+1340 <emphasis role="preprocessor">#if&#32;defined(ARDUINO_ARCH_ESP8266)&#32;||&#32;defined(ARDUINO_ARCH_ESP32)</emphasis>
+1341 <emphasis role="preprocessor">#endif</emphasis>
+1342 
+1343 <emphasis role="comment">/****************&#32;End&#32;of&#32;ESP32&#32;Network&#32;*******************/</emphasis>
+1344 
+1345 <emphasis role="comment">/****************&#32;AVR&#32;Network&#32;*************************/</emphasis>
+1346 <emphasis role="preprocessor">#if&#32;defined(ARDUINO_ARCH_AVR)&#32;&amp;&amp;&#32;defined(TASKMGR_AVR_RF24)</emphasis>
+1347 <emphasis role="preprocessor">#endif</emphasis>
+1348 <emphasis role="comment">/****************&#32;ENd&#32;of&#32;AVR&#32;Network&#32;********************/</emphasis>
+1351 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">//&#32;TASKMANAGER_H_INCLUDED</emphasis>
+1352 
+</programlisting></section>

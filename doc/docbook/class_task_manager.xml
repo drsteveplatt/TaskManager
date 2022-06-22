@@ -1,0 +1,986 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_class_task_manager" xml:lang="en-US">
+<title>TaskManager Class Reference</title>
+<indexterm><primary>TaskManager</primary></indexterm>
+<para>
+
+<para>A cooperative multitasking manager. </para>
+ 
+</para>
+<para>
+<computeroutput>#include &lt;TaskManagerCore_2.h&gt;</computeroutput>
+</para>
+<simplesect>
+    <title>Public Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><link linkend="_class_task_manager_1a491dc7a77a5381675f614a411755ef64">TaskManager</link> ()</para>
+
+<para>Constructor, Creates an empty task. </para>
+</listitem>
+            <listitem><para><link linkend="_class_task_manager_1a6ecdd2b8a6b7545eae64da180ba80c53">~TaskManager</link> ()</para>
+
+<para>Destructor. Destroys the <link linkend="_class_task_manager">TaskManager</link>. </para>
+</listitem>
+            <listitem><para>void <link linkend="_class_task_manager_1a2b88a62f061cbc8159a101844d8e5469">loop</link> ()</para>
+
+<para>Implements a single pass for the system <link linkend="_class_task_manager_1a2b88a62f061cbc8159a101844d8e5469">loop()</link> routine. </para>
+</listitem>
+            <listitem><para>_TaskManagerTask * <link linkend="_class_task_manager_1a9968aa8e895bfc0bbb0cd4e06ee14e6d">findTaskById</link> (tm_taskId_t id)</para>
+
+<para>Find a task by its ID. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect><title>Adding a New Task</title>
+
+<para>These methods are used to add new tasks to the task list </para>
+        <itemizedlist>
+            <listitem><para>void <link linkend="_class_task_manager_1a3b61b260f5ddd9676f7a6899da40ad9e">add</link> (tm_taskId_t taskId, void(*fn)())</para>
+
+<para>Add a simple task. </para>
+</listitem>
+            <listitem><para>void <link linkend="_class_task_manager_1ad0d87e94ca41ece59e98adba02ba8103">addWaitDelay</link> (tm_taskId_t taskId, void(*fn)(), unsigned long msDelay)</para>
+
+<para>Add a task that will be delayed before its first invocation. </para>
+</listitem>
+            <listitem><para>void <link linkend="_class_task_manager_1aef8ccd8e7753e35a483dd8d9203ef8ca">addWaitUntil</link> (tm_taskId_t taskId, void(*fn)(), unsigned long msWhen)</para>
+
+<para>Add a task that will be delayed until a set system clock time before its first invocation. </para>
+</listitem>
+            <listitem><para>void <link linkend="_class_task_manager_1a51b5017ee459e0d54a0995c084bd273f">addWaitMessage</link> (tm_taskId_t taskId, void(*fn)(), unsigned long timeout=0)</para>
+
+<para>Add a task that is waiting for a message. </para>
+</listitem>
+            <listitem><para>void <link linkend="_class_task_manager_1a41d58e9b9e596b19264bb2cbf7c02878">addAutoWaitDelay</link> (tm_taskId_t taskId, void(*fn)(), unsigned long period, bool startDelayed=false)</para>
+
+<para>Add a task that will automatically reschedule itself with a delay. </para>
+</listitem>
+            <listitem><para>void <link linkend="_class_task_manager_1a2c4cd56685a46a66bb3b5a25c1ba8685">addAutoWaitMessage</link> (tm_taskId_t taskId, void(*fn)(), unsigned long timeout=0, bool startWaiting=true)</para>
+
+<para>Add a task that is waiting for a message or until a timeout occurs. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect><title>Yield</title>
+
+<para>These methods are used to yield control back to the task manager core. <note><title>Note</title>
+
+<para>Upon next invocation, execution will start at the TOP of the routine, not at the statement following the yield. </para>
+
+<para>A <emphasis>yield</emphasis> call will override any of the <emphasis>addAuto...</emphasis> automatic rescheduling. This will be a one-time override; later (non-<emphasis>yield</emphasis>) returns will resume automatic rescheduling. </para>
+</note>
+</para>
+        <itemizedlist>
+            <listitem><para>void <link linkend="_class_task_manager_1abc4f2e57cdc1fd1d3051b58dc816de98">yield</link> ()</para>
+
+<para>Exit from this task and return control to the task manager. </para>
+</listitem>
+            <listitem><para>void <link linkend="_class_task_manager_1a2123fa0af84c3a1373b9437e2157e872">yieldDelay</link> (unsigned long ms)</para>
+
+<para>Exit from the task manager and do not restart this task until after a specified period. </para>
+</listitem>
+            <listitem><para>void <link linkend="_class_task_manager_1aa3f827ee35d80bc4faa2f7d438163e78">yieldUntil</link> (unsigned long when)</para>
+
+<para>Exit from the task manager and do not restart this task until (after) a specified CPU clock time. </para>
+</listitem>
+            <listitem><para>void <link linkend="_class_task_manager_1a4f368a9141c55b085aefdc8833aeaeec">yieldForMessage</link> (unsigned long timeout=0)</para>
+
+<para>Exit from the task manager and do not restart this task until a message has been received or a stated time period has passed. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect><title>Sending Messages</title>
+
+<para>These methods send messages to other tasks running on this or other nodes <note><title>Note</title>
+
+<para>If the nodeID is 0 on any routine that sends messages to other nodes, the signal/message will be sent to this node. </para>
+</note>
+</para>
+        <itemizedlist>
+            <listitem><para>void <link linkend="_class_task_manager_1a25bc2f7572add6b5f3a1ed033aa14f41">sendMessage</link> (tm_taskId_t taskId, char *message)</para>
+
+<para>Sends a string message to a task. </para>
+</listitem>
+            <listitem><para>void <link linkend="_class_task_manager_1a138803585db2162518fb8303861639ac">sendMessage</link> (tm_taskId_t taskId, void *buf, int len)</para>
+
+<para>Send a binary message to a task. </para>
+</listitem>
+            <listitem><para>bool <link linkend="_class_task_manager_1ae5ba60f8681afab4cc32d16759262760">sendMessage</link> (tm_nodeId_t nodeId, tm_taskId_t taskId, char *message)</para>
+
+<para>Sends a string message to a task. </para>
+</listitem>
+            <listitem><para>void <link linkend="_class_task_manager_1a0f4e11619ef42339d1a20fa2d31b2b72">getSource</link> (tm_taskId_t &amp;fromTaskId)</para>
+
+<para>Get task ID of last message/signal. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect><title>Task Management</title>
+
+<para>Change task types</para>
+
+<para>These routines change the scheduling metod for the given task. FOr example, SetAutoWaitDelay() will change a task so it will automatically wait for the set delay period after yielding (instead of using whatever rescheduling process was defined when it was Add()ed).</para>
+
+<para>The change will take place immediately. If it is being performed on the currernt task, it will impact the next yield/return. If it is performed on a suspended task, the suspended tasks&apos;s reawakening constraints will be reset to the new method. </para>
+        <itemizedlist>
+            <listitem><para>void <link linkend="_class_task_manager_1a83f88c0adf4712427e17926a62d2f9c0">suspend</link> (tm_taskId_t taskId)</para>
+
+<para>Suspend the given task on this node. </para>
+</listitem>
+            <listitem><para>void <link linkend="_class_task_manager_1ae311c8c428f7d5693c36a123cc6ed58b">resume</link> (tm_taskId_t taskId)</para>
+
+<para>Resume the given task on this node. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect><title>Miscellaneous and Informational Routines</title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_class_task_manager_1a966e7f218ea93bfb36020814ed489517"/>unsigned long <emphasis role="strong">runtime</emphasis> () const</para>
+
+<para>Return the time since the start of the run, in milliseconds. </para>
+</listitem>
+            <listitem><para>bool <link linkend="_class_task_manager_1ae7641b79a5efb0a5e640daa8f623fa5c">timedOut</link> ()</para>
+
+<para>Tell if the current task has timed out while waiting for a signal or message. </para>
+</listitem>
+            <listitem><para>void * <link linkend="_class_task_manager_1ab7a70749690f57b64c4db036abf1fa9d">getMessage</link> ()</para>
+
+<para>Get a task&apos;s message buffer. </para>
+</listitem>
+            <listitem><para>uint16_t <link linkend="_class_task_manager_1a2512563ba937a3542cbe564830ce1ae0">getMessageLength</link> ()</para>
+
+<para>Get the length of the message in the buffer. </para>
+</listitem>
+            <listitem><para>tm_taskId_t <link linkend="_group___task_manager_1ga087a0368a1dc5670757f56000b906e22">myId</link> ()</para>
+
+<para>Return the task ID of the currently running task. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Public Attributes    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_class_task_manager_1a01f290a48b9f1f9ad4fdb08cffddaca5"/><link linkend="_classring">ring</link>&lt; _TaskManagerTask &gt; <emphasis role="strong">m_theTasks</emphasis></para>
+
+<para>The ring of all tasks. For internal use only. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Protected Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_class_task_manager_1a09bb6c7863e8d8f3744b8d6da95a56bf"/>void <emphasis role="strong">internalSendMessage</emphasis> (tm_nodeId_t fromNodeId, tm_taskId_t fromTaskId, tm_taskId_t taskId, char *message)</para>
+</listitem>
+            <listitem><para><anchor xml:id="_class_task_manager_1a1b702e8ce9d59865dcc6b58742b8254b"/>void <emphasis role="strong">internalSendMessage</emphasis> (tm_nodeId_t fromNodeId, tm_taskId_t fromTaskId, tm_taskId_t taskId, void *buf, int len)</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+
+<para>A cooperative multitasking manager. </para>
+
+
+
+<para>Manages a set of cooperative tasks. This includes round-robin scheduling, yielding, and inter-task messaging and signaling. It also replaces the <link linkend="_class_task_manager_1a2b88a62f061cbc8159a101844d8e5469">loop()</link> function in standard Arduino programs. Nominally, there is a single instance of <link linkend="_class_task_manager">TaskManager</link> called TaskMgr. TaskMgr is used for all actual task control.</para>
+
+<para>Each task has a taskID. By convention, user tasks&apos; taskID values are in the range [0 127]. </para>
+</section>
+<section>
+<title>Constructor &amp; Destructor Documentation</title>
+<anchor xml:id="_class_task_manager_1a491dc7a77a5381675f614a411755ef64"/><section>
+    <title>TaskManager()</title>
+<indexterm><primary>TaskManager</primary><secondary>TaskManager</secondary></indexterm>
+<indexterm><primary>TaskManager</primary><secondary>TaskManager</secondary></indexterm>
+<para><computeroutput>TaskManager::TaskManager ( )</computeroutput></para><para>
+
+<para>Constructor, Creates an empty task. </para>
+</para>
+
+<para>Print out information about the task. </para>
+</section>
+<anchor xml:id="_class_task_manager_1a6ecdd2b8a6b7545eae64da180ba80c53"/><section>
+    <title>~TaskManager()</title>
+<indexterm><primary>~TaskManager</primary><secondary>TaskManager</secondary></indexterm>
+<indexterm><primary>TaskManager</primary><secondary>~TaskManager</secondary></indexterm>
+<para><computeroutput>TaskManager::~TaskManager ( )</computeroutput></para><para>
+
+<para>Destructor. Destroys the <link linkend="_class_task_manager">TaskManager</link>. </para>
+</para>
+
+<para>After calling this, any operations based on the object will fail. For normal purpoases, destroying the TaskMgr instance will have serious consequences for the standard <link linkend="_class_task_manager_1a2b88a62f061cbc8159a101844d8e5469">loop()</link> routine. </para>
+</section>
+</section>
+<section>
+<title>Member Function Documentation</title>
+<anchor xml:id="_class_task_manager_1a3b61b260f5ddd9676f7a6899da40ad9e"/><section>
+    <title>add()</title>
+<indexterm><primary>add</primary><secondary>TaskManager</secondary></indexterm>
+<indexterm><primary>TaskManager</primary><secondary>add</secondary></indexterm>
+<para><computeroutput>void TaskManager::add (tm_taskId_t taskId, void(*)() fn)</computeroutput></para><para>
+
+<para>Add a simple task. </para>
+</para>
+
+<para>The task will execute once each cycle through the task list. Unless the task itself forces itself into a different scheduling model (e.g., through YieldSignal), it will execute again at the next available opportunity 
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>taskId</entry><entry>
+<para>- the task&apos;s ID. For normal user tasks, this should be a byte value in the range [1 239]. System tasks have taskId values in the range [240 255]. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>fn</entry><entry>
+<para>&#8211; this is a void function with no arguments. This is the procedure that is called every time the task is invoked. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>See also</title>
+
+<para><link linkend="_class_task_manager_1ad0d87e94ca41ece59e98adba02ba8103">addWaitDelay</link>, <link linkend="_class_task_manager_1aef8ccd8e7753e35a483dd8d9203ef8ca">addWaitUntil</link>, <link linkend="_class_task_manager_1a41d58e9b9e596b19264bb2cbf7c02878">addAutoWaitDelay</link> </para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="_class_task_manager_1a41d58e9b9e596b19264bb2cbf7c02878"/><section>
+    <title>addAutoWaitDelay()</title>
+<indexterm><primary>addAutoWaitDelay</primary><secondary>TaskManager</secondary></indexterm>
+<indexterm><primary>TaskManager</primary><secondary>addAutoWaitDelay</secondary></indexterm>
+<para><computeroutput>void TaskManager::addAutoWaitDelay (tm_taskId_t taskId, void(*)() fn, unsigned long period, bool startDelayed = <computeroutput>false</computeroutput>
+)</computeroutput></para><para>
+
+<para>Add a task that will automatically reschedule itself with a delay. </para>
+</para>
+
+<para>This task will execute once each cycle. The task will automatically reschedule itself to not execute until the given delay has passed. The first execution may be delayed using the optional fourth parameter startDelayed. This delay, if used, will be the same as the period.</para>
+
+<para>Note that yielding for messages or signals may extend this delay. However, if a signal/message is received during the delay period., the procedure will still wait until the end of the delay period. 
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>taskId</entry><entry>
+<para>- the task&apos;s ID. For normal user tasks, this should be a byte value in the range [0 127]. System tasks have taskId values in the range [128 255]. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>fn</entry><entry>
+<para>&#8211; this is a void function with no arguments. This is the procedure that is called every time the task is invoked. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>period</entry><entry>
+<para>&#8211; the schedule, in milliseconds </para>
+</entry>
+                            </row>
+                            <row>
+<entry>startDelayed</entry><entry>
+<para>&#8211; for the first execution, start immediately (false), or delay its start for one period (true) </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>See also</title>
+
+<para><link linkend="_class_task_manager_1a3b61b260f5ddd9676f7a6899da40ad9e">add</link>, addDelayed, <link linkend="_class_task_manager_1aef8ccd8e7753e35a483dd8d9203ef8ca">addWaitUntil</link> </para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="_class_task_manager_1a2c4cd56685a46a66bb3b5a25c1ba8685"/><section>
+    <title>addAutoWaitMessage()</title>
+<indexterm><primary>addAutoWaitMessage</primary><secondary>TaskManager</secondary></indexterm>
+<indexterm><primary>TaskManager</primary><secondary>addAutoWaitMessage</secondary></indexterm>
+<para><computeroutput>void TaskManager::addAutoWaitMessage (tm_taskId_t taskId, void(*)() fn, unsigned long timeout = <computeroutput>0</computeroutput>
+, bool startWaiting = <computeroutput>true</computeroutput>
+)</computeroutput></para><para>
+
+<para>Add a task that is waiting for a message or until a timeout occurs. </para>
+</para>
+
+<para>The task will be added, but will be set to be waiting for the listed signal. If the signal does not arrive before the timeout period (in milliseconds), then the routine will be activated. The routine may use <link linkend="_class_task_manager_1ae7641b79a5efb0a5e640daa8f623fa5c">TaskManager::timedOut()</link> to determine whether it timed our or received the signal. 
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>taskId</entry><entry>
+<para>- the task&apos;s ID. For normal user tasks, this should be a byte value in the range [0 127]. System tasks have taskId values in the range [128 255]. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>fn</entry><entry>
+<para>&#8211; this is a void function with no arguments. This is the procedure that is called every time the task is invoked. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>timeout</entry><entry>
+<para>&#8211; the maximum time to wait (in ms) before timing out. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>startWaiting</entry><entry>
+<para>&#8211; tells whether the routine will start waiting for the signal (true) or will execute immediately (false). </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>See also</title>
+
+<para><link linkend="_class_task_manager_1a51b5017ee459e0d54a0995c084bd273f">addWaitMessage</link> </para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="_class_task_manager_1ad0d87e94ca41ece59e98adba02ba8103"/><section>
+    <title>addWaitDelay()</title>
+<indexterm><primary>addWaitDelay</primary><secondary>TaskManager</secondary></indexterm>
+<indexterm><primary>TaskManager</primary><secondary>addWaitDelay</secondary></indexterm>
+<para><computeroutput>void TaskManager::addWaitDelay (tm_taskId_t taskId, void(*)() fn, unsigned long msDelay)</computeroutput></para><para>
+
+<para>Add a task that will be delayed before its first invocation. </para>
+</para>
+
+<para>This task will execute once each cycle. Its first execution will be delayed for a set time. After this, unless the task forces itself into a different scheduling model (e.g., through yieldSignal), it will execute agaion at the next available opportunity. 
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>taskId</entry><entry>
+<para>- the task&apos;s ID. For normal user tasks, this should be a byte value in the range [0 127]. System tasks have taskId values in the range [128 255]. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>fn</entry><entry>
+<para>&#8211; this is a void function with no arguments. This is the procedure that is called every time the task is invoked. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>msDelay</entry><entry>
+<para>&#8211; the initial delay, in milliseconds </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>See also</title>
+
+<para><link linkend="_class_task_manager_1a3b61b260f5ddd9676f7a6899da40ad9e">add</link>, <link linkend="_class_task_manager_1aef8ccd8e7753e35a483dd8d9203ef8ca">addWaitUntil</link>, <link linkend="_class_task_manager_1a41d58e9b9e596b19264bb2cbf7c02878">addAutoWaitDelay</link> </para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="_class_task_manager_1a51b5017ee459e0d54a0995c084bd273f"/><section>
+    <title>addWaitMessage()</title>
+<indexterm><primary>addWaitMessage</primary><secondary>TaskManager</secondary></indexterm>
+<indexterm><primary>TaskManager</primary><secondary>addWaitMessage</secondary></indexterm>
+<para><computeroutput>void TaskManager::addWaitMessage (tm_taskId_t taskId, void(*)() fn, unsigned long timeout = <computeroutput>0</computeroutput>
+)</computeroutput></para><para>
+
+<para>Add a task that is waiting for a message. </para>
+</para>
+
+<para>The task will be added, but will be waiting for a message. 
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>taskId</entry><entry>
+<para>- the task&apos;s ID. For normal user tasks, this should be a byte value in the range [0 127]. System tasks have taskId values in the range [128 255]. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>fn</entry><entry>
+<para>&#8211; this is a void function with no arguments. This is the procedure that is called every time the task is invoked. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>timeout</entry><entry>
+<para>&#8211; the maximum time to wait (in ms) before timing out. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                </para>
+</section>
+<anchor xml:id="_class_task_manager_1aef8ccd8e7753e35a483dd8d9203ef8ca"/><section>
+    <title>addWaitUntil()</title>
+<indexterm><primary>addWaitUntil</primary><secondary>TaskManager</secondary></indexterm>
+<indexterm><primary>TaskManager</primary><secondary>addWaitUntil</secondary></indexterm>
+<para><computeroutput>void TaskManager::addWaitUntil (tm_taskId_t taskId, void(*)() fn, unsigned long msWhen)</computeroutput></para><para>
+
+<para>Add a task that will be delayed until a set system clock time before its first invocation. </para>
+</para>
+
+<para>This task will execute once each cycle. Its first execution will be delayed until a set system clock time. After this, unless the task forces itself into a different scheduling model (e.g., through yieldSignal), it will execute agaion at the next available opportunity. 
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>taskId</entry><entry>
+<para>- the task&apos;s ID. For normal user tasks, this should be a byte value in the range [0 127]. System tasks have taskId values in the range [128 255]. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>fn</entry><entry>
+<para>&#8211; this is a void function with no arguments. This is the procedure that is called every time the task is invoked. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>msWhen</entry><entry>
+<para>&#8211; the initial delay, in milliseconds </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>See also</title>
+
+<para><link linkend="_class_task_manager_1a3b61b260f5ddd9676f7a6899da40ad9e">add</link>, <link linkend="_class_task_manager_1ad0d87e94ca41ece59e98adba02ba8103">addWaitDelay</link>, <link linkend="_class_task_manager_1a41d58e9b9e596b19264bb2cbf7c02878">addAutoWaitDelay</link> </para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="_class_task_manager_1a9968aa8e895bfc0bbb0cd4e06ee14e6d"/><section>
+    <title>findTaskById()</title>
+<indexterm><primary>findTaskById</primary><secondary>TaskManager</secondary></indexterm>
+<indexterm><primary>TaskManager</primary><secondary>findTaskById</secondary></indexterm>
+<para><computeroutput>_TaskManagerTask * TaskManager::findTaskById (tm_taskId_t id)</computeroutput></para><para>
+
+<para>Find a task by its ID. </para>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>id</entry><entry>
+<para>the ID of the task </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>Returns</title>
+
+<para>A pointer to the _TaskManagerTask or NULL if not found </para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="_class_task_manager_1ab7a70749690f57b64c4db036abf1fa9d"/><section>
+    <title>getMessage()</title>
+<indexterm><primary>getMessage</primary><secondary>TaskManager</secondary></indexterm>
+<indexterm><primary>TaskManager</primary><secondary>getMessage</secondary></indexterm>
+<para><computeroutput>void * TaskManager::getMessage ( )<computeroutput>[inline]</computeroutput></computeroutput></para><para>
+
+<para>Get a task&apos;s message buffer. </para>
+</para>
+
+<para><formalpara><title>Returns</title>
+
+<para>A pointer to the actual message buffer. Use the contents of the buffer but do NOT modify it. If a task is killed, this pointer becomes invalid. </para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="_class_task_manager_1a2512563ba937a3542cbe564830ce1ae0"/><section>
+    <title>getMessageLength()</title>
+<indexterm><primary>getMessageLength</primary><secondary>TaskManager</secondary></indexterm>
+<indexterm><primary>TaskManager</primary><secondary>getMessageLength</secondary></indexterm>
+<para><computeroutput>uint16_t TaskManager::getMessageLength ( )<computeroutput>[inline]</computeroutput></computeroutput></para><para>
+
+<para>Get the length of the message in the buffer. </para>
+</para>
+
+<para><formalpara><title>Returns</title>
+
+<para>The size of the data block in the buffer. Note that if the content is a string, the size will be one greater than the string length to account for the trailing null. </para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="_class_task_manager_1a0f4e11619ef42339d1a20fa2d31b2b72"/><section>
+    <title>getSource()</title>
+<indexterm><primary>getSource</primary><secondary>TaskManager</secondary></indexterm>
+<indexterm><primary>TaskManager</primary><secondary>getSource</secondary></indexterm>
+<para><computeroutput>void TaskManager::getSource (tm_taskId_t &amp; fromTaskId)<computeroutput>[inline]</computeroutput></computeroutput></para><para>
+
+<para>Get task ID of last message/signal. </para>
+</para>
+
+<para>Returns the taskId of the task that last sent a signal or message to the current task. If the current task has never received a signal, returns [0].</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="3" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>out</entry><entry>fromTaskId</entry><entry>
+<para>&#8211; the taskId that sent the last message or signal </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                </para>
+</section>
+<anchor xml:id="_class_task_manager_1a2b88a62f061cbc8159a101844d8e5469"/><section>
+    <title>loop()</title>
+<indexterm><primary>loop</primary><secondary>TaskManager</secondary></indexterm>
+<indexterm><primary>TaskManager</primary><secondary>loop</secondary></indexterm>
+<para><computeroutput>void TaskManager::loop ( )</computeroutput></para><para>
+
+<para>Implements a single pass for the system <link linkend="_class_task_manager_1a2b88a62f061cbc8159a101844d8e5469">loop()</link> routine. </para>
+</para>
+
+<para>This performs a single iteration for the system <link linkend="_class_task_manager_1a2b88a62f061cbc8159a101844d8e5469">loop()</link> routine. It finds the next runnable task and runs it. It processes any yield*() operations that the user routine may have executed.</para>
+
+<para>This routine is for internal use only. </para>
+</section>
+<anchor xml:id="_class_task_manager_1ae311c8c428f7d5693c36a123cc6ed58b"/><section>
+    <title>resume()</title>
+<indexterm><primary>resume</primary><secondary>TaskManager</secondary></indexterm>
+<indexterm><primary>TaskManager</primary><secondary>resume</secondary></indexterm>
+<para><computeroutput>void TaskManager::resume (tm_taskId_t taskId)</computeroutput></para><para>
+
+<para>Resume the given task on this node. </para>
+</para>
+
+<para>Resumes a task. If the task do not exist, nothing happens. If the task had not been suspended, nothing happens. 
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>taskId</entry><entry>
+<para>The task to be resumed</para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <note><title>Note</title>
+
+<para>Not implemented. </para>
+</note>
+<formalpara><title>See also</title>
+
+<para><link linkend="_class_task_manager_1a83f88c0adf4712427e17926a62d2f9c0">suspend()</link> </para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="_class_task_manager_1ae5ba60f8681afab4cc32d16759262760"/><section>
+    <title>sendMessage()<computeroutput>[1/3]</computeroutput></title>
+<indexterm><primary>sendMessage</primary><secondary>TaskManager</secondary></indexterm>
+<indexterm><primary>TaskManager</primary><secondary>sendMessage</secondary></indexterm>
+<para><computeroutput>bool TaskManager::sendMessage (tm_nodeId_t nodeId, tm_taskId_t taskId, char * message)</computeroutput></para><para>
+
+<para>Sends a string message to a task. </para>
+</para>
+
+<para>Sends a message to a task. The message will go to only one task.</para>
+
+<para>Note that once a task has been sent a message, it will not be waiting for other instances of the same siggnal number. Note that additional messages sent prior to the task executing will overwrite any prior messages. Messages that are too large are ignored. Remember to account for the trailing &apos;
+<literallayout>&#160;&#xa;</literallayout>
+&apos; when considering the string message size.</para>
+
+<para><note><title>Note</title>
+
+<para>This routine is only available on ESP and RF24-enabled AVR environments.</para>
+</note>
+
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>nodeId</entry><entry>
+<para>&#8211; the node the message is sent to </para>
+</entry>
+                            </row>
+                            <row>
+<entry>taskId</entry><entry>
+<para>&#8211; the ID number of the task </para>
+</entry>
+                            </row>
+                            <row>
+<entry>message</entry><entry>
+<para>&#8211; the character string message. It is restricted in length to TASKMGR_MESSAGE_LENGTH-1 characters. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>See also</title>
+
+<para><link linkend="_class_task_manager_1a4f368a9141c55b085aefdc8833aeaeec">yieldForMessage()</link> </para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="_class_task_manager_1a25bc2f7572add6b5f3a1ed033aa14f41"/><section>
+    <title>sendMessage()<computeroutput>[2/3]</computeroutput></title>
+<indexterm><primary>sendMessage</primary><secondary>TaskManager</secondary></indexterm>
+<indexterm><primary>TaskManager</primary><secondary>sendMessage</secondary></indexterm>
+<para><computeroutput>void TaskManager::sendMessage (tm_taskId_t taskId, char * message)<computeroutput>[inline]</computeroutput></computeroutput></para><para>
+
+<para>Sends a string message to a task. </para>
+</para>
+
+<para>Sends a message to a task. The message will go to only one task.</para>
+
+<para>Note that once a task has been sent a message, it will not be waiting for other instances of the same siggnal number. Note that additional messages sent prior to the task executing will overwrite any prior messages. Messages that are too large are ignored. Remember to account for the trailing &apos;
+<literallayout>&#160;&#xa;</literallayout>
+&apos; when considering the string message size.</para>
+
+<para><note><title>Note</title>
+
+<para>In networked <link linkend="_class_task_manager">TaskManager</link> environments, this will send the message to a task on the current node.</para>
+</note>
+
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>taskId</entry><entry>
+<para>&#8211; the ID number of the task </para>
+</entry>
+                            </row>
+                            <row>
+<entry>message</entry><entry>
+<para>&#8211; the character string message. It is restricted in length to TASKMGR_MESSAGE_LENGTH-1 characters. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>See also</title>
+
+<para><link linkend="_class_task_manager_1a4f368a9141c55b085aefdc8833aeaeec">yieldForMessage()</link> </para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="_class_task_manager_1a138803585db2162518fb8303861639ac"/><section>
+    <title>sendMessage()<computeroutput>[3/3]</computeroutput></title>
+<indexterm><primary>sendMessage</primary><secondary>TaskManager</secondary></indexterm>
+<indexterm><primary>TaskManager</primary><secondary>sendMessage</secondary></indexterm>
+<para><computeroutput>void TaskManager::sendMessage (tm_taskId_t taskId, void * buf, int len)<computeroutput>[inline]</computeroutput></computeroutput></para><para>
+
+<para>Send a binary message to a task. </para>
+</para>
+
+<para>Sends a message to a task. The message will go to only one task. Note that once a task has been sent a message, it will not be waiting for other instances of the same signal number. Messages that are too large are ignored.</para>
+
+<para><note><title>Note</title>
+
+<para>Additional messages sent prior to the task executing will overwrite any prior messages.</para>
+
+<para>In networked <link linkend="_class_task_manager">TaskManager</link> environments, this will send the message to a task on the current node.</para>
+</note>
+
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>taskId</entry><entry>
+<para>&#8211; the ID number of the task </para>
+</entry>
+                            </row>
+                            <row>
+<entry>buf</entry><entry>
+<para>&#8211; A pointer to the structure that is to be passed to the task </para>
+</entry>
+                            </row>
+                            <row>
+<entry>len</entry><entry>
+<para>&#8211; The length of the buffer. Buffers can be at most TASKMGR_MESSAGE_LENGTH bytes long. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>See also</title>
+
+<para><link linkend="_class_task_manager_1a4f368a9141c55b085aefdc8833aeaeec">yieldForMessage()</link> </para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="_class_task_manager_1a83f88c0adf4712427e17926a62d2f9c0"/><section>
+    <title>suspend()</title>
+<indexterm><primary>suspend</primary><secondary>TaskManager</secondary></indexterm>
+<indexterm><primary>TaskManager</primary><secondary>suspend</secondary></indexterm>
+<para><computeroutput>void TaskManager::suspend (tm_taskId_t taskId)</computeroutput></para><para>
+
+<para>Suspend the given task on this node. </para>
+</para>
+
+<para>The given task will be suspended until it is resumed. It will not be allowed to run, nor will it receive messages or signals. 
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>taskId</entry><entry>
+<para>The task to be suspended </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <note><title>Note</title>
+
+<para>Not implemented. </para>
+</note>
+<formalpara><title>See also</title>
+
+<para>receive </para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="_class_task_manager_1ae7641b79a5efb0a5e640daa8f623fa5c"/><section>
+    <title>timedOut()</title>
+<indexterm><primary>timedOut</primary><secondary>TaskManager</secondary></indexterm>
+<indexterm><primary>TaskManager</primary><secondary>timedOut</secondary></indexterm>
+<para><computeroutput>bool TaskManager::timedOut ( )<computeroutput>[inline]</computeroutput></computeroutput></para><para>
+
+<para>Tell if the current task has timed out while waiting for a signal or message. </para>
+</para>
+
+<para><formalpara><title>Returns</title>
+
+<para>true if the task started due to timing out while waiting for a signal or message; false otherwise. </para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="_class_task_manager_1abc4f2e57cdc1fd1d3051b58dc816de98"/><section>
+    <title>yield()</title>
+<indexterm><primary>yield</primary><secondary>TaskManager</secondary></indexterm>
+<indexterm><primary>TaskManager</primary><secondary>yield</secondary></indexterm>
+<para><computeroutput>void TaskManager::yield ( )</computeroutput></para><para>
+
+<para>Exit from this task and return control to the task manager. </para>
+</para>
+
+<para>This exits from the current task, and returns control to the task manager. Functionally, it is similar to a return statement. The next time the task gains control, it will resume from the TOP of the routine. Note that if the task was an Auto task, it will be automatically rescheduled according to its Auto specifications. <formalpara><title>See also</title>
+
+<para><link linkend="_class_task_manager_1a2123fa0af84c3a1373b9437e2157e872">yieldDelay()</link>, <link linkend="_class_task_manager_1aa3f827ee35d80bc4faa2f7d438163e78">yieldUntil()</link>, yieldSignal(), yieldMessage(), <link linkend="_class_task_manager_1a41d58e9b9e596b19264bb2cbf7c02878">addAutoWaitDelay()</link>, addAutoWaitSignal(), <link linkend="_class_task_manager_1a2c4cd56685a46a66bb3b5a25c1ba8685">addAutoWaitMessage()</link> </para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="_class_task_manager_1a2123fa0af84c3a1373b9437e2157e872"/><section>
+    <title>yieldDelay()</title>
+<indexterm><primary>yieldDelay</primary><secondary>TaskManager</secondary></indexterm>
+<indexterm><primary>TaskManager</primary><secondary>yieldDelay</secondary></indexterm>
+<para><computeroutput>void TaskManager::yieldDelay (unsigned long ms)</computeroutput></para><para>
+
+<para>Exit from the task manager and do not restart this task until after a specified period. </para>
+</para>
+
+<para>This exits from the current task and returns control to the task manager. This task will not be rescheduled until at least the stated number of milliseconds has passed. Note that yieldDelay <emphasis>overrides</emphasis> any of the Auto specifications. That is, the next rescheduling will occur <emphasis>solely</emphasis> after the stated time period, and will not be constrained by AutoWaitSignal, AutoWaitMessage, or a different AutoWaitDelay value. The Auto specification will be retained, and will be applied on future executions where <link linkend="_class_task_manager_1abc4f2e57cdc1fd1d3051b58dc816de98">yield()</link> or a normal return are used. 
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>ms</entry><entry>
+<para>&#8211; the delay in milliseconds. Note the next call may exceed this constraint depending on time taken by other tasks. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>See also</title>
+
+<para><link linkend="_class_task_manager_1abc4f2e57cdc1fd1d3051b58dc816de98">yield()</link>, <link linkend="_class_task_manager_1aa3f827ee35d80bc4faa2f7d438163e78">yieldUntil()</link>, yieldSignal(), yieldMessage(), <link linkend="_class_task_manager_1a41d58e9b9e596b19264bb2cbf7c02878">addAutoWaitDelay()</link>, addAutoWaitSignal(), <link linkend="_class_task_manager_1a2c4cd56685a46a66bb3b5a25c1ba8685">addAutoWaitMessage()</link> </para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="_class_task_manager_1a4f368a9141c55b085aefdc8833aeaeec"/><section>
+    <title>yieldForMessage()</title>
+<indexterm><primary>yieldForMessage</primary><secondary>TaskManager</secondary></indexterm>
+<indexterm><primary>TaskManager</primary><secondary>yieldForMessage</secondary></indexterm>
+<para><computeroutput>void TaskManager::yieldForMessage (unsigned long timeout = <computeroutput>0</computeroutput>
+)</computeroutput></para><para>
+
+<para>Exit from the task manager and do not restart this task until a message has been received or a stated time period has passed. </para>
+</para>
+
+<para>This exits from the current task and returns control to the task manager. This task will not be rescheduled until a message has been received or a stated time period has passed (the timeout period). The TaskManager::timeOut() function will tell whether or not the timeout had been triggered.</para>
+
+<para><note><title>Note</title>
+
+<para>The yieldForMessage call <emphasis>overrides</emphasis> any of the Auto specifications. That is, the next rescheduling will occur <emphasis>solely</emphasis> after the signal has been received, and will not be constrained by AutoWaitDelay, AutoWaitSignal, or a different AutoWaitMessage value. The Auto specification will be retained, and will be applied on future executions where <link linkend="_class_task_manager_1abc4f2e57cdc1fd1d3051b58dc816de98">yield()</link> or a normal return are used. </para>
+</note>
+
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>timeout</entry><entry>
+<para>&#8211; The timeout period, in milliseconds. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>See also</title>
+
+<para><link linkend="_class_task_manager_1abc4f2e57cdc1fd1d3051b58dc816de98">yield()</link>, <link linkend="_class_task_manager_1a2123fa0af84c3a1373b9437e2157e872">yieldDelay()</link>, yieldForSignal(), <link linkend="_class_task_manager_1a41d58e9b9e596b19264bb2cbf7c02878">addAutoWaitDelay()</link>, addAutoWaitSignal(), <link linkend="_class_task_manager_1a2c4cd56685a46a66bb3b5a25c1ba8685">addAutoWaitMessage()</link>, timeOut() </para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="_class_task_manager_1aa3f827ee35d80bc4faa2f7d438163e78"/><section>
+    <title>yieldUntil()</title>
+<indexterm><primary>yieldUntil</primary><secondary>TaskManager</secondary></indexterm>
+<indexterm><primary>TaskManager</primary><secondary>yieldUntil</secondary></indexterm>
+<para><computeroutput>void TaskManager::yieldUntil (unsigned long when)</computeroutput></para><para>
+
+<para>Exit from the task manager and do not restart this task until (after) a specified CPU clock time. </para>
+</para>
+
+<para>This exits from the current task and returns control to the task manager. This task will not be rescheduled until the CPU clock (millis()) has exceeded the given time. Note that yieldUntil <emphasis>overrides</emphasis> any of the Auto specifications. That is, the next rescheduling will occur <emphasis>solely</emphasis> after the stated clock time has passed, and will not be constrained by AutoWaitSignal, AutoWaitMessage, or a different AutoWaitDelay value. The Auto specification will be retained, and will be applied on future executions where <link linkend="_class_task_manager_1abc4f2e57cdc1fd1d3051b58dc816de98">yield()</link> or a normal return are used. 
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>when</entry><entry>
+<para>&#8211; The target CPU time. Note the next call may exceed this constraint depending on time taken by other tasks. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>See also</title>
+
+<para><link linkend="_class_task_manager_1abc4f2e57cdc1fd1d3051b58dc816de98">yield()</link>, <link linkend="_class_task_manager_1a2123fa0af84c3a1373b9437e2157e872">yieldDelay()</link>, yieldSignal(), yieldMessage(), <link linkend="_class_task_manager_1a41d58e9b9e596b19264bb2cbf7c02878">addAutoWaitDelay()</link>, addAutoWaitSignal(), <link linkend="_class_task_manager_1a2c4cd56685a46a66bb3b5a25c1ba8685">addAutoWaitMessage()</link> </para>
+</formalpara>
+</para>
+</section>
+<para>
+The documentation for this class was generated from the following files:</para>
+TaskManagerCore_2.hTaskManager_2.cpp</section>
+</section>

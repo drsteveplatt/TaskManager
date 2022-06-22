@@ -1,0 +1,124 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<chapter xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_mainpage" xml:lang="en-US">
+<section xml:id="_index_1Overview">
+<title>Overview</title>
+
+<para><link linkend="_class_task_manager">TaskManager</link> is a cooperative task manager for the Arduino family of processors. It replaces the single user <computeroutput>loop()</computeroutput> routine with an environment in which the user can write many independent <computeroutput>loop()</computeroutput> -style routines. These user routines are run in a round-robin manner. In addition, routines can <itemizedlist>
+<listitem>
+<para>Delay &#8211; suspending their operation for a specified period while allowing other routines to make use of the time </para>
+</listitem>
+<listitem>
+<para>Signal &#8211; suspend action until they receive a signal, or send a signal allowing a different task to resume </para>
+</listitem>
+<listitem>
+<para>Message &#8211; suspend action until a message has been received, or send messages to different tasks to pass them information.</para>
+</listitem>
+</itemizedlist>
+</para>
+</section>
+<section xml:id="_index_1News">
+<title>News</title>
+
+<para>2022/05/31: Release 2.0: Merging Atmel and ESP32 branches. 
+<literallayout>&#160;&#xa;</literallayout>
+ 
+<literallayout>&#160;&#xa;</literallayout>
+ESP32 will include multi-node (mesh) routines to send/receive messages between nodes. Atmel systems will need to use TaskManagerRF version 2.0 to support this functionality. 2015/11/13: Release 1.0: Initial full release. 
+<literallayout>&#160;&#xa;</literallayout>
+More code cleanup, improved documentation. Added routines so tasks could ID where messages/signals came from. may be a while until they are...</para>
+</section>
+<section xml:id="_index_1Summary">
+<title>Summary</title>
+
+<para><link linkend="_class_task_manager">TaskManager</link> is a cooperative multitasking task-swapper. It allows the developer to create many independent tasks, which are called in a round-robin manner. 
+<literallayout>&#160;&#xa;</literallayout>
+<link linkend="_class_task_manager">TaskManager</link> offers the following: <itemizedlist>
+<listitem>
+<para>Any number of tasks. </para>
+</listitem>
+<listitem>
+<para>Extends the Arduino &quot;setup/loop&quot; paradigm &#8211; the programmer creates several &quot;loop&quot; routines (tasks) instead of one. So programming is simple and straightforward. </para>
+</listitem>
+<listitem>
+<para>Tasks can communicate through signals or messages. A signal is an information-free &quot;poke&quot; sent to whatever task is waiting for the poke. A message has information (string or data), and is passed to a particular task. </para>
+</listitem>
+<listitem>
+<para><link linkend="_class_task_manager">TaskManager</link> programs can use RF24 2.4GHz radios to communicate between nodes. So tasks running on different nodes can communicate through signals and messages in the same manner as if they were on the same node.</para>
+</listitem>
+</itemizedlist>
+</para>
+</section>
+<section xml:id="_index_1Example">
+<title>Example</title>
+
+<para>The following is a <link linkend="_class_task_manager">TaskManager</link> program. <literallayout><computeroutput><emphasis role="comment">//</emphasis>
+<emphasis role="comment">//&#32;Blink&#32;two&#32;LEDs&#32;at&#32;different&#32;rates</emphasis>
+<emphasis role="comment">//</emphasis>
+
+<emphasis role="preprocessor">#include&#32;&lt;SPI.h&gt;</emphasis>
+<emphasis role="preprocessor">#include&#32;&lt;RF24.h&gt;</emphasis>
+<emphasis role="preprocessor">#include&#32;&lt;TaskManager.h&gt;</emphasis>
+
+<emphasis role="preprocessor">#define&#32;LED_1_PORT&#32;&#32;2</emphasis>
+<emphasis role="keywordtype">bool</emphasis>&#32;led_1_state;
+
+<emphasis role="preprocessor">#define&#32;LED_2_PORT&#32;&#32;3</emphasis>
+<emphasis role="keywordtype">bool</emphasis>&#32;led_2_state;
+
+<emphasis role="keywordtype">void</emphasis>&#32;setup()&#32;{
+&#32;&#32;pinMode(LED_1_PORT,&#32;OUTPUT);
+&#32;&#32;digitalWrite(LED_1_PORT,&#32;LOW);
+&#32;&#32;led_1_state&#32;=&#32;LOW;
+
+&#32;&#32;pinMode(LED_2_PORT,&#32;OUTPUT);
+&#32;&#32;digitalWrite(LED_2_PORT,&#32;LOW);
+&#32;&#32;led_2_state&#32;=&#32;LOW;
+
+&#32;&#32;TaskMgr.<link linkend="_class_task_manager_1a3b61b260f5ddd9676f7a6899da40ad9e">add</link>(1,&#32;loop_led_1);
+&#32;&#32;TaskMgr.<link linkend="_class_task_manager_1a3b61b260f5ddd9676f7a6899da40ad9e">add</link>(2,&#32;loop_led_2);
+}
+
+<emphasis role="keywordtype">void</emphasis>&#32;loop_led_1()&#32;{
+&#32;&#32;&#32;&#32;led_1_state&#32;=&#32;(led_1_state==LOW)&#32;?&#32;HIGH&#32;:&#32;LOW;
+&#32;&#32;&#32;&#32;digitalWrite(LED_1_PORT,&#32;led_1_state);
+&#32;&#32;&#32;&#32;TaskMgr.<link linkend="_class_task_manager_1a2123fa0af84c3a1373b9437e2157e872">yieldDelay</link>(500);
+}
+
+<emphasis role="keywordtype">void</emphasis>&#32;loop_led_2()&#32;{
+&#32;&#32;&#32;&#32;led_2_state&#32;=&#32;(led_2_state==LOW)&#32;?&#32;HIGH&#32;:&#32;LOW;
+&#32;&#32;&#32;&#32;digitalWrite(LED_2_PORT,&#32;led_2_state);
+&#32;&#32;&#32;&#32;TaskMgr.<link linkend="_class_task_manager_1a2123fa0af84c3a1373b9437e2157e872">yieldDelay</link>(100);
+}
+</computeroutput></literallayout></para>
+
+<para>Note the following; this is all that is needed for <link linkend="_class_task_manager">TaskManager</link>: <itemizedlist>
+<listitem>
+<para>You need to &apos;#include &lt;TaskManager.h&gt;&apos;. </para>
+</listitem>
+<listitem>
+<para>There is no &apos;void loop()&apos;. Instead, you write a routine for each independent task as if it were its own &apos;loop()&apos;. </para>
+</listitem>
+<listitem>
+<para>You tell &apos;TaskMgr&apos; about your routines through the &apos;void TaskManager::add(byte
+    taskId, void (*) task);&apos; method. This is shown in the two calls to &apos;TaskMgr.add(...);&apos;. </para>
+</listitem>
+<listitem>
+<para>You do not use &apos;delay();&apos;. Never use &apos;delay();&apos;. &apos;delay();&apos; delays all things; nothing will run. Instead use <link linkend="_class_task_manager_1a2123fa0af84c3a1373b9437e2157e872">TaskManager::yieldDelay()</link>&apos;. &apos;yieldDelay()&apos; will return from the current routine and guarantee it won&apos;t be restarted for the specified time. However, other routines will be allowed to run during this time.</para>
+</listitem>
+</itemizedlist>
+</para>
+</section>
+<section xml:id="_index_1future">
+<title>Future Work</title>
+
+<para>Here are the upcoming/future plans for <link linkend="_class_task_manager">TaskManager</link>. Some are short term, some are longer term. <itemizedlist>
+<listitem>
+<para>SPI investigation/certification. Running RF in a multi-SPI environment is &quot;fraught with peril&quot;. The SPI routines <computeroutput>beginTransaction()</computeroutput> and <computeroutput>endTransaction()</computeroutput> allow different SPI devices to share the MOSI/MISO interface even if they use different serial settings. However, most SPI libraries do not use currently use these routines. (Note that the RF library recommended for <link linkend="_class_task_manager">TaskManager</link> does.) We need to investigate the different SPI libraries and identify the transaction-safety of each. </para>
+</listitem>
+<listitem>
+<para>Suspend, resume, and kill. These routines haven&apos;t been fully tested. </para>
+</listitem>
+</itemizedlist>
+</para>
+</section>
+</chapter>

@@ -1,8 +1,6 @@
 #ifndef RING_H_INCLUDED
 #define RING_H_INCLUDED
 
-//#include "Streaming.h"
-
 //#define RING_DEBUG
 
 //! \brief An STL-style class that implements rings
@@ -22,19 +20,7 @@ protected:
     T m_val;
     _ringNode* m_next;
     _ringNode* m_prev;
-#if defined(RING_DEBUG)
-    void DebugDump(Print& p) const;
-#endif
 };
-
-#if defined(RING_DEBUG)
-template<class T> void _ringNode<T>::DebugDump(Print& p) const {
-    p.print(F("[val: ")); p.print(m_val);
-    p.print(F(" next: 0x")); p.print((int)m_next, HEX);
-    p.print(F(" prev: 0x")); p.print((int)m_prev, HEX);
-    p.print(F("]"));
-}
-#endif
 
 // The ring object.  It contains a pointer to the "current" element of
 // a series of _ringNode objects/
@@ -52,11 +38,7 @@ template<class T> void _ringNode<T>::DebugDump(Print& p) const {
     must have a constructor and a destructor as well as operator=.  It should also
     have the printTo member function if any form of serialization is to be done.
 */
-#if defined(RING_DEBUG)
-template<class T>class ring: public Printable {
-#else
 template<class T>class ring {
-#endif
 	private:
     _ringNode<T>* m_cur;
     char* m_prefix;
@@ -65,8 +47,8 @@ public:
     //***** Constructor, destructor
     //! \brief Construct an empty ring
     ring(): m_cur(NULL), m_prefix((char*)"r: ") {}
-    //! \brief Destroy a ring.
-    /*!
+    /*! \brief Destroy a ring.
+
     	As part of this process, the destructors for all of the stored objects will be called.
     	After the destruction, the ring will be empty.
     */
@@ -101,22 +83,14 @@ public:
     ring<T>& operator=(ring<T>& r);
     bool operator==(ring<T>& r) const;
 
-#if defined(RING_DEBUG)
-	// extension for Printable to allow the class to be serialized/streamed
-    size_t printTo(Print& p) const;
-
-    // debugging stuff
-    void DebugDump(Print& p) const;
-#endif
-
     // mapping operations
     void map(void (*fn)(T& ));
     void map(void (*fn)(T& , void* ), void* );
 };
 
-//! \brief Push an element onto the front of the ring.  The element will be the new current element
-/*!
-	A more elaborate description of push_front
+/*! \brief Push an element onto the front of the ring.  The element will be the new current element.
+
+	Places the element at the front of the ring.  All other elements in the ring are preserved.
 	\param val - The object being pushed onto the front.  The object is copied.  As such, the object will
 	require a copier (operator=) member function.
 	\sa front(), push_back()
@@ -139,10 +113,11 @@ template<class T>void ring<T>::push_front(T val) {
 
 /*! \brief Push an element onto the back of the ring.  The current element is left
 	unchanged.
-
+	
+	Places the element at the front of the ring.  All other elements in the ring are preserved.
 	\param val - The object being pushed onto the back.  The object is copied.  As such, the object will
 	require a copier (operator=) member function.
-	\sa back(), push_back();
+	\sa back(), push_front();
 */
 template<class T> inline void ring<T>::push_back(T val) {
     this->push_front(val);
@@ -288,56 +263,10 @@ template<class T> inline bool ring<T>::operator==(ring<T>& r) const {
     return m_cur==r.m_cur;
 }
 
-#if defined(RING_DEBUG)
-/*!	\brief Implements the Printable interface functionality.
-
-	This prints out the ring in a human-readable form to the given Print stream.
-	It assumes that each ring data value is either natively printable or
-	also implements the Printable interface.
-	\param p - the Print stream
-*/
-template<class T>size_t ring<T>::printTo(Print& p) const {
-    _ringNode<T>* last;
-    _ringNode<T>* cur;
-    size_t len = 0;
-    len += p.print("[");
-    len += p.print(m_prefix);
-    if(m_cur!=NULL) {
-        for(cur=m_cur, last=m_cur->m_prev; cur!=last; cur=cur->m_next) {
-            len += p.print(cur->m_val);
-            len += p.print(" ");
-        }
-        len += p.print(last->m_val);
-    }
-    len += p.print("]");
-    return len;
-}
-
-//! \brief Print out the contents of the ring to a Print object.
-/*!
-	Print out the contents of the ring to the Print object.  This requires
-	that the class T also be Printable (either natively or by implementing
-	the Printable interface).
-	\param p - a Print object (e.g., Serial).
-*/
-template<class T>void ring<T>::DebugDump(Print& p) const {
-    Serial.print("m_cur: 0x"); Serial.print((int)m_cur, HEX);
-    _ringNode<T>* cur;
-    _ringNode<T>* last;
-    if(m_cur==NULL) { p.print("[]"); return; }
-    p.print("[");
-    for(cur=m_cur, last=m_cur->m_prev; cur!=last; cur=cur->m_next) {
-        cur->DebugDump(p);
-    }
-    last->DebugDump(p);
-    p.print("]");
-}
-#endif
-
 // Mapping functions
 
-//! \brief Map a function across each data element on a ring.
-/*!
+/*! \brief Map a function across each data element on a ring.
+
 	Map a function that takes a single T as its param.  T is passed as a reference
 	so the function may modify T.
 	\param fn - The function to be applied to each element.
@@ -353,16 +282,16 @@ template<class T>void ring<T>::map(void (*fn)(T&)) {
     (fn)(cur->m_val);
 }
 
-//!	\brief Map a function with one secondary parameter across all of the elements of a ring
-/*!
-// Map a function that takes a T and a void* as a param.  T is pased as a reference
-// so the function may modify T.  THe void* is a parameter to map and is passed to
-// the function.  It may be a pointer to anything, and can be used to accumulate
-// results, etc.
-//	\param fn - A function that takes a ring's data object and
-//	an arbitrary data pointer.  The function is applied to the pair.
-//	\param p - An arbitrary data object.
-//	\sa map(void (*fn)())
+/*!	\brief Map a function with one secondary parameter across all of the elements of a ring
+
+	Map a function that takes a T and a void* as a param.  T is pased as a reference
+	so the function may modify T.  THe void* is a parameter to map and is passed to
+	the function.  It may be a pointer to anything, and can be used to accumulate
+	results, etc.
+	\param fn - A function that takes a ring's data object and
+	an arbitrary data pointer.  The function is applied to the pair.
+	\param p - An arbitrary data object.
+	\sa map(void (*fn)())
 */
 template<class T>void ring<T>::map(void (*fn)(T&, void*), void* p) {
     _ringNode<T>* cur;

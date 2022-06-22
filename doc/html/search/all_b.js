@@ -1,25 +1,5 @@
 var searchData=
 [
-  ['taskmanger_20_2d_20cooperative_20multitasking_20system_20for_20arduino_35',['TaskManger - Cooperative Multitasking System for Arduino',['../index.html',1,'']]],
-  ['t1_36',['T1',['../_task_manager_8cpp.html#ac16509a75e3d3fc46b9df1726be486ec',1,'TaskManager.cpp']]],
-  ['taskmanager_37',['TaskManager',['../class_task_manager.html',1,'TaskManager'],['../class_task_manager.html#a491dc7a77a5381675f614a411755ef64',1,'TaskManager::TaskManager()']]],
-  ['taskmanager_2ecpp_38',['TaskManager.cpp',['../_task_manager_8cpp.html',1,'']]],
-  ['taskmanagercore_2eh_39',['TaskManagerCore.h',['../_task_manager_core_8h.html',1,'']]],
-  ['taskmanagermacros_2eh_40',['TaskManagerMacros.h',['../_task_manager_macros_8h.html',1,'']]],
-  ['timedout_41',['timedOut',['../class_task_manager.html#ae7641b79a5efb0a5e640daa8f623fa5c',1,'TaskManager']]],
-  ['tm_5faddsubtask_42',['TM_ADDSUBTASK',['../_task_manager_macros_8h.html#a3c97121be787a2a0e342963ee41f520d',1,'TaskManagerMacros.h']]],
-  ['tm_5fbegin_43',['TM_BEGIN',['../_task_manager_macros_8h.html#a7f26ce9bbeeebe09f8fca438a08f82c4',1,'TaskManagerMacros.h']]],
-  ['tm_5fbeginsub_44',['TM_BEGINSUB',['../_task_manager_macros_8h.html#a1788f4117bcd1a4e69464f04d86a6b0c',1,'TaskManagerMacros.h']]],
-  ['tm_5fbeginsub_5fp_45',['TM_BEGINSUB_P',['../_task_manager_macros_8h.html#aebdd4dfda705bb5b93f27e3b3ad531b1',1,'TaskManagerMacros.h']]],
-  ['tm_5fcall_46',['TM_CALL',['../_task_manager_macros_8h.html#a22125fd8a3cb9db92f2795d67cdd0792',1,'TaskManagerMacros.h']]],
-  ['tm_5fcall_5fp_47',['TM_CALL_P',['../_task_manager_macros_8h.html#a4f8360d4bf388bf85838f9b6d46055ff',1,'TaskManagerMacros.h']]],
-  ['tm_5fend_48',['TM_END',['../_task_manager_macros_8h.html#a4d23ea00e7a4a4d2bf985d3c4953bb85',1,'TaskManagerMacros.h']]],
-  ['tm_5fendsub_49',['TM_ENDSUB',['../_task_manager_macros_8h.html#a888606b55490f298ce41ab61803c34e4',1,'TaskManagerMacros.h']]],
-  ['tm_5freturnsub_50',['TM_RETURNSUB',['../_task_manager_macros_8h.html#a38c18f499a2c2ad8c831429f85b8a3a3',1,'TaskManagerMacros.h']]],
-  ['tm_5fyield_51',['TM_YIELD',['../_task_manager_macros_8h.html#ac8c477311683ee6b7156c91cb21337a4',1,'TaskManagerMacros.h']]],
-  ['tm_5fyielddelay_52',['TM_YIELDDELAY',['../_task_manager_macros_8h.html#ad7c5403dfd59812c4baf4d607b57f026',1,'TaskManagerMacros.h']]],
-  ['tm_5fyieldmessage_53',['TM_YIELDMESSAGE',['../_task_manager_macros_8h.html#afb7bc1e4e3146740517648cf175e538c',1,'TaskManagerMacros.h']]],
-  ['tm_5fyieldmessagetimeout_54',['TM_YIELDMESSAGETIMEOUT',['../_task_manager_macros_8h.html#adb19801ca5248447dfd47ab53567b261',1,'TaskManagerMacros.h']]],
-  ['tm_5fyieldsignal_55',['TM_YIELDSIGNAL',['../_task_manager_macros_8h.html#ae6da5dca1dcd12f69c36ad0dd2bdad2b',1,'TaskManagerMacros.h']]],
-  ['tm_5fyieldsignaltimeout_56',['TM_YIELDSIGNALTIMEOUT',['../_task_manager_macros_8h.html#a201178a86c9e4e34ebcb69bc77024c52',1,'TaskManagerMacros.h']]]
+  ['operator_3d_0',['operator=',['../group__ring.html#ga52e785fb89c3e8ca7f4c5824f51f3532',1,'ring']]],
+  ['operator_3d_3d_1',['operator==',['../group__ring.html#gab47d8aac67ce284fc004bb88da21862f',1,'ring']]]
 ];

@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_group___task_manager" xml:lang="en-US">
+<title>TaskManager</title>
+<indexterm><primary>TaskManager</primary></indexterm>
+<simplesect>
+    <title>Classes    </title>
+        <itemizedlist>
+            <listitem><para>class <link linkend="_class_task_manager">TaskManager</link></para>
+
+<para>A cooperative multitasking manager. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Macros    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_group___task_manager_1ga7978d46c4b712c74924585d78fc9c851"/>#define <emphasis role="strong">TASKMGR_RF_MONITOR_TASK</emphasis>   (TASKMGR_NULL_TASK-1)</para>
+</listitem>
+            <listitem><para><anchor xml:id="_group___task_manager_1gae8cf78a801a8df6343783de38c5ad342"/>#define <emphasis role="strong">TASKMGR_PING_MONITOR_TASK</emphasis>   (TASKMGR_NULL_TASK-2)</para>
+</listitem>
+            <listitem><para><anchor xml:id="_group___task_manager_1ga7263c52749ff88cfd62fde72fbe9fba6"/>#define <emphasis role="strong">TASKMGR_MENU_MONITOR_TASK</emphasis>   (TASKMGR_NULL_TASK-3)</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Miscellaneous and Informational Routines    </title>
+        <itemizedlist>
+            <listitem><para>tm_taskId_t <link linkend="_group___task_manager_1ga087a0368a1dc5670757f56000b906e22">TaskManager::myId</link> ()</para>
+
+<para>Return the task ID of the currently running task. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+</section>
+<section>
+<title>Function Documentation</title>
+<anchor xml:id="_group___task_manager_1ga087a0368a1dc5670757f56000b906e22"/><section>
+    <title>myId()</title>
+<indexterm><primary>myId</primary><secondary>TaskManager</secondary></indexterm>
+<indexterm><primary>TaskManager</primary><secondary>myId</secondary></indexterm>
+<para><computeroutput>tm_taskId_t TaskManager::myId ( )<computeroutput>[inline]</computeroutput></computeroutput></para><para>
+
+<para>Return the task ID of the currently running task. </para>
+</para>
+
+<para><formalpara><title>Returns</title>
+
+<para>The byte value that represents the current task&apos;s ID. </para>
+</formalpara>
+</para>
+</section>
+</section>
+</section>

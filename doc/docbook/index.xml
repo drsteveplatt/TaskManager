@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<book xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_index" xml:lang="en-US">
+    <info>
+    <title>TaskManager</title>
+    </info>
+<chapter>
+    <title>TaskManger - Cooperative Multitasking System for Arduino</title>
+    <xi:include href="mainpage.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+</chapter>
+<chapter>
+    <title>Module Documentation</title>
+    <xi:include href="group___ring.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+    <xi:include href="group___task_manager.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+    <xi:include href="group___task_manager_task.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+</chapter>
+<chapter>
+    <title>Class Documentation</title>
+    <xi:include href="class__ring.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+    <xi:include href="classring.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+    <xi:include href="class_task_manager.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+</chapter>
+<chapter>
+    <title>File Documentation</title>
+    <xi:include href="_task_manager__2_8h_source.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+    <xi:include href="_task_manager_boilerplates__2_8h_source.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+    <xi:include href="_task_manager_core__2_8h_source.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+    <xi:include href="_task_manager_macros__2_8h_source.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+    <xi:include href="_task_manager_sub__2_8h_source.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+</chapter>
+<index/>
+</book>

@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_group___ring" xml:lang="en-US">
+<title>Ring</title>
+<indexterm><primary>Ring</primary></indexterm>
+<simplesect>
+    <title>Classes    </title>
+        <itemizedlist>
+            <listitem><para>class <link linkend="_classring">ring&lt; T &gt;</link></para>
+
+<para>An STL-style class that implements rings. </para>
+</listitem>
+            <listitem><para>class <link linkend="_class__ring">_ring</link></para>
+
+<para>Implements a templated ring data structure. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+</section>
+</section>

@@ -1,0 +1,443 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_classring" xml:lang="en-US">
+<title>ring&lt; T &gt; Class Template Reference</title>
+<indexterm><primary>ring&lt; T &gt;</primary></indexterm>
+<para>
+
+<para>An STL-style class that implements rings. </para>
+ 
+</para>
+<simplesect>
+    <title>Public Member Functions    </title>
+        <itemizedlist>
+            <listitem><para><anchor xml:id="_classring_1a289cfd3a4d5885e43351277b1d3fb9d9"/><emphasis role="strong">ring</emphasis> ()</para>
+
+<para>Construct an empty ring. </para>
+</listitem>
+            <listitem><para><link linkend="_classring_1aa208bdbd13da76233bfb0edb3e460fa5">~ring</link> ()</para>
+
+<para>Destroy a ring. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect><title></title>
+        <itemizedlist>
+            <listitem><para>void <link linkend="_classring_1ad9de090ad384e32e39337c85a9a21549">push_front</link> (T val)</para>
+
+<para>Push an element onto the front of the ring. The element will be the new current element. </para>
+</listitem>
+            <listitem><para>void <link linkend="_classring_1ab13c5ad32f0ccd338400dd16c3259f9b">push_back</link> (T val)</para>
+
+<para>Push an element onto the back of the ring. The current element is left unchanged. </para>
+</listitem>
+            <listitem><para>void <link linkend="_classring_1a8bd49b76e56686927dcfd78cb5172690">pop_front</link> ()</para>
+
+<para>Removes the first element from the ring. </para>
+</listitem>
+            <listitem><para>void <link linkend="_classring_1ad000e92398391abc8958e0fc5595c329">pop_back</link> ()</para>
+
+<para>Removes the last element from the ring. </para>
+</listitem>
+            <listitem><para>void <link linkend="_classring_1a65033722386b6afe9d7cd03e5dc95bb5">clear</link> ()</para>
+
+<para>Removes all elements from a ring. </para>
+</listitem>
+            <listitem><para>T &amp; <link linkend="_classring_1a18c99d7c346c2ac99a91e49c28f8a7af">front</link> () const</para>
+
+<para>Returns a reference to the first stored data element. </para>
+</listitem>
+            <listitem><para>T &amp; <link linkend="_classring_1afc322bf07d7bdcc65888e604581202d0">back</link> () const</para>
+
+<para>Returns a reference to the last stored data element. </para>
+</listitem>
+            <listitem><para>void <link linkend="_classring_1af16864a4bd729a9b91e4a2fcdec8f737">move_next</link> ()</para>
+
+<para>Moves the ring to the next element in sequence. </para>
+</listitem>
+            <listitem><para>void <link linkend="_classring_1ad682fc47814540b7c492dfb3a65123b3">move_prev</link> ()</para>
+
+<para>Moves the ring to the previous element in sequence. </para>
+</listitem>
+            <listitem><para>bool <link linkend="_classring_1a1800422d7f49e93354e0f8e7730bdcb6">empty</link> () const</para>
+
+<para>Tells whether or not a ring is empty. </para>
+</listitem>
+            <listitem><para>size_t <link linkend="_classring_1ad8424513e6933cfd2cf7629f32a56252">size</link> () const</para>
+
+<para>Returns the size of the ring. </para>
+</listitem>
+            <listitem><para><link linkend="_classring">ring</link>&lt; T &gt; &amp; <link linkend="_classring_1a52e785fb89c3e8ca7f4c5824f51f3532">operator=</link> (<link linkend="_classring">ring</link>&lt; T &gt; &amp;r)</para>
+
+<para>Produces a lightweight assignnment/copy of a ring. </para>
+</listitem>
+            <listitem><para>bool <link linkend="_classring_1ab47d8aac67ce284fc004bb88da21862f">operator==</link> (<link linkend="_classring">ring</link>&lt; T &gt; &amp;r) const</para>
+
+<para>Compare two rings for equality. </para>
+</listitem>
+            <listitem><para>void <link linkend="_classring_1aada527f64532b1710d200953bfbabf2a">map</link> (void(*fn)(T &amp;))</para>
+
+<para>Map a function across each data element on a ring. </para>
+</listitem>
+            <listitem><para>void <link linkend="_classring_1ac47cf27eccf2ffdbcc102e16b139c459">map</link> (void(*fn)(T &amp;, void *), void *)</para>
+
+<para>Map a function with one secondary parameter across all of the elements of a ring. </para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+<simplesect><title>template&lt;class T&gt;
+class ring&lt; T &gt;</title></simplesect>
+
+<para>An STL-style class that implements rings. </para>
+</section>
+<section>
+<title>Constructor &amp; Destructor Documentation</title>
+<anchor xml:id="_classring_1aa208bdbd13da76233bfb0edb3e460fa5"/><section>
+    <title>~ring()</title>
+<indexterm><primary>~ring</primary><secondary>ring&lt; T &gt;</secondary></indexterm>
+<indexterm><primary>ring&lt; T &gt;</primary><secondary>~ring</secondary></indexterm>
+<computeroutput>template&lt;class T &gt; </computeroutput><para><computeroutput><link linkend="_classring">ring</link>&lt; T &gt;::~<link linkend="_classring">ring</link> ( )<computeroutput>[inline]</computeroutput></computeroutput></para><para>
+
+<para>Destroy a ring. </para>
+</para>
+
+<para>As part of this process, the destructors for all of the stored objects will be called. After the destruction, the ring will be empty. </para>
+</section>
+</section>
+<section>
+<title>Member Function Documentation</title>
+<anchor xml:id="_classring_1afc322bf07d7bdcc65888e604581202d0"/><section>
+    <title>back()</title>
+<indexterm><primary>back</primary><secondary>ring&lt; T &gt;</secondary></indexterm>
+<indexterm><primary>ring&lt; T &gt;</primary><secondary>back</secondary></indexterm>
+<computeroutput>template&lt;class T &gt; </computeroutput><para><computeroutput>T &amp; <link linkend="_classring">ring</link>&lt; T &gt;::back<computeroutput>[inline]</computeroutput></computeroutput></para><para>
+
+<para>Returns a reference to the last stored data element. </para>
+</para>
+
+<para>This returns a reference to the last stored data element. Any changes to this will change the referenced (on-ring) value as well. Calling on an empty ring will result in unpredictable actions. <formalpara><title>See also</title>
+
+<para><link linkend="_classring_1a18c99d7c346c2ac99a91e49c28f8a7af">front</link> </para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="_classring_1a65033722386b6afe9d7cd03e5dc95bb5"/><section>
+    <title>clear()</title>
+<indexterm><primary>clear</primary><secondary>ring&lt; T &gt;</secondary></indexterm>
+<indexterm><primary>ring&lt; T &gt;</primary><secondary>clear</secondary></indexterm>
+<computeroutput>template&lt;class T &gt; </computeroutput><para><computeroutput>void <link linkend="_classring">ring</link>&lt; T &gt;::clear</computeroutput></para><para>
+
+<para>Removes all elements from a ring. </para>
+</para>
+
+<para>Removes all elements from a ring. This will call the destructor of all stored objects. Calling on an empty ring will have no effect. The ring will be empty after this is called. Returns nothing. </para>
+</section>
+<anchor xml:id="_classring_1a1800422d7f49e93354e0f8e7730bdcb6"/><section>
+    <title>empty()</title>
+<indexterm><primary>empty</primary><secondary>ring&lt; T &gt;</secondary></indexterm>
+<indexterm><primary>ring&lt; T &gt;</primary><secondary>empty</secondary></indexterm>
+<computeroutput>template&lt;class T &gt; </computeroutput><para><computeroutput>bool <link linkend="_classring">ring</link>&lt; T &gt;::empty<computeroutput>[inline]</computeroutput></computeroutput></para><para>
+
+<para>Tells whether or not a ring is empty. </para>
+</para>
+
+<para>Returns true if the ring is empty, false if the ring has values on it. </para>
+</section>
+<anchor xml:id="_classring_1a18c99d7c346c2ac99a91e49c28f8a7af"/><section>
+    <title>front()</title>
+<indexterm><primary>front</primary><secondary>ring&lt; T &gt;</secondary></indexterm>
+<indexterm><primary>ring&lt; T &gt;</primary><secondary>front</secondary></indexterm>
+<computeroutput>template&lt;class T &gt; </computeroutput><para><computeroutput>T &amp; <link linkend="_classring">ring</link>&lt; T &gt;::front<computeroutput>[inline]</computeroutput></computeroutput></para><para>
+
+<para>Returns a reference to the first stored data element. </para>
+</para>
+
+<para>This returns a reference to the first stored data element. Any changes to this will change the referenced (on-ring) value as well. Calling on an empty ring will result in unpredictable actions. <formalpara><title>See also</title>
+
+<para><link linkend="_classring_1afc322bf07d7bdcc65888e604581202d0">back</link> </para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="_classring_1aada527f64532b1710d200953bfbabf2a"/><section>
+    <title>map()<computeroutput>[1/2]</computeroutput></title>
+<indexterm><primary>map</primary><secondary>ring&lt; T &gt;</secondary></indexterm>
+<indexterm><primary>ring&lt; T &gt;</primary><secondary>map</secondary></indexterm>
+<computeroutput>template&lt;class T &gt; </computeroutput><para><computeroutput>void <link linkend="_classring">ring</link>&lt; T &gt;::map (void(*)(T &amp;) fn)</computeroutput></para><para>
+
+<para>Map a function across each data element on a ring. </para>
+</para>
+
+<para>Map a function that takes a single T as its param. T is passed as a reference so the function may modify T. 
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>fn</entry><entry>
+<para>- The function to be applied to each element. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>See also</title>
+
+<para><link linkend="_classring_1aada527f64532b1710d200953bfbabf2a">map</link>(void (<emphasis>fn)(T&amp;, void</emphasis>), void*) </para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="_classring_1ac47cf27eccf2ffdbcc102e16b139c459"/><section>
+    <title>map()<computeroutput>[2/2]</computeroutput></title>
+<indexterm><primary>map</primary><secondary>ring&lt; T &gt;</secondary></indexterm>
+<indexterm><primary>ring&lt; T &gt;</primary><secondary>map</secondary></indexterm>
+<computeroutput>template&lt;class T &gt; </computeroutput><para><computeroutput>void <link linkend="_classring">ring</link>&lt; T &gt;::map (void(*)(T &amp;, void *) fn, void * p)</computeroutput></para><para>
+
+<para>Map a function with one secondary parameter across all of the elements of a ring. </para>
+</para>
+
+<para>Map a function that takes a T and a void* as a param. T is pased as a reference so the function may modify T. The void* is a parameter to map and is passed to the function. It may be a pointer to anything, and can be used to accumulate results, etc. 
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>fn</entry><entry>
+<para>- A function that takes a ring&apos;s data object and an arbitrary data pointer. The function is applied to the pair. </para>
+</entry>
+                            </row>
+                            <row>
+<entry>p</entry><entry>
+<para>- An arbitrary data object. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>See also</title>
+
+<para><link linkend="_classring_1aada527f64532b1710d200953bfbabf2a">map</link>(void (*fn)()) </para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="_classring_1af16864a4bd729a9b91e4a2fcdec8f737"/><section>
+    <title>move_next()</title>
+<indexterm><primary>move_next</primary><secondary>ring&lt; T &gt;</secondary></indexterm>
+<indexterm><primary>ring&lt; T &gt;</primary><secondary>move_next</secondary></indexterm>
+<computeroutput>template&lt;class T &gt; </computeroutput><para><computeroutput>void <link linkend="_classring">ring</link>&lt; T &gt;::move_next<computeroutput>[inline]</computeroutput></computeroutput></para><para>
+
+<para>Moves the ring to the next element in sequence. </para>
+</para>
+
+<para>This moves the ring to the next element in sequence. If the ring is empty (or has only one member), it will be unchanged. The previous first element will now be the last element. <formalpara><title>See also</title>
+
+<para><link linkend="_classring_1ad682fc47814540b7c492dfb3a65123b3">move_prev</link> </para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="_classring_1ad682fc47814540b7c492dfb3a65123b3"/><section>
+    <title>move_prev()</title>
+<indexterm><primary>move_prev</primary><secondary>ring&lt; T &gt;</secondary></indexterm>
+<indexterm><primary>ring&lt; T &gt;</primary><secondary>move_prev</secondary></indexterm>
+<computeroutput>template&lt;class T &gt; </computeroutput><para><computeroutput>void <link linkend="_classring">ring</link>&lt; T &gt;::move_prev<computeroutput>[inline]</computeroutput></computeroutput></para><para>
+
+<para>Moves the ring to the previous element in sequence. </para>
+</para>
+
+<para>This moves the ring to the previous element in sequence. If the ring is empty (or has only one member), it will be unchanged. The previous last element will now be the first element. <formalpara><title>See also</title>
+
+<para><link linkend="_classring_1af16864a4bd729a9b91e4a2fcdec8f737">move_next</link> </para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="_classring_1a52e785fb89c3e8ca7f4c5824f51f3532"/><section>
+    <title>operator=()</title>
+<indexterm><primary>operator=</primary><secondary>ring&lt; T &gt;</secondary></indexterm>
+<indexterm><primary>ring&lt; T &gt;</primary><secondary>operator=</secondary></indexterm>
+<computeroutput>template&lt;class T &gt; </computeroutput><para><computeroutput><link linkend="_classring">ring</link>&lt; T &gt; &amp; <link linkend="_classring">ring</link>&lt; T &gt;::operator= (<link linkend="_classring">ring</link>&lt; T &gt; &amp; r)<computeroutput>[inline]</computeroutput></computeroutput></para><para>
+
+<para>Produces a lightweight assignnment/copy of a ring. </para>
+</para>
+
+<para>Produces a lightweight copy of the ring. That is, the top level data of the ring is copied, but all of the data nodes are shared between the source and destination ring. 
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>r</entry><entry>
+<para>- the ring that is to be &quot;copied&quot; </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                </para>
+</section>
+<anchor xml:id="_classring_1ab47d8aac67ce284fc004bb88da21862f"/><section>
+    <title>operator==()</title>
+<indexterm><primary>operator==</primary><secondary>ring&lt; T &gt;</secondary></indexterm>
+<indexterm><primary>ring&lt; T &gt;</primary><secondary>operator==</secondary></indexterm>
+<computeroutput>template&lt;class T &gt; </computeroutput><para><computeroutput>bool <link linkend="_classring">ring</link>&lt; T &gt;::operator== (<link linkend="_classring">ring</link>&lt; T &gt; &amp; r) const<computeroutput>[inline]</computeroutput></computeroutput></para><para>
+
+<para>Compare two rings for equality. </para>
+</para>
+
+<para>Compares the two rings. This is a lightweight comparion. It compares the top level data (are they pointing to the same data components), but does not compare data components. As such, two rings separately constructed with the same data values will not be equal. But two rings constructed with the operator= will (provided neither have been modified 
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>r</entry><entry>
+<para>- the ring that the current ring is being compared against. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                </para>
+</section>
+<anchor xml:id="_classring_1ad000e92398391abc8958e0fc5595c329"/><section>
+    <title>pop_back()</title>
+<indexterm><primary>pop_back</primary><secondary>ring&lt; T &gt;</secondary></indexterm>
+<indexterm><primary>ring&lt; T &gt;</primary><secondary>pop_back</secondary></indexterm>
+<computeroutput>template&lt;class T &gt; </computeroutput><para><computeroutput>void <link linkend="_classring">ring</link>&lt; T &gt;::pop_back<computeroutput>[inline]</computeroutput></computeroutput></para><para>
+
+<para>Removes the last element from the ring. </para>
+</para>
+
+<para>Removes the last element from the ring. This will call the destructor of the stored object. Calling on an empty ring will have no effect. Returns nothing. <formalpara><title>See also</title>
+
+<para><link linkend="_classring_1a8bd49b76e56686927dcfd78cb5172690">pop_front()</link> </para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="_classring_1a8bd49b76e56686927dcfd78cb5172690"/><section>
+    <title>pop_front()</title>
+<indexterm><primary>pop_front</primary><secondary>ring&lt; T &gt;</secondary></indexterm>
+<indexterm><primary>ring&lt; T &gt;</primary><secondary>pop_front</secondary></indexterm>
+<computeroutput>template&lt;class T &gt; </computeroutput><para><computeroutput>void <link linkend="_classring">ring</link>&lt; T &gt;::pop_front</computeroutput></para><para>
+
+<para>Removes the first element from the ring. </para>
+</para>
+
+<para>Removes the first element from the ring. This will call the destructor of the stored object. Calling on an empty ring will have no effect. Returns nothing. <formalpara><title>See also</title>
+
+<para><link linkend="_classring_1ad000e92398391abc8958e0fc5595c329">pop_back()</link> </para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="_classring_1ab13c5ad32f0ccd338400dd16c3259f9b"/><section>
+    <title>push_back()</title>
+<indexterm><primary>push_back</primary><secondary>ring&lt; T &gt;</secondary></indexterm>
+<indexterm><primary>ring&lt; T &gt;</primary><secondary>push_back</secondary></indexterm>
+<computeroutput>template&lt;class T &gt; </computeroutput><para><computeroutput>void <link linkend="_classring">ring</link>&lt; T &gt;::push_back (T val)<computeroutput>[inline]</computeroutput></computeroutput></para><para>
+
+<para>Push an element onto the back of the ring. The current element is left unchanged. </para>
+</para>
+
+<para>Places the element at the front of the ring. All other elements in the ring are preserved. 
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>val</entry><entry>
+<para>- The object being pushed onto the back. The object is copied. As such, the object will require a copier (operator=) member function. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>See also</title>
+
+<para><link linkend="_classring_1afc322bf07d7bdcc65888e604581202d0">back()</link>, <link linkend="_classring_1ad9de090ad384e32e39337c85a9a21549">push_front()</link>; </para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="_classring_1ad9de090ad384e32e39337c85a9a21549"/><section>
+    <title>push_front()</title>
+<indexterm><primary>push_front</primary><secondary>ring&lt; T &gt;</secondary></indexterm>
+<indexterm><primary>ring&lt; T &gt;</primary><secondary>push_front</secondary></indexterm>
+<computeroutput>template&lt;class T &gt; </computeroutput><para><computeroutput>void <link linkend="_classring">ring</link>&lt; T &gt;::push_front (T val)</computeroutput></para><para>
+
+<para>Push an element onto the front of the ring. The element will be the new current element. </para>
+</para>
+
+<para>Places the element at the front of the ring. All other elements in the ring are preserved. 
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>val</entry><entry>
+<para>- The object being pushed onto the front. The object is copied. As such, the object will require a copier (operator=) member function. </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                <formalpara><title>See also</title>
+
+<para><link linkend="_classring_1a18c99d7c346c2ac99a91e49c28f8a7af">front()</link>, <link linkend="_classring_1ab13c5ad32f0ccd338400dd16c3259f9b">push_back()</link> </para>
+</formalpara>
+</para>
+</section>
+<anchor xml:id="_classring_1ad8424513e6933cfd2cf7629f32a56252"/><section>
+    <title>size()</title>
+<indexterm><primary>size</primary><secondary>ring&lt; T &gt;</secondary></indexterm>
+<indexterm><primary>ring&lt; T &gt;</primary><secondary>size</secondary></indexterm>
+<computeroutput>template&lt;class T &gt; </computeroutput><para><computeroutput>size_t <link linkend="_classring">ring</link>&lt; T &gt;::size</computeroutput></para><para>
+
+<para>Returns the size of the ring. </para>
+</para>
+
+<para>Returns the number of elements in the ring. Returns 0 for an empty ring. </para>
+</section>
+<para>
+The documentation for this class was generated from the following file:</para>
+TaskManagerCore_2.h</section>
+</section>

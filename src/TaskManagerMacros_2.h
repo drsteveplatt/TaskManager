@@ -14,13 +14,15 @@
 #if !defined(TASKMANAGERMACROS_DEFINED)
 #define TASKMANAGERMACROS_DEFINED
 
-/*!	@name Task Manager Macros
+/*!	\defgroup macros Task Manager Macros
+	@{ 
+*/
+/*	\name macros
 
 	These macros allow a task to yield in the middle, resuming
 	at the next statement.  They should be used only under very precise
 	control.
 */
-/* @{ */
 
 /*!	\brief Prepare the procedure for the TM macros
 
@@ -45,8 +47,6 @@
 		default:	break;					\
 	}										\
 	__tmNext__ = 0;
-// Compatibility with older code
-//#define	TM_CLEANUP() TM_END()
 
 /*!	\brief Return from a task
 	Cleans up and returns from a task.
@@ -79,19 +79,6 @@
 			TaskMgr.yieldDelay(ms);			\
 		case n: ; }
 
-/*!	\brief	Yield until a signal is received, and then return to the next statement
-
-	Perform a yieldForSignal(sigNum) operation.  Upon return to this task, execution will continue at
-	the next statement.
-	\param n -- an integer label.  The label should be unique for all of the TM_YIELD*()
-	routines in this task.
-	\param sigNum -- a byte value representing the signal the task will be waiting for.
-*/
-#define TM_YIELDSIGNAL(n,sig)	{			\
-			__tmNext__ = n;					\
-			TaskMgr.yieldForSignal(sig);	\
-		case n: ; }
-
 /*!	\brief	Yield until a message has been received, and then return to the next statement
 
 	Perform a yieldForMessage() operation.  Upon return to this task, execution will continue at
@@ -99,25 +86,9 @@
 	\param n -- an integer label.  The label should be unique for all of the TM_YIELD*()
 	routines in this task.
 */
-
-
 #define TM_YIELDMESSAGE(n)	{				\
 			__tmNext__ = n;					\
 			TaskMgr.yieldForMessage();		\
-		case n: ; }
-
-/*!	\brief	Yield until a signal is received or a time has passed, and then return to the next statement
-
-	Perform a yieldForSignal(sigNum, timeout) operation.  Upon return to this task, execution will continue at
-	the next statement.
-	\param n -- an integer label.  The label should be unique for all of the TM_YIELD*()
-	routines in this task.
-	\param sigNum -- a byte value representing the signal the task will be waiting for.
-	\param msTimeout -- the maximal amount of time the task will wait for the signal.
-*/
-#define TM_YIELDSIGNALTIMEOUT(n,sig,msto)	{   \
-			__tmNext__ = n;					    \
-			TaskMgr.yieldForSignal(sig,msto);	\
 		case n: ; }
 
 /*!	\brief	Yield until a message is received or a time has passed, and then return to the next statement
@@ -128,21 +99,23 @@
 	routines in this task.
 	\param msTimeout -- the maximal amount of time the task will wait for the signal.
 */
-#define TM_YIELDMESSAGETIMEOUT(n,msto)	{	\
+#define TM_YIELDMESSAGETIMEOUT(n,msTimeout)	{	\
 			__tmNext__ = n;					\
-			TaskMgr.yieldForMessage(msto);	\
+			TaskMgr.yieldForMessage(msTimeout);	\
 		case n:  ; }
 
-/*! @} */
 
-/*!	@name Task Manager Callable Subtasks
+/*!	\defgroup subtaskMacros Task Manager Callable Subtasks
+	\ingroup macros
+	@{ 
+*/
+/*	\name subtaskMacros
 	These macros allow for the definition of a TM subtask -- a procedure
 	that can be called from task.
 
 	Each subtask is identified by a unique ID.  This ID is both a signal ID and a task ID.
 	It should not be used by any other subtask or for any other signalling purposes
 */
-/*! @{ */
 
 /*!	\brief	Define a callable subtask
 	TM_ADDSUBTASK() defines the task and prepares it to wait for activation.
@@ -224,10 +197,12 @@
 /*!	\brief Reentrant Task Header
 	TM_REENTRANT() sets up a local variable block for a reentrant task.  This should be called before the TM_BEGIN*()
 	statement.	paramType is a struct/class that must contain
-	a tm_typeId_t member 'taskId'.  It may contain whatever other persistent variables the routine requires.  allParams
+	a tm_typeId_t member 'taskId'.  It may contain whatever other persistent variables the routine requires.  
+	<br>The parameter allParams
 	is an array of paramType objects, ending with an entry with a taskId value of 0.  The macro will declare a local
 	variable localp which will be a pointer to one entry in allParams.  Fields may be used by using pointer
 	dereferencing, for example, 'myLocal->someField".
+	TM_END() should be used at the end of a reentrant subtask.
 	\param paramType -- the type (struct/class name) of the parameter
 	\param allParams -- an array of paramType objects
 	\param localp -- the variable that will be a pointer to an entry in allParams.
@@ -242,5 +217,6 @@
 		if(__done) { localp = &(allParams[__where]);	}								\
 		else return;																	\
 	}
-/*! @} */
+/*! @} */ // subtaskMacros
+/*! @} */ // macros
 #endif

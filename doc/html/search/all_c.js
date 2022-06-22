@@ -1,8 +1,9 @@
 var searchData=
 [
-  ['yield_57',['yield',['../class_task_manager.html#abc4f2e57cdc1fd1d3051b58dc816de98',1,'TaskManager']]],
-  ['yielddelay_58',['yieldDelay',['../class_task_manager.html#a2123fa0af84c3a1373b9437e2157e872',1,'TaskManager']]],
-  ['yieldformessage_59',['yieldForMessage',['../class_task_manager.html#a4f368a9141c55b085aefdc8833aeaeec',1,'TaskManager']]],
-  ['yieldforsignal_60',['yieldForSignal',['../class_task_manager.html#a887541b9c53d4dab1e28779098f68ce2',1,'TaskManager']]],
-  ['yielduntil_61',['yieldUntil',['../class_task_manager.html#aa3f827ee35d80bc4faa2f7d438163e78',1,'TaskManager']]]
+  ['pop_5fback_0',['pop_back',['../group__ring.html#gad000e92398391abc8958e0fc5595c329',1,'ring']]],
+  ['pop_5ffront_1',['pop_front',['../group__ring.html#ga8bd49b76e56686927dcfd78cb5172690',1,'ring']]],
+  ['predefined_20taskids_2',['Predefined TaskIDs',['../group__fixed.html',1,'']]],
+  ['public_20member_20constants_20and_20fields_3',['Public Member Constants and Fields',['../group__public.html',1,'']]],
+  ['push_5fback_4',['push_back',['../group__ring.html#gab13c5ad32f0ccd338400dd16c3259f9b',1,'ring']]],
+  ['push_5ffront_5',['push_front',['../group__ring.html#gad9de090ad384e32e39337c85a9a21549',1,'ring']]]
 ];

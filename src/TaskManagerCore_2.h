@@ -1,55 +1,112 @@
+/* AVR Networking (RF24) Note:
+   Uncomment this #define ONLY IF you wish the ACR RF24 networking code to be included.
+   This will incorporate RF24 components into AVR compilations.
+   Any AVR program using this will also have to #include <RF24.h> prior #include <TaskManagerRF24.h>
+*/
+//#define TASKMGR_AVR_RF24
+
 #ifndef TASKMANAGERCORE_H_INCLUDED
 #define TASKMANAGERCORE_H_INCLUDED
 
 
 //#include <Streaming.h>
-#include <ring.h>
+#include "ring.h"
+
+#if defined(ARDUINO_ARCH_AVR)
+typedef uint8_t tm_nodeId_t;
+typedef uint8_t tm_taskId_t;
+#elif defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
+typedef uint16_t tm_nodeId_t;
+typedef uint8_t tm_taskId_t;
+#else
+#endif
+
+// Process includes for networking code
+#if defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24)
+#include "radioDriverRF.h"
+#elif  defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
+#include "radioDriverESP.h"
+#endif
+
 #include <setjmp.h>
 
 /*! \file TaskManagerCore.h
     Header for Arduino TaskManager library
 */
 
-
+/*! \defgroup global Global Values
+	@{
+*/
 /*! \def TASKMGR_MESSAGE_SIZE
     The maximum size of a message passed between tasks
 
     This defines the maximum size for an inter-task message.  It is constrained, in part,
     by plans for RFI communication between tasks running on different devices.
 
-    Note that the NRF24's max payload size is 32.  Message overhead is 3 bytes for cmd, src node, src task and 1 for target task.
-    ESP-NOW max payload is 250, overhead is 4 for cmd/src and 1 for target.
+    Note that the NRF24's max payload size is 32.  Message overhead is 3 bytes for cmd, src node, src task 
+	and 1 byte for target task.
+	
+    ESP-NOW max payload is 250, overhead is 4 for cmd/src and 1 for target.  Message overhead is 4 bytes for 
+	cmd, src node, src task, and 1 byte for target task.  THIS MAY CHANGE IF WE ALLOW MORE THAN 256 TASKS
+	
 */
-#if defined(__AVR__)
-typedef uint8_t tm_nodeId_t;
-typedef uint8_t tm_taskId_t;
-#define TASKMGR_MESSAGE_SIZE (32-1-sizeof(tm_nodeId_t)-2*sizeof(tm_taskId_t))
+/*!	\def TASKMGR_MAX_PAYLOAD
+	The maximum size of the payload (packet plus overhead) that the particular radio 
+	architecture supports.  This differs for ESP and RF24 systems.
+*/
+#if defined(ARDUINO_ARCH_AVR)
+#define TASKMGR_MAX_PAYLOAD (32)
 #elif defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
-typedef uint16_t tm_nodeId_t;
-typedef uint8_t tm_taskId_t;
-#define TASKMGR_MESSAGE_SIZE (250-1-sizeof(tm_nodeId_t)-2*sizeof(tm_taskId_t))
 #else
+#define TASKMGR_MAX_PAYLOAD (250)
 #endif
-
-/*! \def Null Task ID
-	The TaskID of the null task
+#define TASKMGR_MESSAGE_SIZE (TASKMGR_MAX_PAYLOAD-1-sizeof(tm_nodeId_t)-2*sizeof(tm_taskId_t))
+/*! @} */ // end global
+/*! \defgroup TaskManager TaskManager
+ * @{
 */
-#define TASKMGR_NULL_TASK 255
 
-/*! \def RF Monitor Task
+/*!	\defgroup fixed Predefined TaskIDs
+	\ingroup TaskManager
+	@{
+*/
+
+/*  FIXED TASKS */
+/*!	\def TASKMGR_MAX_TASK
+*/
+#if defined(ARDUINO_ARCH_AVR)
+#define TASKMGR_MAX_TASK 255
+#elif defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
+#define TASKMGR_MAX_TASK 255
+#endif
+/*! \def TASKMGR_NULL_TASK
+	The TaskID of the null task.  At present, 255 for both AVR and ESP.  We
+	may increase the max ESP task value along with changing tm_taskId_t.
+*/
+#define TASKMGR_NULL_TASK TASKMGR_MAX_TASK
+
+/*! \def TASKMGR_RF_MONITOR_TASK
 	The TaskID of the task that monitors the inter-node radio link
 */
-#define TASKMGR_RF_MONITOR_TASK 254
+#define TASKMGR_RF_MONITOR_TASK (TASKMGR_NULL_TASK-1)
 
-/*! \def PING Responder Task
+/*! \def TASKMGR_PING_MONITOR_TASK
 	The TaskID that monitors RF PING requests
 */
-#define TASKMGR_PING_MONITOR_TASK 253
+#define TASKMGR_PING_MONITOR_TASK (TASKMGR_NULL_TASK-2)
 
-/*! \def Menu System Button Monitor Task
+/*! \def TASKMGR_MENU_MONITOR_TASK
 	The task that monitors button presses for the LCD menu subsystem
 */
-#define TASKMGR_MENU_MONITOR_TASK 252
+#define TASKMGR_MENU_MONITOR_TASK (TASKMGR_NULL_TASK-3)
+	/*! @} */ // group fixed
+ /*! @} */ // group TaskManager
+ 
+/*! \defgroup TaskManagerTask _TaskManagerTask
+   @{
+*/ 
+
+class TaskManager;	// forward declaration
 
 /*! \class _TaskManagerTask
     \brief Internal class to manage a single active task
@@ -57,8 +114,6 @@ typedef uint8_t tm_taskId_t;
     This class is used by the TaskManager class to manage a single task.
     It should not be used by the end-user.
 */
-class TaskManager;
-
 #if defined(TASKMANAGER_DEBUG)
 class _TaskManagerTask: public Printable {
 #else
@@ -66,24 +121,24 @@ class _TaskManagerTask {
 #endif
     friend class TaskManager;
 protected:
-	/*! \name Public Member Constants and Fields
+	/*! \defgroup public Public Member Constants and Fields
+		\ingroup TaskManagerTask
 	*/
-	/* \@ */
+	/* @{ */
     /*! \enum TaskStates
         \brief Defines the various flag-bits describing the state of a task
     */
-    enum TaskStates {WaitSignal=0x01,   //!< Task is waiting for a signal.
+    enum TaskStates {UNUSED01=0x01,   	// RFU
         WaitMessage=0x02,               //!< Task is waiting for a message.
         WaitUntil=0x04,                 //!< Task is waiting until a time has passed.
-        AutoReWaitSignal = 0x08,        //!< After normal completion, task will be set to wait for a signal.
+        UNUSED08 = 0x08,        		// RFU
         AutoReWaitMessage = 0x10,       //!< After normal completion, task will be set to wait for a message.
         AutoReWaitUntil = 0x20,         //!< After normal completion, task will be set to wait until a time has passed.
         TimedOut = 0x40,                //!< Marker that the task had a timeout with a signal/message, and the timeout happened.
         Suspended=0x80                  //!< Task is suspended and will not receive messages, signals, or timeouts.
         };
-	/* \} */
+	/* @} */ // end public
 public:
-    byte m_sigNum;      //!< The signal this task is waiting for (if waiting for a signal).
 	tm_nodeId_t	m_fromNodeId;		// where the signal/message came from
 	tm_taskId_t	m_fromTaskId;
 protected:
@@ -95,27 +150,27 @@ protected:
                                     //!< This is compared to the absolute ms clock maintained by the processor
 
 
-    char m_message[TASKMGR_MESSAGE_SIZE];   //!<  The message sent to this task (if waiting for a message)
+    char m_message[TASKMGR_MESSAGE_SIZE+1];   //!<  The message sent to this task (if waiting for a message)
     uint16_t m_messageLength;
 
     //NOT USED??? unsigned int m_reTimeout;   //!< The timeout to use during auto restarts.  0 means no timeout.
 
     // Autorestart information.  If a task has autorestart, here is the information to use at the restart
     unsigned long m_period; //!< If it is auto-reschedule, the rescheduling period
-    byte m_restartSignal;   //!< If it is auto-reseschedule, the signal to wait for upon rescheduling
 
     tm_taskId_t    m_id; //!< The task ID
     void    (*m_fn)(); //!< The procedure to be invoked each cycle
 
 public:
-	/*!	\name	Constructors and Destructor
+	/*!	\defgroup constructors	Constructors and Destructor
+		\ingroup TaskManagerTask
 	*/
-	/*! \( */
+	/*! @{ */
     // Constructors and destructors
     _TaskManagerTask();
     _TaskManagerTask(tm_taskId_t id, void (*fn)());
     ~_TaskManagerTask();
-	/*! \) */
+	/*! @} */ // end constructors
 protected:
     // State bit manipulation methods
     bool anyStateSet(byte);
@@ -135,8 +190,6 @@ protected:
     void setWaitUntil(unsigned long);
     void setWaitDelay(unsigned int);
     void setAutoDelay(unsigned int);
-    void setWaitSignal(byte, unsigned int msTimeout=0);
-    void setAutoSignal(byte, unsigned int msTimeout=0);
     void setWaitMessage(unsigned int msTimeout=0);
     void setAutoMessage(unsigned int msTimeout=0);
 
@@ -154,9 +207,13 @@ public:
 	size_t printTo(Print& p) const;
 #endif
 };
+/*! @} */ // end TaskManagerTask
 
 /**********************************************************************************************************/
 
+/*! \ingroup TaskManager
+ * @{
+*/
 /*! \class TaskManager
     \brief A cooperative multitasking manager
 
@@ -171,25 +228,34 @@ class TaskManager: public Printable {
 #else
 class TaskManager {
 #endif
+#if (defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24))
+private:
+	RF24*	m_rf24;				// Our radio (dynamically allocated)	
+#endif
 public:
     ring<_TaskManagerTask> m_theTasks; //!< The ring of all tasks.  For internal use only.
 
 private:
-    unsigned long m_startTime;  // Start clock time.  Used to calcualte runtime. For internal use only.
+    unsigned long m_startTime;  // Start clock time.  Used to calculate runtime. For internal use only.
 public:
+	/*! \defgroup constructor Constructor and Destructor
+		\ingroup TaskManager
+		@{
+	*/
 	// Constructor and destructor
 	// Not included in doxygen documentation because the
 	// user never constructs or destructs a TaskManager object
 	/*! \brief Constructor,  Creates an empty task
 	*/
     TaskManager();
+	
     /*!  \brief Destructor.  Destroys the TaskManager.
 
 	    After calling this, any operations based on the object will fail.  For normal purpoases, destroying the
 	    TaskMgr instance will have serious consequences for the standard loop() routine.
 	*/
     ~TaskManager();
-
+	/*! @} */ // end constructor
 
     // Things used by yield
 private:
@@ -202,8 +268,6 @@ private:
     */
     enum YieldTypes { YtYield,
         YtYieldUntil,
-        YtYieldSignal,
-        YtYieldSignalTimeout,
         YtYieldMessage,
         YtYieldMessageTimeout,
         YtYieldSuspend,
@@ -212,11 +276,14 @@ private:
     jmp_buf  taskJmpBuf;    // Jump buffer used by yield.  For internal use only.
 
 public:
-	/*!	@name Adding a New Task
+	/*!	\defgroup add Adding Tasks
+		\ingroup TaskManager
+		@{
+	*/
+	/*	\name add
 
 		These methods are used to add new tasks to the task list
 	*/
-	/*! @{ */
 
 	/*!  \brief Add a simple task.
 
@@ -269,26 +336,6 @@ public:
 	*/
     void addWaitMessage(tm_taskId_t taskId, void(*fn)(), unsigned long timeout=0);
 
-    /*! \brief Add a task that will wait until a signal arrives or (optionally) a timeout occurs.
-
-	    The task will be added, but will be set to be waiting for the listed signal.  If a nonzero timeout is
-	    specified and ifthe signal does
-	    not arrive before the timeout period (in milliseconds), then the routine will be activated.  The
-	    routine may use TaskManager::timedOut() to determine whether it timed our or received the signal.
-
-	    Note that calling addWaitSignal() with no timeout or startWaiting parmeter, the task will start in a wait
-	    state with no timeout.  To start the task in a non-wait-state (active) with no timeout, the routine must
-	    be called as addWaitSignal(id, fn, 0, false).
-	    \param taskId - the task's ID.  For normal user tasks, this should be a byte value in the range [0 127].
-	    System tasks have taskId values in the range [128 255].
-	    \param fn -- this is a void function with no arguments.  This is the procedure that is called every time
-	    the task is invoked.
-	    \param sigNum -- the signal the task will be waiting for
-	    \param timeout -- the maximum time to wait (in ms) before timing out.  The default is zero (no timeout).
-	    \sa addAutoWaitSignal
-	*/
-    void addWaitSignal(tm_taskId_t taskId, void(*fn)(), byte sigNum, unsigned long timeout=0);
-
     /*! \brief Add a task that will automatically reschedule itself with a delay
 
 		This task will execute once each cycle.  The task will automatically reschedule itself to not execute
@@ -308,21 +355,6 @@ public:
     */
     void addAutoWaitDelay(tm_taskId_t taskId, void(*fn)(), unsigned long period, bool startDelayed=false);
 
-	/*! \brief Add a task that will be delayed until a set system clock time before its first invocation,
-		and will automatically reschedule itself with the same delay.
-
-		The task will be added, but will be set to be waiting for the specified period. If the task exits normally
-		(normal return, fall out of the bottom, or yield()), it will reschedule itself to wait for the same delay period.
-		\param taskId - the task's ID.  For normal user tasks, this should be a byte value in the range [0 127].
-		System tasks have taskId values in the range [128 255].
-		\param fn -- this is a void function with no arguments.  This is the procedure that is called every time
-		the task is invoked.
-		\param period -- the delay between invocations.
-		\param startWaiting -- tells whether the routine will start waiting for the signal (true) or will execute
-		immediately (false).
-	*/
-    void addAutoWaitSignal(tm_taskId_t taskId, void(*fn)(), byte sigNum, unsigned long timeout=0, bool startWaiting=true);
-
 	/*! \brief Add a task that is waiting for a message or until a timeout occurs
 
 		The task will be added, but will be set to be waiting for the listed signal.  If the signal does
@@ -338,9 +370,13 @@ public:
 		\sa addWaitMessage
 	*/
 	void addAutoWaitMessage(tm_taskId_t taskId, void(*fn)(), unsigned long timeout=0, bool startWaiting=true);
-	/*! @} */
-
-    /*!	@name Yield
+	/*! @} */ // end add
+	
+	/*! \defgroup yield Yield Methods
+		\ingroup TaskManager
+		@{
+	*/
+    /* Yield
 
     	These methods are used to yield control back to the task manager core.
     	@note Upon next invocation, execution will start at the TOP of
@@ -348,7 +384,7 @@ public:
     	@note A <i>yield</i> call will override any of the <i>addAuto...</i> automatic
     	rescheduling.  This will be a one-time override; later (non-<i>yield</i>) returns
     	will resume automatic rescheduling.
-    */ /*! @{ */
+    */
 
     /*! \brief Exit from this task and return control to the task manager
 
@@ -383,29 +419,13 @@ public:
 	*/
     void yieldUntil(unsigned long when);
 
-	/*! \brief Exit from the task manager and do not restart this task until a signal has been received or a stated time period has passed.
-
-		This exits from the current task and returns control to the task manager.  This task will not be rescheduled until
-		the given signal has been received or a stated time period has passed (the timeout period). The TaskManager::timeOut()
-		function will tell whether or not the timeout had been triggered.
-
-		Note that yieldForSignal _overrides_ any of the Auto
-		specifications.  That is, the next rescheduling will occur _solely_ after the signal has been received, and will
-		not be constrained by AutoWaitDelay, AutoWaitMessage, or a different AutoWaitSignal value.  The Auto specification will
-		be retained, and will be applied on future executions where yield() or a normal return are used.
-		\param sigNum -- the value of the signal the task will wait for.
-		\param timeout -- The timeout period, in milliseconds.
-		\sa yield(), yieldDelay(), yieldForMessage(), addAutoWaitDelay(), addAutoWaitSignal(), addAutoWaitMessage(), timeOut()
-	*/
-    void yieldForSignal(byte sigNum, unsigned long timeout=0);
-
     /*! \brief Exit from the task manager and do not restart this task until a message has been received or a stated time period has passed.
 
 	    This exits from the current task and returns control to the task manager.  This task will not be rescheduled until
 	    a message has been received or a stated time period has passed (the timeout period). The TaskManager::timeOut()
 	    function will tell whether or not the timeout had been triggered.
 
-	    Note that yieldForMessage _overrides_ any of the Auto
+	    \note The yieldForMessage call _overrides_ any of the Auto
 	    specifications.  That is, the next rescheduling will occur _solely_ after the signal has been received, and will
 	    not be constrained by AutoWaitDelay, AutoWaitSignal, or a different AutoWaitMessage value.  The Auto specification will
 	    be retained, and will be applied on future executions where yield() or a normal return are used.
@@ -413,35 +433,18 @@ public:
 	    \sa yield(), yieldDelay(), yieldForSignal(), addAutoWaitDelay(), addAutoWaitSignal(), addAutoWaitMessage(), timeOut()
 	*/
     void yieldForMessage(unsigned long timeout=0);
-    /*! @} */
+    /*! @} */ // end yield
 
+	/*! \defgroup send Sending Messages
+		\ingroup TaskManager
+		@{
+	*/
+	/*  Sending Messages
 
-	/*!	@name Sending Signals and Messages
-
-		These methods send signals or messages to other tasks running on this or other nodes
-		@note If the nodeID is 0 on any routine that sends signals/messages to other nodes,
+		These methods send messages to other tasks running on this or other nodes
+		@note If the nodeID is 0 on any routine that sends messages to other nodes,
 		the signal/message will be sent to this node.
 	*/
-	/*! @{ */
-
-	/*!	\brief  Sends a signal to a task
-
-	    Sends a signal to a task.  The signal will go to only one task.  If there are several tasks waiting on the signal, it will go to
-	    the first task found that is waiting for this particular signal.  Note that once a task is signalled, it will not be waiting for
-	    other instances of the same siggnal number.
-
-	    \param sigNum -- the value of the signal to be sent
-	    \sa yieldForSignal(), sendSignalAll(), addWaitSignal, addAutoWaitSignal()
-	*/
-    void sendSignal(byte sigNum);
-
-	/*! \brief Send a signal to all tasks that are waiting for this particular signal.
-
-		Signals all tasks that are waiting for signal <i>sigNum</i>.
-		\param sigNum -- The signal number to be sent
-		\sa sendSignal(), yieldForSiganl(), addWaitSignal(), addAutoWaitSignal()
-	*/
-    void sendSignalAll(byte sigNum);
 
     /*! \brief  Sends a string message to a task
 
@@ -453,12 +456,16 @@ public:
 	    Messages that are too large are ignored.  Remember to account for the trailing '\n'
 	    when considering the string message size.
 
+		\note In networked TaskManager environments, this will send the message to a task
+		on the current node.
+
 	    \param taskId -- the ID number of the task
 	    \param message -- the character string message.  It is restricted in length to
 	    TASKMGR_MESSAGE_LENGTH-1 characters.
+		\returns true if message successfully sent, false otherwise
 	    \sa yieldForMessage()
 	*/
-    void sendMessage(tm_taskId_t taskId, char* message);       // string
+    bool sendMessage(tm_taskId_t taskId, char* message);       // string
 
 	/*! \brief Send a binary message to a task
 
@@ -467,16 +474,74 @@ public:
 		other instances of the same signal number.  Messages that are too large are
 		ignored.
 
+		\note Additional messages sent prior to the task executing will overwrite any prior messages.
+		
+		\note In networked TaskManager environments, this will send the message to a task
+		on the current node.
+		
+		\param taskId -- the ID number of the task
+		\param buf -- A pointer to the structure that is to be passed to the task
+		\param len -- The length of the buffer.  Buffers can be at most TASKMGR_MESSAGE_LENGTH
+		bytes long.
+		\returns true if message successfully sent, false otherwise
+		\sa yieldForMessage()
+	*/
+    bool sendMessage(tm_taskId_t taskId, void* buf, int len);
+	/*!	@} */ // end send
+	
+#if (defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24)) || defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
+	/*! \brief  Sends a string message to a task
+		\ingroup send
+
+		Sends a message to a task.  The message will go to only one task.
+
+		Note that once a task has been sent a message, it will not be waiting for
+		other instances of the same siggnal number.
 		Note that additional messages sent prior to the task executing will overwrite any prior messages.
+		Messages that are too large are ignored.  Remember to account for the trailing '\n'
+		when considering the string message size.
+
+		\note This routine is only available on ESP and RF24-enabled AVR environments.
+
+		\param nodeId -- the node the message is sent to
+		\param taskId -- the ID number of the task
+		\param message -- the character string message.  It is restricted in length to
+		TASKMGR_MESSAGE_LENGTH-1 characters.
+		\sa yieldForMessage()
+	*/
+	bool sendMessage(tm_nodeId_t nodeId, tm_taskId_t taskId, char* message);
+
+
+	/*! \brief Send a binary message to a task
+		\ingroup send
+
+		Sends a message to a task.  The message will go to only one task.
+		Note that once a task has been sent a message, it will not be waiting for
+		other instances of the same signal number.  Messages that are too large are
+		ignored.
+
+		\note Additional messages sent prior to the task executing will overwrite any prior messages.
+		
+		\note This routine is only available on ESP and RF24-enabled AVR environments.
+		
+		\param nodeId -- the node the message is sent to
 		\param taskId -- the ID number of the task
 		\param buf -- A pointer to the structure that is to be passed to the task
 		\param len -- The length of the buffer.  Buffers can be at most TASKMGR_MESSAGE_LENGTH
 		bytes long.
 		\sa yieldForMessage()
 	*/
-    void sendMessage(tm_taskId_t taskId, void* buf, int len);
+	bool sendMessage(tm_nodeId_t nodeId, tm_taskId_t taskId, void* buf, int len);
 
-	/*!	\brief Get source node/task of last message/signal
+
+#endif
+
+	/*!	\defgroup receive Receiving Messages
+		\ingroup TaskManager
+		@{
+	*/
+
+	/*!	\brief Get task ID of last message/signal
 
 		Returns the taskId of the task that last sent a signal or message
 		to the current task.  If the current task has never received a signal, returns [0].
@@ -484,14 +549,28 @@ public:
 		\param[out] fromTaskId -- the taskId that sent the last message or signal
 	*/
 	void getSource(tm_taskId_t& fromTaskId);
+#if (defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24)) || defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
+	/*!	\brief Get source node/task ID of last message/signal
 
-	/*! @} */
+		Returns the nodeId and taskId of the node/task that last sent a signal or message
+		to the current task.  If the current task has never received a signal, returns [0 0].
+		If the last message/signal was from "this" node, returns fromNodeId=0.
 
-	/*! @name Changing Task Scheduing Method */
-	/*! @{ */
-	/*! \brief Change task types
+		\note This routine is only available on ESP and RF24-enabled AVR environments.
 
-		These routines change the scheduling metod for the given task.  FOr example, SetAutoWaitDelay() will change a
+		\param[out] fromNodeId -- the nodeId that sent the last message or signal
+		\param[out] fromTaskId -- the taskId that sent the last message or signal
+	*/
+	void getSource(tm_nodeId_t& fromNodeId, tm_taskId_t& fromTaskId);
+#endif
+
+	/*! @} */ // end receive
+
+	/*  @name Changing Task Scheduing Method */
+	/*  @{ */
+	/*  \brief Change task types
+
+		These routines change the scheduling method for the given task.  FOr example, SetAutoWaitDelay() will change a
 		task so it will automatically wait for the set delay period after yielding (instead of using whatever
 		rescheduling process was defined when it was Add()ed).
 
@@ -501,77 +580,277 @@ public:
 
 	*/
 
-	/*! @} */
+	/*  @} */
 
-    /*!	@name Task Management */
+    /*!	@defgroup task Task Management
+		\ingroup TaskManager
     /*! @{ */
 
-	/*!	\brief Suspend the given task
+	/*!	\brief Suspend the given task on this node.
 
 		The given task will be suspended until it is resumed.  It will not be allowed to run, nor will it receive
 		messages or signals.
 		\param taskId The task to be suspended
-
-		\note Not implemented.
-
+		\returns true if the task could be suspended, false otherwise
 		\sa receive
 	*/
-    void suspend(tm_taskId_t taskId);					// task
+    bool suspend(tm_taskId_t taskId);					// task
+	
+#if (defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24)) || defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
+	/*!	\brief Suspend the given task on the given node
 
-	/*!	\brief Resume the given task on the given node
+		Suspends a task on any node.  If nodeID==0, it suspends a task on this node. If the node or task
+		do not exist, nothing happens.  If the task was already suspended, it remains suspended.
+		
+		\param nodeId The node containing the task
+		\param taskId The task to be suspended
+		\returns true if the task could be suspended, false otherwise
+
+		\note Not implemented.
+		\note This routine is only available on ESP and RF24-enabled AVR environments.
+		\sa resume()
+	*/
+	bool suspend(tm_nodeId_t nodeId, tm_taskId_t taskId);			// node, task
+#endif	
+
+	/*!	\brief Resume the given task on this node
 
 		Resumes a task.  If the task
 		do not exist, nothing happens.  If the task had not been suspended, nothing happens.
 		\param taskId The task to be resumed
+		\returns true if the task could be resumed, false otherwise
 
 		\note Not implemented.
 		\sa suspend()
 	*/
-	void resume(tm_taskId_t taskId);					// task
+	bool resume(tm_taskId_t taskId);					// task
+	
+#if (defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24)) || defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
+	/*!	\brief Resume the given task on the given node
 
-	/*! @} */
+		Resumes a task on any node.  If nodeID==0, it resumes a task on this node.  If the node or task
+		do not exist, nothing happens.  If the task had not been suspended, nothing happens.
+		\param nodeId The node containnig the task
+		\param taskId The task to be resumed
+		\note Not implemented.
+		\returns true if the task could be suspended, false otherwise
+		\note This routine is only available on ESP and RF24-enabled AVR environments.
+		\sa suspend()
+	*/
+	bool resume(tm_nodeId_t nodeId, tm_taskId_t taskId);			// node, task
+#endif
 
-	/*! @name Miscellaneous and Informational Routines */
-	/*! @{ */
+	/*! @} */	// end task */
+	
+	/* **** Mesh/Radio Internal Routines */
+#if (defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24)) || defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
+private:
+	tm_nodeId_t m_myNodeId;
+	/*!	\defgroup internal Internal components
+		\ingroup TaskManager
+		@{
+	*/
+	/*!	\brief Generic packet sender
+		TaskManager.radioBuf contains a complete formatted packet of information to 
+		send to the designated node.  radioSender(node) sends the packet to the node.
+		
+		This routine is only present in radio-enabled environments.  It is implemented 
+		in the driver module.
+		\param node - The target node
+		\returns - boolean, true if the remote node received the packet (low-level receive).  This
+		does not guarantee that the task has received the packet.
+	*/
+	bool radioSender(tm_nodeId_t);	// generic packet sender
+	/* @} */ // end internal
+    // status requests/
+    //void yieldPingNode(byte);					// node -> status (responding/not responding)
+    //void yieldPingTask(byte, byte);				// node, task -> status
+    //bool radioFree();						// Is the radio available for use?
+	/*! @} */	// end internal
+    // radio
+private:
+	// notes on parameters to the commands
+	//	signal, signalAll: m_data[0] = sigNum
+	//  message: m_data[0] = taskID, m_data[1+] = message
+	//  suspend, resume: m_data[0] = taskID
+	enum RadioCmd {
+		tmrNoop,			//!<	Do nothing
+		tmrStatus,			//!<	Request status of this node.
+		tmrAck,				//!<	Node status returned from a tmrStatus request
+		tmrTaskStatus,		//!<	Request status of a task on this node
+		tmrTaskAck,			//!<	Task status returned from a tmrTaskStatus request
+		tmrMessage,			//!<	Send a message
+		tmrSuspend,			//!<	Suspend a task
+		tmrResume			//!<	Resume a task
+	};
+	_TaskManagerRadioPacket	radioBuf;
+	bool	m_radioReceiverRunning;
+#if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
+public:
+/*!	\cond DO_NOT_PROCESS */
+	SemaphoreHandle_t m_TaskManagerMessageQueueSemaphore;
+/*! \endcond */
+#endif
+public:
+	/*!	\brief General radio receiver task.
+		Each driver is required to provide a radio receiver task.  The radio receiver task is 
+		a full fledged TaskManager task, and is called on schedule with all other tasks.
+		
+		The radio receiver task should empty the incoming message queue of all messages and distribute them
+		to the appropriate target tasks.
+	*/
+	void tmRadioReceiverTask();
+
+#if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
+private:
+	esp_err_t m_lastESPError;
+#endif
+#endif
+
+	/*! \defgroup radio Network/mesh functions
+		\ingroup TaskManager
+	
+		These functions are available in the ESP and the RF24-enabled versions of TaskManager.
+		They allow the creation of networks of AVR or ESP based nodes.  Tasks running on nodes
+		may send/receive messages to/from tasks either on the local node or to any node on the 
+		network.  Any operation performable on a task may also be performed on a remote task.
+		
+		Note that ESP and AVR nodes may not be intermixed on the same network.
+		
+		Note that there is one unified network space for each of ESP and AVR.  A node may reach
+		any other node within radio range.
+		@{
+	*/
+#if (defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24))
+public:
+	/*! \brief Create the radio and start it receiving
+
+		Create an RF24 radio instance and set our radio node ID.
+
+		Note that additional messages sent prior to the task executing will overwrite any prior messages.
+
+		\param nodeId -- the node the message is sent to
+		\param cePin -- Chip Enable pin
+		\param csPin -- Chip Select pin
+		\note This routine is only available on ESP and RF24-enabled AVR environments.
+	*/
+	void radioBegin(tm_nodeId_t nodeId, byte cePin, byte csPin);
+#elif defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
+public:
+	/*! \brief Create the radio and start it receiving
+
+		Set up the ESP-32 ESP-Now configuration set our radio node ID.
+
+		There are three variants:  radioBegin(nodeId), radioBegin(nodeId, ssId), radioBegin(nodeId, ssid, pw).
+
+		The first is used when all of the nodes of a project are only using ESP-NOW.
+		It closes the WiFi connection after ESP-NOW has been configured.
+
+		The second is used if this node is ESP-NOW-only, but another node in the project (which this node is communicating with)
+		is using WiFi.  It configures ESP-NOW to use the same channel as the WiFi node, but closes WiFi for this node.
+
+		The third is used if this node is using both ESP-NOW and WiFi.  It configures both ESP-NOW and WiFi, acquires an IP address,
+		and leaves WiFi open for later use.
+
+		Note that additional messages sent prior to the task executing will overwrite any prior messages.
+
+		\param nodeId -- the node the message is sent to
+		\param ssid -- the ssid of the local WiFi node (if using WiFi in a project).
+		\param pw -- the password of the local WiFi node (if using WiFi from this node).
+		\note This routine is only available on ESP environments.
+	*/
+	bool radioBegin(tm_nodeId_t nodeId, const char* ssid=NULL, const char* pw=NULL);
+
+	/*! \brief Add a peer for ESP-Now communications
+
+		\param nodeId -- A peer node for future communications.
+		\note This routine is only available on ESP environments.
+	*/
+	bool registerPeer(tm_nodeId_t nodeId);
+
+	/*!	\brief Remove a peer from ESP-Now communications
+		\param nodeId -- A peer node that will no longer be usable as a peer
+		\note This routine is only available on ESP environments.
+	*/
+	bool unRegisterPeer(tm_nodeId_t nodeId);
+#endif
+
+#if (defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24)) || defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
+	/*!	\brief Return the node ID of this system.
+		\return The byte value that is the current node's radio ID.  If the radio has not been
+		enabled, returns 0.
+		\note This routine is only available on ESP environments.
+	*/
+    tm_nodeId_t myNodeId();
+#endif
+	/*! @} */ // end radio
+
+	/*! \defgroup misc Miscellaneous and Informational Routines
+		\ingroup TaskManager
+	    @{ */
+		
 	/*! \brief Return the time since the start of the run, in milliseconds
 	*/
     unsigned long runtime() const;
 #if defined(TASKMANAGER_DEBUG)
+/*!	\cond DO_NOT_PROCESS */
     size_t printTo(Print& p) const;
+/*!	\endcond */
 #endif
     /*! \brief Tell if the current task has timed out while waiting for a signal or message
     	\return true if the task started due to timing out while waiting for a signal or message; false otherwise.
 	*/
 	bool timedOut();
 
+
+	/*! @} */ // end misc
+	
 	/*! \brief Get a task's message buffer
+		\ingroup receive
 		\return A pointer to the actual message buffer.  Use the contents of the buffer but do NOT modify it.
 		If a task is killed, this pointer becomes invalid.
-	*/
-	void* getMessage();
+	*/	void* getMessage();
 
 	/*!	\brief Get the length of the message in the buffer
+		\ingroup receive
 		\return The size of the data block in the buffer.  Note that if the content is a string, the
 		size will be one greater than the string length to account for the trailing null.
 	*/
 	uint16_t getMessageLength();
-
+	
 	/*! \brief Return the task ID of the currently running task
+		\ingroup task
 		\return The byte value that represents the current task's ID.
 	*/
-    byte myId();
-
-
-
-    /*! @} */
+    tm_taskId_t myId();
 
     // We need a publicly available TaskManager::loop() so our global loop() can use it
     void loop();
 
 protected:
-	void internalSendSignal(tm_nodeId_t fromNodeId, tm_taskId_t fromTaskId, byte sigNum);
-	void internalSendSignalAll(tm_nodeId_t fromNodeId, tm_taskId_t fromTaskId, byte sigNum);
+	/*!	\brief Sends a string message to a task on this system.
+		Send a null-terminated (string) message to a task running on this system.  This is the internal
+		gateway used by both sendMessage("this node") and from the radio receiver module (messages from
+		other nodes).
+		\ingroup internal
+		\param fromNodeId - the source node of the message.  0 means "this node".
+		\param fromTaskId - the source task of the message.
+		\param taskId - which task is to receive the message.
+		\param message - a null-terminated string message.
+	*/
 	void internalSendMessage(tm_nodeId_t fromNodeId, tm_taskId_t fromTaskId, tm_taskId_t taskId, char* message);
+
+	/*!	\brief Sends a binary message to a task on this system.
+		Send a raw data (binary) message to a task running on this system.  This is the internal
+		gateway used by both sendMessage("this node") and from the radio receiver module (messages from
+		other nodes).
+		\ingroup internal
+		\param fromNodeId - the source node of the message.  0 means "this node".
+		\param fromTaskId - the source task of the message.
+		\param taskId - which task is to receive the message.
+		\param buf - the buffer with the message.
+		\param len - the size of the buf (in bytes).
+	*/
 	void internalSendMessage(tm_nodeId_t fromNodeId, tm_taskId_t fromTaskId, tm_taskId_t taskId, void* buf, int len);
 
 private:
@@ -581,14 +860,18 @@ private:
 
     // internal utility
 public:
-    _TaskManagerTask* findTaskById(byte id);
+    _TaskManagerTask* findTaskById(tm_taskId_t id);
 
 };
+/*! @} */ // end TaskManager
 
 //
 // Inline stuff
 //
 
+/*! \ingroup TaskManagerTask
+ * @{
+*/
 // _TaskManagerTask Things
 
 // Constructor and destructor
@@ -616,7 +899,7 @@ inline _TaskManagerTask::~_TaskManagerTask() {
 /*! \brief Set the task to a runnable state.  That is, it will not be suspended or waiting for anything
 */
 inline void _TaskManagerTask::setRunnable() {
-    stateClear(WaitSignal+WaitMessage+WaitUntil+Suspended);
+    stateClear(WaitMessage+WaitUntil+Suspended);
 }
 /*! \brief Set the task to a generic suspended state.  That is, it will not be run until it is set runnable
 */
@@ -669,41 +952,7 @@ inline void _TaskManagerTask::setAutoDelay(unsigned int ms) {
         stateSet(AutoReWaitUntil);
     }
 }
-/*! \brief Set the task to wait for a signal, with an optional timeout
 
-    Sets the task to wait for a signal.  If a timeout (in ms) is specified and is greater than 0, the task will
-    reactivate after that time if the signal has not been received.  If no timeout (or a zero timeout) was specified,
-    the task will wait forever until the signal is received.
-    \param sigNum -- The signal number to wait for.
-    \param msTimeout -- The timeout on the signal.  Optional, default is zero.  If zero, then there is no timeout.
-*/
-inline void _TaskManagerTask::setWaitSignal(byte sigNum, unsigned int msTimeout/*=0*/) {
-    m_sigNum = sigNum;
-    stateSet(WaitSignal);
-    if(msTimeout>0)setWaitDelay(msTimeout);
-}
-/*! \brief Sets the task to automatically restart waiting on the given signal
-    whenever it exits normally (non-yield).
-
-    Sets the task so it will automatically restart waiting on the given signal whenever it exits through either
-    a return or by dropping through the bottom of the routine.  Using any form of yield() will override
-    the auto-restart.  If the auto-restart runs, the next execution will not happen until the given signal arrives
-
-    Note that this will not set the task as being active or in a wait-state
-    for the first invocation of the task.  That will need to be done
-    separately.
-
-    Note that this can be combined with setAutoDelay to create a task
-    that will auto-restart with a wait-for-signal-or-timeout.
-    \param sigNum -- the signal to wait for.
-    \param msTimeout -- The optional timeout.  Zero means no timeout.
-    \sa setWaitDelay, setAutoSignal, setAutoMessage
-*/
-inline void _TaskManagerTask::setAutoSignal(byte sigNum, unsigned int msTimeout/*=0*/)  {
-    m_restartSignal = sigNum;
-    stateSet(AutoReWaitSignal);
-    setAutoDelay(msTimeout);
-}
 /*! \brief Set the task to wait for a message, with an optional timeout.
 
     Sets the task to wait for a message.  If a timeout (in ms) is specified and is greater than 0, the task will
@@ -737,16 +986,9 @@ inline void _TaskManagerTask::setAutoMessage(unsigned int msTimeout/*=0*/)  {
 }
 
 //
-// Sending signals or messages to a task
+// Sending messages to a task
 //
-/*! \brief Tell the task that it has been signalled.
 
-    Tells the task that it has been signalled.  Presuably, the caller has checked the m_sigNum to
-    ensure that it _should_ be signalled.  The timeout flag is cleared.
-*/
-inline void _TaskManagerTask::signal() {
-    stateClear(WaitSignal + WaitUntil + TimedOut);
-}
 /*! \brief Send an actual message to the task
 
     Sends a message to the task.  The timeout and other flags are cleared.
@@ -798,39 +1040,48 @@ inline void _TaskManagerTask::stateSet(byte bits) {
 inline void _TaskManagerTask::stateClear(byte bits) {
     m_stateFlags &= (~bits);
 }
-
-/*	\brief Copy the auto state bits to the current state bits
+/*! \brief Resets bits (note: not sure of purpose)
 */
 inline void _TaskManagerTask::resetCurrentStateBits() {
 	m_stateFlags = (m_stateFlags&0xf8) + ((m_stateFlags>>3)&0x07);
 }
+ /*! @} */ // end TaskManagerTask
+ 
+ /*************** TaskManager Implementation ****************/
+/*! \ingroup TaskManager
+ * @{
+*/
 
+/* \ingroup  task 
+	@{
+*/
 inline tm_taskId_t TaskManager::myId() {
 	return m_theTasks.front().m_id;
 };
-
-
-
+/* @} */ // end task
+/*! \ingroup receive
+	@{
+*/
 inline bool TaskManager::timedOut() {
     return m_theTasks.front().stateTestBit(_TaskManagerTask::TimedOut);
 }
-
-inline void TaskManager::sendSignal(byte sigNum) {
-	internalSendSignal(0, myId(), sigNum);
-}
-
-inline void TaskManager::sendSignalAll(byte sigNum) {
-	internalSendSignalAll(0, myId(), sigNum);
-}
-
-inline void TaskManager::sendMessage(tm_taskId_t taskId, char* message) {
+	/*! @} */ // end receive
+/*! \ingroup send
+	@{
+*/
+inline bool TaskManager::sendMessage(tm_taskId_t taskId, char* message) {
 	internalSendMessage(0, myId(), taskId, message);
+	return true;
 }
 
-inline void TaskManager::sendMessage(tm_taskId_t taskId, void* buf, int len) {
+inline bool TaskManager::sendMessage(tm_taskId_t taskId, void* buf, int len) {
 	internalSendMessage(0, myId(), taskId, buf, len);
+	return true;
 }
-
+	/*!	@} */ // end send
+/*! \ingroup receive
+	@{
+*/
 inline void* TaskManager::getMessage() {
     return (void*)(&(m_theTasks.front().m_message));
 }
@@ -842,8 +1093,26 @@ inline uint16_t TaskManager::getMessageLength() {
 inline void TaskManager::getSource(tm_taskId_t& fromTaskId) {
 	fromTaskId = m_theTasks.front().m_fromTaskId;
 }
-
+	/*! @} */ // end receive
+/*! \ingroup misc		
+	@{
+*/
 inline unsigned long TaskManager::runtime() const { return millis()-m_startTime; }
+	/*! @} */ // end misc
+/*! @} */	// end taskmanager
+ 
+/**************** Network ************************/
+/*! \ingroup TaskManager
+ *	@{
+*/
+#if (defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24)) || defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
+inline tm_nodeId_t TaskManager::myNodeId() {
+	return m_myNodeId;
+}
+#endif
+
+/*! @}
+*/
 #endif // TASKMANAGER_H_INCLUDED
 
 /*!
@@ -864,27 +1133,12 @@ inline unsigned long TaskManager::runtime() const { return millis()-m_startTime;
 
 	\section News
 
+	2022/05/31: Release 2.0: Merging Atmel and ESP32 branches.  
+	<br>ESP32 will include multi-node (mesh) routines
+	to send/receive messages between nodes.  Atmel systems will need to use TaskManagerRF version 2.0 to 
+	support this functionality.
 	2015/11/13: Release 1.0: Initial full release.
 	<br>More code cleanup, improved documentation.  Added routines so tasks could ID where messages/signals came from.
-
-
-	2015/10/15: Prerelease 0.2.1:  RF24 routines added.  Code cleaned up.
-	<br>Routines include \c beginRadio() and versions of \c sendSignal(), \c sendSignalAll(),
-	and \c sendMessage(). The \c send*()
-	routines add a parameter to specify the \c nodeId the signal/message is being sent to.
-	<br>Additionally, the code was refactored for clarity.
-
-	2015/07/30: Prerelease 0.2:  Updated functionality of \c addAutoWaitDelay().
-	<br>The \c addAutoWaitDelay()
-	routine will operate on a repeat time based on the original start time, not on the end time.  For example,
-	if the task starts at 1000 with addAutoDelay(500) and it takes 100 (all ms), it will start at 1000, 1500,
-	2000, etc.  If it used yieldDelay, the yield is based on the end-time of the task, so it will start at
-	1000, 1600 (1000+100(run)+500(delay)), 2200 (1600+100(run)+500(delay)), etc.
-	<br>An excellent suggestion from the alpha user group.
-
-	2015/01/15: Internal (SA-28) Pre-release:  Core functionality complete.
-	<br>This is an alpha release for a small group of users.  Most of the non-RF functionality has been implemeented.
-	<br>\c suspend() and \c resume() not implemented yet.  It
 	may be a while until they are...
 
 	\section Summary
@@ -946,9 +1200,7 @@ inline unsigned long TaskManager::runtime() const { return millis()-m_startTime;
 		\endcode
 
 		Note the following; this is all that is needed for TaskManager:
-		\li You need to '\#include'  three files.  Since TaskManager (which is a class) uses RF,
-		you need to include them whether or not you use the RF/radio routines.
-		\li TaskManager routines are accessed through the 'TaskMgr' object.
+		\li You need to '\#include <TaskManager.h>'.
 		\li There is no 'void  loop()'. Instead, you write a routine for each independent task as
 		if it were its own 'loop()'.
 		\li You tell 'TaskMgr' about your routines through the 'void TaskManager::add(byte
@@ -961,18 +1213,10 @@ inline unsigned long TaskManager::runtime() const { return millis()-m_startTime;
 
 	\section future Future Work
 	Here are the upcoming/future plans for TaskManager.  Some are short term, some are longer term.
-	\li TaskManager: The Book.  I have a draft of a more in-depth set of tutorials, examples, and programmer's
-	documentation.  This needs to be finalized and added to the TaskManager release tree.
-	\li RF Extension.  Add a method 'getStatus(nodeId)' that returns the status (including whether or not
-	exists) for a given node.  This will also require the creation of a task in the system task group.
-	\li RF Extension.  Right now, 'nodeId' values of 1..254 are available for general use.  'nodeId' value
-	255 has been reserved for "all".  I need to add a routine 'findNodes()' that finds all available nodes.
-	After this, specifying 'nodeId' of 255 in a 'sendSignal()', 'sendSignalAll()', or 'sendMessage()' will
-	send the signal/message to every node that has been found. 'getStatus()' will be needed for this.
 	\li SPI investigation/certification.  Running RF in a multi-SPI environment is "fraught with peril".  The SPI routines
 	\c beginTransaction() and \c endTransaction() allow different SPI devices to share the MOSI/MISO interface even
 	if they use different serial settings.  However, most SPI libraries do not use currently use these routines.
 	(Note that the RF library recommended for TaskManager does.)  We need to investigate the different SPI
 	libraries and identify the transaction-safety of each.
-	\li Suspend, resume, and kill.  These routines haven't been implemented.
+	\li Suspend, resume, and kill.  These routines haven't been fully tested.
 */

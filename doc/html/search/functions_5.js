@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['getmessage_83',['getMessage',['../class_task_manager.html#ab7a70749690f57b64c4db036abf1fa9d',1,'TaskManager']]],
-  ['getsource_84',['getSource',['../class_task_manager.html#ac0e1a0b27ea28b7d0b4394da1d1b5ab0',1,'TaskManager']]]
+  ['getmessage_0',['getMessage',['../group__receive.html#gab7a70749690f57b64c4db036abf1fa9d',1,'TaskManager']]],
+  ['getmessagelength_1',['getMessageLength',['../group__receive.html#ga2512563ba937a3542cbe564830ce1ae0',1,'TaskManager']]],
+  ['getsource_2',['getSource',['../group__receive.html#ga0f4e11619ef42339d1a20fa2d31b2b72',1,'TaskManager']]]
 ];

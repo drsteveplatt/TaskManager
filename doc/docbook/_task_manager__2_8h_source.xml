@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="__task_manager__2_8h_source" xml:lang="en-US">
+<title>TaskManager_2.h</title>
+<programlisting linenumbering="unnumbered">1 <emphasis role="comment">//&#32;Main&#32;program&#32;include&#32;for&#32;TaskManagerRF</emphasis>
+2 <emphasis role="comment">//&#32;Note&#32;this&#32;file&#32;should&#32;only&#32;be&#32;#include&apos;d&#32;from&#32;the&#32;main&#32;program.</emphasis>
+3 <emphasis role="comment">//&#32;Other&#32;C++&#32;files&#32;in&#32;the&#32;program&#32;should&#32;#include&#32;TaskManagerSub.h</emphasis>
+4 <emphasis role="preprocessor">#ifndef&#32;TASKMANAGER_H_INCLUDED</emphasis>
+5 <emphasis role="preprocessor">#define&#32;TASKMANAGER_H_INCLUDED</emphasis>
+6 
+7 <emphasis role="comment">//#define&#32;TASKMANAGER_DEBUG</emphasis>
+8 <emphasis role="preprocessor">#include&#32;&lt;TaskManagerMacros_2.h&gt;</emphasis>
+9 <emphasis role="preprocessor">#include&#32;&lt;TaskManagerCore_2.h&gt;</emphasis>
+10 <emphasis role="comment">//&#32;These&#32;need&#32;to&#32;be&#32;here&#32;to&#32;ensure&#32;these&#32;are&#32;declared.</emphasis>
+11 <emphasis role="comment">//&#32;Note&#32;that&#32;each&#32;main-file&#32;include&#32;in&#32;the&#32;TaskManager&#32;family&#32;has&#32;one&#32;of&#32;these.</emphasis>
+12 <emphasis role="comment">//&#32;This&#32;ensures&#32;that&#32;the&#32;correct&#32;TaskMgr&#32;is&#32;used.</emphasis>
+13 <link linkend="_class_task_manager">TaskManager</link>&#32;TaskMgr;
+14 <emphasis role="keywordtype">void</emphasis>&#32;loop()&#32;{
+15 &#32;&#32;&#32;&#32;TaskMgr.<link linkend="_class_task_manager_1a2b88a62f061cbc8159a101844d8e5469">loop</link>();
+16 }
+17 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">//&#32;TASKMANAGER_H_INCLUDED</emphasis>
+18 
+19 
+</programlisting></section>
