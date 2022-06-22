@@ -106,29 +106,6 @@ bool _TaskManagerTask::isRunnable()  {
 		ret = true;
 	}
 	return ret;
-#if false
-    // new isRunnable
-    // handles message/signal with timeout
-    stateClear(TimedOut);
-    if(stateTestBit(Suspended)) {
-            ret = false;
-    } else if(stateTestBit(WaitUntil) && m_restartTime<millis()) {
-        // complex -- either a straight WaitUntil or a signal/message timeout
-        stateClear(WaitUntil);
-        if(anyStateSet(WaitSignal+WaitMessage)) {
-            // timeout
-            stateClear(WaitSignal); // to be sure
-            stateClear(WaitMessage); // to be sure
-            stateSet(TimedOut);    // used if signalled, others should ignore
-        }
-        ret = true;
-    } else if(anyStateSet(WaitUntil+WaitMessage+WaitSignal)) {
-        ret = false;
-    } else {
-        ret = true;
-    }
-    return ret;
-#endif
 }
 
 /*! \brief Assign the value of one task to another
@@ -203,23 +180,23 @@ TaskManager::~TaskManager() {
 //
 
 
-void TaskManager::add(byte taskId, void (*fn)()) {
+void TaskManager::add(tm_taskId_t taskId, void (*fn)()) {
     _TaskManagerTask newTask(taskId, fn);
     m_theTasks.push_back(newTask);
 }
 
 
-void TaskManager::addWaitDelay(byte taskId, void(*fn)(), unsigned long msDelay) {
+void TaskManager::addWaitDelay(tm_taskId_t taskId, void(*fn)(), unsigned long msDelay) {
     addWaitUntil(taskId, fn, millis() + msDelay);
 }
 
-void TaskManager::addWaitUntil(byte taskId, void(*fn)(), unsigned long msWhen) {
+void TaskManager::addWaitUntil(tm_taskId_t taskId, void(*fn)(), unsigned long msWhen) {
     _TaskManagerTask newTask(taskId, fn);
     newTask.setWaitUntil(msWhen);
     m_theTasks.push_back(newTask);
 }
 
-void TaskManager::addAutoWaitDelay(byte taskId, void(*fn)(), unsigned long period, bool startWaiting /*=false*/) {
+void TaskManager::addAutoWaitDelay(tm_taskId_t taskId, void(*fn)(), unsigned long period, bool startWaiting /*=false*/) {
     _TaskManagerTask newTask(taskId, fn);
     if(startWaiting) newTask.setWaitDelay(period); else newTask.m_restartTime = millis();
     newTask.setAutoDelay(period);
@@ -227,14 +204,14 @@ void TaskManager::addAutoWaitDelay(byte taskId, void(*fn)(), unsigned long perio
 }
 
 
-void TaskManager::addWaitSignal(byte taskId, void(*fn)(), byte sigNum, unsigned long timeout/*=0*/){
+void TaskManager::addWaitSignal(tm_taskId_t taskId, void(*fn)(), byte sigNum, unsigned long timeout/*=0*/){
     _TaskManagerTask newTask(taskId, fn);
     newTask.setWaitSignal(sigNum, timeout);
     m_theTasks.push_back(newTask);
 }
 
 
-void TaskManager::addAutoWaitSignal(byte taskId, void(*fn)(), byte sigNum, unsigned long timeout/*=0*/, bool startWaiting/*=true*/) {
+void TaskManager::addAutoWaitSignal(tm_taskId_t taskId, void(*fn)(), byte sigNum, unsigned long timeout/*=0*/, bool startWaiting/*=true*/) {
     _TaskManagerTask newTask(taskId, fn);
     if(startWaiting) {
         newTask.setWaitSignal(sigNum, timeout);
@@ -244,13 +221,13 @@ void TaskManager::addAutoWaitSignal(byte taskId, void(*fn)(), byte sigNum, unsig
     m_theTasks.push_back(newTask);
 }
 
-void TaskManager::addWaitMessage(byte taskId, void (*fn)(), unsigned long timeout/*=0*/) {
+void TaskManager::addWaitMessage(tm_taskId_t taskId, void (*fn)(), unsigned long timeout/*=0*/) {
     _TaskManagerTask newTask(taskId, fn);
     newTask.setWaitMessage(timeout);
     m_theTasks.push_back(newTask);
 }
 
-void TaskManager::addAutoWaitMessage(byte taskId, void (*fn)(), unsigned long timeout/*=0*/, bool startWaiting/*=true*/) {
+void TaskManager::addAutoWaitMessage(tm_taskId_t taskId, void (*fn)(), unsigned long timeout/*=0*/, bool startWaiting/*=true*/) {
     _TaskManagerTask newTask(taskId, fn);
     if(startWaiting) {
         newTask.setWaitMessage(timeout);
@@ -294,7 +271,7 @@ void TaskManager::yieldForMessage(unsigned long timeout/*=0*/) {
 //	TaskManagerRF uses either local or non-local nodeIDs.
 //
 
-void TaskManager::internalSendSignal(tm_nodeId_t fromNodeId, byte fromTaskId, byte sigNum) {
+void TaskManager::internalSendSignal(tm_nodeId_t fromNodeId, tm_taskId_t fromTaskId, byte sigNum) {
     ring<_TaskManagerTask> tmpTasks;
     _TaskManagerTask* tmt;
     _TaskManagerTask* last;
@@ -322,7 +299,7 @@ void TaskManager::internalSendSignal(tm_nodeId_t fromNodeId, byte fromTaskId, by
     }
 }
 
-void TaskManager::internalSendSignalAll(tm_nodeId_t fromNodeId, byte fromTaskId, byte sigNum) {
+void TaskManager::internalSendSignalAll(tm_nodeId_t fromNodeId, tm_taskId_t fromTaskId, byte sigNum) {
     ring<_TaskManagerTask> tmpTasks;
     _TaskManagerTask* tmt;
     _TaskManagerTask* last;
@@ -348,7 +325,7 @@ void TaskManager::internalSendSignalAll(tm_nodeId_t fromNodeId, byte fromTaskId,
     }
 }
 
-void TaskManager::internalSendMessage(tm_nodeId_t fromNodeId, byte fromTaskId, byte taskId, char* message) {
+void TaskManager::internalSendMessage(tm_nodeId_t fromNodeId, tm_taskId_t fromTaskId, tm_taskId_t taskId, char* message) {
     _TaskManagerTask* tsk;
     if(strlen(message)>TASKMGR_MESSAGE_SIZE-1) return;
     tsk = findTaskById(taskId);
@@ -358,7 +335,7 @@ void TaskManager::internalSendMessage(tm_nodeId_t fromNodeId, byte fromTaskId, b
     tsk->putMessage((void*)message, strlen(message)+1);
 }
 
-void TaskManager::internalSendMessage(tm_nodeId_t fromNodeId, byte fromTaskId, byte taskId, void* buf, int len) {
+void TaskManager::internalSendMessage(tm_nodeId_t fromNodeId, tm_taskId_t fromTaskId, tm_taskId_t taskId, void* buf, int len) {
     _TaskManagerTask* tsk;
     if(len>TASKMGR_MESSAGE_SIZE) return;
     tsk = findTaskById(taskId);
@@ -415,7 +392,7 @@ size_t TaskManager::printTo(Print& p) const {
     \param id: the ID of the task
     \return A pointer to the _TaskManagerTask or NULL if not found
 */
-_TaskManagerTask* TaskManager::findTaskById(byte id) {
+_TaskManagerTask* TaskManager::findTaskById(tm_taskId_t id) {
      ring<_TaskManagerTask> tmpTasks;
     _TaskManagerTask* tmt;
     _TaskManagerTask* last;
@@ -479,32 +456,6 @@ void TaskManager::loop() {
 			nextTask->setWaitUntil(millis()+nextTask->m_period);
 		}
 		nextTask->resetCurrentStateBits();
-#if false
-		// new code to handle different interpretations
-		if(nextTask->stateTestBit(_TaskManagerTask::AutoReWaitSignal) ||
-			nextTask->stateTestBit(_TaskManagerTask::AutoReWaitMessage)) {
-			// set up next signal/message
-			if(nextTask->stateTestBit(_TaskManagerTask::AutoReWaitSignal)) {
-			   nextTask->setWaitSignal(nextTask->m_restartSignal);
-			} else {
-			   nextTask->setWaitMessage();
-			}
-			// set up next timing
-			if(nextTask->stateTestBit(_TaskManagerTask::AutoReWaitUntil))
-				nextTask->setWaitUntil(millis()+nextTask->m_period);
-		} else {
-			// just check for AutoReWaitUntil and process periodic timing
-			if(nextTask->stateTestBit(_TaskManagerTask::AutoReWaitUntil)) {
-			   unsigned long newRestart = nextTask->m_restartTime;	// the time this one started
-			   unsigned long now = millis();
-			   while(newRestart<now) {
-					newRestart += nextTask->m_period;	// keep bumping til the future
-			   }
-			   if(DEBUG && nextTask->m_id==1) Serial << "task next schedule is " << newRestart << endl;
-			   nextTask->setWaitUntil(newRestart);
-			}
-        }
-#endif
 		if(DEBUG && (nextTask->m_id==T1 || nextTask->m_id==T2))
 			Serial << "post-set status is " << _HEX(nextTask->m_stateFlags) << endl;
     } else {
@@ -563,13 +514,13 @@ void TaskManager::loop() {
 
 // Status tasks
 
-void TaskManager::suspend(byte taskId) {
+void TaskManager::suspend(tm_taskId_t taskId) {
     _TaskManagerTask* tsk;
     tsk = findTaskById(taskId);
     tsk->setSuspended();
 }
 
-void TaskManager::resume(byte taskId) {
+void TaskManager::resume(tm_taskId_t taskId) {
     _TaskManagerTask* tsk;
     tsk = findTaskById(taskId);
     tsk->clearSuspended();

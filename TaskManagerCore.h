@@ -17,17 +17,17 @@
     This defines the maximum size for an inter-task message.  It is constrained, in part,
     by plans for RFI communication between tasks running on different devices.
 
-    Note that the NRF24's max payload size is 32.  Message overhead is 3 bytes for cmd/src and 1 for target.
+    Note that the NRF24's max payload size is 32.  Message overhead is 3 bytes for cmd, src node, src task and 1 for target task.
     ESP-NOW max payload is 250, overhead is 4 for cmd/src and 1 for target.
 */
 #if defined(__AVR__)
-#define TASKMGR_MESSAGE_SIZE (32-3-1)
-typedef byte tm_nodeId_t;
-typedef byte tm_taskId_t;
+typedef uint8_t tm_nodeId_t;
+typedef uint8_t tm_taskId_t;
+#define TASKMGR_MESSAGE_SIZE (32-1-sizeof(tm_nodeId_t)-2*sizeof(tm_taskId_t))
 #elif defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
-#define TASKMGR_MESSAGE_SIZE (250-4-1)
 typedef uint16_t tm_nodeId_t;
-typedef byte tm_taskId_t;
+typedef uint8_t tm_taskId_t;
+#define TASKMGR_MESSAGE_SIZE (250-1-sizeof(tm_nodeId_t)-2*sizeof(tm_taskId_t))
 #else
 #endif
 
@@ -85,9 +85,9 @@ protected:
 public:
     byte m_sigNum;      //!< The signal this task is waiting for (if waiting for a signal).
 	tm_nodeId_t	m_fromNodeId;		// where the signal/message came from
-	byte	m_fromTaskId;
+	tm_taskId_t	m_fromTaskId;
 protected:
-    byte m_stateFlags; //!< The task's state information
+    uint8_t m_stateFlags; //!< The task's state information
 
     // Active delay information.  If a task is waiting, here is the reason (or in the
     // case of messaging, the response)
@@ -96,6 +96,7 @@ protected:
 
 
     char m_message[TASKMGR_MESSAGE_SIZE];   //!<  The message sent to this task (if waiting for a message)
+    uint16_t m_messageLength;
 
     //NOT USED??? unsigned int m_reTimeout;   //!< The timeout to use during auto restarts.  0 means no timeout.
 
@@ -103,7 +104,7 @@ protected:
     unsigned long m_period; //!< If it is auto-reschedule, the rescheduling period
     byte m_restartSignal;   //!< If it is auto-reseschedule, the signal to wait for upon rescheduling
 
-    byte    m_id; //!< The task ID
+    tm_taskId_t    m_id; //!< The task ID
     void    (*m_fn)(); //!< The procedure to be invoked each cycle
 
 public:
@@ -112,7 +113,7 @@ public:
 	/*! \( */
     // Constructors and destructors
     _TaskManagerTask();
-    _TaskManagerTask(byte id, void (*fn)());
+    _TaskManagerTask(tm_taskId_t id, void (*fn)());
     ~_TaskManagerTask();
 	/*! \) */
 protected:
@@ -227,7 +228,7 @@ public:
 		the task is invoked.
 		\sa addWaitDelay, addWaitUntil, addAutoWaitDelay
 	*/
-    void add(byte taskId, void (*fn)());
+    void add(tm_taskId_t taskId, void (*fn)());
 
 	/*! \brief Add a task that will be delayed before its first invocation
 
@@ -241,7 +242,7 @@ public:
 		\param msDelay -- the initial delay, in milliseconds
 		\sa add, addWaitUntil, addAutoWaitDelay
     */
-    void addWaitDelay(byte taskId, void(*fn)(), unsigned long msDelay);
+    void addWaitDelay(tm_taskId_t taskId, void(*fn)(), unsigned long msDelay);
 
 	/*! \brief Add a task that will be delayed until a set system clock time before its first invocation
 
@@ -255,7 +256,7 @@ public:
 		\param msWhen -- the initial delay, in milliseconds
 		\sa add, addWaitDelay, addAutoWaitDelay
     */
-    void addWaitUntil(byte taskId, void(*fn)(), unsigned long msWhen);
+    void addWaitUntil(tm_taskId_t taskId, void(*fn)(), unsigned long msWhen);
 
 	/*! \brief Add a task that is waiting for a message
 
@@ -266,7 +267,7 @@ public:
 		the task is invoked.
 		\param timeout -- the maximum time to wait (in ms) before timing out.
 	*/
-    void addWaitMessage(byte taskId, void(*fn)(), unsigned long timeout=0);
+    void addWaitMessage(tm_taskId_t taskId, void(*fn)(), unsigned long timeout=0);
 
     /*! \brief Add a task that will wait until a signal arrives or (optionally) a timeout occurs.
 
@@ -286,7 +287,7 @@ public:
 	    \param timeout -- the maximum time to wait (in ms) before timing out.  The default is zero (no timeout).
 	    \sa addAutoWaitSignal
 	*/
-    void addWaitSignal(byte taskId, void(*fn)(), byte sigNum, unsigned long timeout=0);
+    void addWaitSignal(tm_taskId_t taskId, void(*fn)(), byte sigNum, unsigned long timeout=0);
 
     /*! \brief Add a task that will automatically reschedule itself with a delay
 
@@ -305,7 +306,7 @@ public:
 		\param startDelayed -- for the first execution, start immediately (false), or delay its start for one period (true)
 		\sa add, addDelayed, addWaitUntil
     */
-    void addAutoWaitDelay(byte taskId, void(*fn)(), unsigned long period, bool startDelayed=false);
+    void addAutoWaitDelay(tm_taskId_t taskId, void(*fn)(), unsigned long period, bool startDelayed=false);
 
 	/*! \brief Add a task that will be delayed until a set system clock time before its first invocation,
 		and will automatically reschedule itself with the same delay.
@@ -320,7 +321,7 @@ public:
 		\param startWaiting -- tells whether the routine will start waiting for the signal (true) or will execute
 		immediately (false).
 	*/
-    void addAutoWaitSignal(byte taskId, void(*fn)(), byte sigNum, unsigned long timeout=0, bool startWaiting=true);
+    void addAutoWaitSignal(tm_taskId_t taskId, void(*fn)(), byte sigNum, unsigned long timeout=0, bool startWaiting=true);
 
 	/*! \brief Add a task that is waiting for a message or until a timeout occurs
 
@@ -336,7 +337,7 @@ public:
 		immediately (false).
 		\sa addWaitMessage
 	*/
-	void addAutoWaitMessage(byte taskId, void(*fn)(), unsigned long timeout=0, bool startWaiting=true);
+	void addAutoWaitMessage(tm_taskId_t taskId, void(*fn)(), unsigned long timeout=0, bool startWaiting=true);
 	/*! @} */
 
     /*!	@name Yield
@@ -457,7 +458,7 @@ public:
 	    TASKMGR_MESSAGE_LENGTH-1 characters.
 	    \sa yieldForMessage()
 	*/
-    void sendMessage(byte taskId, char* message);       // string
+    void sendMessage(tm_taskId_t taskId, char* message);       // string
 
 	/*! \brief Send a binary message to a task
 
@@ -473,7 +474,7 @@ public:
 		bytes long.
 		\sa yieldForMessage()
 	*/
-    void sendMessage(byte taskId, void* buf, int len);
+    void sendMessage(tm_taskId_t taskId, void* buf, int len);
 
 	/*!	\brief Get source node/task of last message/signal
 
@@ -482,7 +483,7 @@ public:
 
 		\param[out] fromTaskId -- the taskId that sent the last message or signal
 	*/
-	void getSource(byte& fromTaskId);
+	void getSource(tm_taskId_t& fromTaskId);
 
 	/*! @} */
 
@@ -515,7 +516,7 @@ public:
 
 		\sa receive
 	*/
-    void suspend(byte taskId);					// task
+    void suspend(tm_taskId_t taskId);					// task
 
 	/*!	\brief Resume the given task on the given node
 
@@ -526,7 +527,7 @@ public:
 		\note Not implemented.
 		\sa suspend()
 	*/
-	void resume(byte taskId);					// task
+	void resume(tm_taskId_t taskId);					// task
 
 	/*! @} */
 
@@ -549,6 +550,12 @@ public:
 	*/
 	void* getMessage();
 
+	/*!	\brief Get the length of the message in the buffer
+		\return The size of the data block in the buffer.  Note that if the content is a string, the
+		size will be one greater than the string length to account for the trailing null.
+	*/
+	uint16_t getMessageLength();
+
 	/*! \brief Return the task ID of the currently running task
 		\return The byte value that represents the current task's ID.
 	*/
@@ -562,10 +569,10 @@ public:
     void loop();
 
 protected:
-	void internalSendSignal(tm_nodeId_t fromNodeId, byte fromTaskId, byte sigNum);
-	void internalSendSignalAll(tm_nodeId_t fromNodeId, byte fromTaskId, byte sigNum);
-	void internalSendMessage(tm_nodeId_t fromNodeId, byte fromTaskId, byte taskId, char* message);
-	void internalSendMessage(tm_nodeId_t fromNodeId, byte fromTaskId, byte taskId, void* buf, int len);
+	void internalSendSignal(tm_nodeId_t fromNodeId, tm_taskId_t fromTaskId, byte sigNum);
+	void internalSendSignalAll(tm_nodeId_t fromNodeId, tm_taskId_t fromTaskId, byte sigNum);
+	void internalSendMessage(tm_nodeId_t fromNodeId, tm_taskId_t fromTaskId, tm_taskId_t taskId, char* message);
+	void internalSendMessage(tm_nodeId_t fromNodeId, tm_taskId_t fromTaskId, tm_taskId_t taskId, void* buf, int len);
 
 private:
     // Find the next active task
@@ -598,7 +605,7 @@ inline _TaskManagerTask::_TaskManagerTask(): m_id(0), m_fn(NULL), m_stateFlags(0
     \param taskId: The taskId.  User tasks in the range [0 127], system tasks [128 255].  Does not have to be unique.
     \param fn: The routine that is called to perform the process.
 */
-inline _TaskManagerTask::_TaskManagerTask(byte taskId, void (*fn)()): m_id(taskId), m_fn(fn), m_stateFlags(0) {
+inline _TaskManagerTask::_TaskManagerTask(tm_taskId_t taskId, void (*fn)()): m_id(taskId), m_fn(fn), m_stateFlags(0) {
 }
 /*! \brief Standard destructor.
 */
@@ -750,6 +757,7 @@ inline void _TaskManagerTask::signal() {
 inline void _TaskManagerTask::putMessage(void* buf, int len) {
     if(len<=TASKMGR_MESSAGE_SIZE) {
         memcpy(m_message, buf, len);
+        m_messageLength = len;
         stateClear(WaitMessage+WaitUntil+TimedOut);
     }
 }
@@ -797,7 +805,7 @@ inline void _TaskManagerTask::resetCurrentStateBits() {
 	m_stateFlags = (m_stateFlags&0xf8) + ((m_stateFlags>>3)&0x07);
 }
 
-inline byte TaskManager::myId() {
+inline tm_taskId_t TaskManager::myId() {
 	return m_theTasks.front().m_id;
 };
 
@@ -815,11 +823,11 @@ inline void TaskManager::sendSignalAll(byte sigNum) {
 	internalSendSignalAll(0, myId(), sigNum);
 }
 
-inline void TaskManager::sendMessage(byte taskId, char* message) {
+inline void TaskManager::sendMessage(tm_taskId_t taskId, char* message) {
 	internalSendMessage(0, myId(), taskId, message);
 }
 
-inline void TaskManager::sendMessage(byte taskId, void* buf, int len) {
+inline void TaskManager::sendMessage(tm_taskId_t taskId, void* buf, int len) {
 	internalSendMessage(0, myId(), taskId, buf, len);
 }
 
@@ -827,7 +835,11 @@ inline void* TaskManager::getMessage() {
     return (void*)(&(m_theTasks.front().m_message));
 }
 
-inline void TaskManager::getSource(byte& fromTaskId) {
+inline uint16_t TaskManager::getMessageLength() {
+	return m_theTasks.front().m_messageLength;
+}
+
+inline void TaskManager::getSource(tm_taskId_t& fromTaskId) {
 	fromTaskId = m_theTasks.front().m_fromTaskId;
 }
 

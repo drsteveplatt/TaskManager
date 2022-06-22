@@ -33,7 +33,7 @@
 	switch(__tmNext__) {					\
 		case 0:
 // for compatibility with older code
-#define TM_INIT() TM_BEGIN()
+//#define TM_INIT() TM_BEGIN()
 
 /*!	\brief	Close out the TM macro component
 
@@ -46,7 +46,13 @@
 	}										\
 	__tmNext__ = 0;
 // Compatibility with older code
-#define	TM_CLEANUP() TM_END()
+//#define	TM_CLEANUP() TM_END()
+
+/*!	\brief Return from a task
+	Cleans up and returns from a task.
+*/
+#define TM_RETURN() { __tmNext__ = 0; return; }
+
 
 /*!	\brief	Yield and return to the next statement
 
@@ -176,7 +182,7 @@
 	TM_RETURNSUB() -- bare returns are not allowed.  TM_RETURNSUB() can be used
 	from multiple places within a subtask
 */
-#define TM_RETURNSUB()  { TaskMgr.sendMessage(__callingTask__, NULL, 0); return; }
+#define TM_RETURNSUB()  { TaskMgr.sendMessage(__callingTask__, NULL, 0); __tmNext__ = 0; return; }
 
 /*!	\brief Call a subtask
 	TM_CALL() calls a subtask.  When the subtask has been completed (via TM_SUBTASK_RETURN()), the
@@ -213,5 +219,28 @@
 	}												\
 	TaskMgr.sendMessage(__callingTask__, NULL, 0);	\
 	__tmNext__ = 0;
+
+
+/*!	\brief Reentrant Task Header
+	TM_REENTRANT() sets up a local variable block for a reentrant task.  This should be called before the TM_BEGIN*()
+	statement.	paramType is a struct/class that must contain
+	a tm_typeId_t member 'taskId'.  It may contain whatever other persistent variables the routine requires.  allParams
+	is an array of paramType objects, ending with an entry with a taskId value of 0.  The macro will declare a local
+	variable localp which will be a pointer to one entry in allParams.  Fields may be used by using pointer
+	dereferencing, for example, 'myLocal->someField".
+	\param paramType -- the type (struct/class name) of the parameter
+	\param allParams -- an array of paramType objects
+	\param localp -- the variable that will be a pointer to an entry in allParams.
+*/
+#define TM_REENTRANT(paramType, allParams, localp)										\
+	paramType*	localp;																	\
+	{	bool __done;																	\
+		int __i, __where;																\
+		__done = false;																	\
+		for(__i=0; allParams[__i].taskId!=0; __i++) 									\
+			if(allParams[__i].taskId==TaskMgr.myId()) { __done=true; __where=__i; }		\
+		if(__done) { localp = &(allParams[__where]);	}								\
+		else return;																	\
+	}
 /*! @} */
 #endif
