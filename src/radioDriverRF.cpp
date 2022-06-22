@@ -12,7 +12,7 @@
 #if defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24)
 
 #include <arduino.h>
-#include <TaskManagerCore_2.h>
+#include <TaskManagerCore.h>
 #include "radioDriverRF.h"
 
 extern TaskManager TaskMgr;

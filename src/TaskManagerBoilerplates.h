@@ -6,7 +6,7 @@
 
 // Various boilerplate utilities
 
-// Unblocking Read
+// Non-blocking Read
 // Read from a stream into a String
 // This is useful in TM_Macro code, so it will need TM_BEGIN() and TM_END().
 //	stream_in is the stream to use (normally Serial)

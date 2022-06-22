@@ -21,13 +21,6 @@ typedef uint8_t tm_taskId_t;
 #else
 #endif
 
-// Process includes for networking code
-#if defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24)
-#include "radioDriverRF.h"
-#elif  defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
-#include "radioDriverESP.h"
-#endif
-
 #include <setjmp.h>
 
 /*! \file TaskManagerCore.h
@@ -57,11 +50,20 @@ typedef uint8_t tm_taskId_t;
 #if defined(ARDUINO_ARCH_AVR)
 #define TASKMGR_MAX_PAYLOAD (32)
 #elif defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
-#else
 #define TASKMGR_MAX_PAYLOAD (250)
+#else
 #endif
 #define TASKMGR_MESSAGE_SIZE (TASKMGR_MAX_PAYLOAD-1-sizeof(tm_nodeId_t)-2*sizeof(tm_taskId_t))
 /*! @} */ // end global
+
+// Process includes for networking code
+#if defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24)
+#include "radioDriverRF.h"
+#elif  defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
+#include "radioDriverESP.h"
+#endif
+
+
 /*! \defgroup TaskManager TaskManager
  * @{
 */

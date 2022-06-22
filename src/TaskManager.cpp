@@ -1,7 +1,7 @@
 #define TASKMANAGER_MAIN
 
 #include <arduino.h>
-#include <TaskManagerCore_2.h>
+#include <TaskManagerCore.h>
 #include <Streaming.h>
 
 #define DEBUG false

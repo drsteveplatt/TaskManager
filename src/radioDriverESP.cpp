@@ -8,7 +8,7 @@
 //  for received data, buffering the data, and placing it into
 //  the targeted task's message buffer).
 
-// Only use this is an ESP device
+// Only use this in an ESP device
 #if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
 
 #include <arduino.h>
@@ -19,7 +19,7 @@
 
 #include <Streaming.h>
 
-#include <TaskManagerCore_2.h>
+#include <TaskManagerCore.h>
 #include "radioDriverESP.h"
 
 // Get rid of DEBUG at some point

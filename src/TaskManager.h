@@ -5,8 +5,8 @@
 #define TASKMANAGER_H_INCLUDED
 
 //#define TASKMANAGER_DEBUG
-#include <TaskManagerMacros_2.h>
-#include <TaskManagerCore_2.h>
+#include <TaskManagerMacros.h>
+#include <TaskManagerCore.h>
 // These need to be here to ensure these are declared.
 // Note that each main-file include in the TaskManager family has one of these.
 // This ensures that the correct TaskMgr is used.
