@@ -128,10 +128,10 @@ Example</h1>
 <div class="line">    digitalWrite(LED_2_PORT, led_2_state);</div>
 <div class="line">    TaskMgr.<a class="code hl_function" href="group___task_manager.html#ga2123fa0af84c3a1373b9437e2157e872">yieldDelay</a>(100);</div>
 <div class="line">}</div>
-<div class="ttc" id="agroup___task_manager_html_ga2123fa0af84c3a1373b9437e2157e872"><div class="ttname"><a href="group___task_manager.html#ga2123fa0af84c3a1373b9437e2157e872">TaskManager::yieldDelay</a></div><div class="ttdeci">void yieldDelay(unsigned long ms)</div><div class="ttdoc">Exit from the task manager and do not restart this task until after a specified period.</div><div class="ttdef"><b>Definition:</b> TaskManager_2.cpp:218</div></div>
-<div class="ttc" id="agroup___task_manager_html_ga3b61b260f5ddd9676f7a6899da40ad9e"><div class="ttname"><a href="group___task_manager.html#ga3b61b260f5ddd9676f7a6899da40ad9e">TaskManager::add</a></div><div class="ttdeci">void add(tm_taskId_t taskId, void(*fn)())</div><div class="ttdoc">Add a simple task.</div><div class="ttdef"><b>Definition:</b> TaskManager_2.cpp:172</div></div>
+<div class="ttc" id="agroup___task_manager_html_ga2123fa0af84c3a1373b9437e2157e872"><div class="ttname"><a href="group___task_manager.html#ga2123fa0af84c3a1373b9437e2157e872">TaskManager::yieldDelay</a></div><div class="ttdeci">void yieldDelay(unsigned long ms)</div><div class="ttdoc">Exit from the task manager and do not restart this task until after a specified period.</div><div class="ttdef"><b>Definition:</b> TaskManager.cpp:218</div></div>
+<div class="ttc" id="agroup___task_manager_html_ga3b61b260f5ddd9676f7a6899da40ad9e"><div class="ttname"><a href="group___task_manager.html#ga3b61b260f5ddd9676f7a6899da40ad9e">TaskManager::add</a></div><div class="ttdeci">void add(tm_taskId_t taskId, void(*fn)())</div><div class="ttdoc">Add a simple task.</div><div class="ttdef"><b>Definition:</b> TaskManager.cpp:172</div></div>
 </div><!-- fragment --><p >Note the following; this is all that is needed for <a class="el" href="class_task_manager.html" title="A cooperative multitasking manager.">TaskManager</a>: </p><ul>
-<li>You need to '#include &lt;TaskManager.h&gt;'. </li>
+<li>You need to '#include &lt;<a class="el" href="_task_manager_8h_source.html">TaskManager.h</a>&gt;'. </li>
 <li>There is no 'void loop()'. Instead, you write a routine for each independent task as if it were its own 'loop()'. </li>
 <li>You tell 'TaskMgr' about your routines through the 'void TaskManager::add(byte
     taskId, void (*) task);' method. This is shown in the two calls to 'TaskMgr.add(...);'. </li>
@@ -147,7 +147,7 @@ Future Work</h1>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Jun 22 2022 10:18:07 for TaskManager by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.4
+Generated on Wed Jun 22 2022 15:26:17 for TaskManager by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.4
 </small></address>
 </body>
 </html>

@@ -689,9 +689,9 @@ private:
 	bool	m_radioReceiverRunning;
 #if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
 public:
-/*!	\cond DO_NOT_PROCESS */
+/*!	\ignore */
 	SemaphoreHandle_t m_TaskManagerMessageQueueSemaphore;
-/*! \endcond */
+/*! \endignore */
 #endif
 public:
 	/*!	\brief General radio receiver task.
@@ -706,6 +706,11 @@ public:
 #if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
 private:
 	esp_err_t m_lastESPError;
+public:
+	/*! \brief Return a textual description of the last ESP error message.
+		\returns A const char* with text describing the last error.
+	*/
+	const char* lastESPError();
 #endif
 #endif
 

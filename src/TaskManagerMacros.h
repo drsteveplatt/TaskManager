@@ -51,7 +51,8 @@
 /*!	\brief Return from a task
 	Cleans up and returns from a task.
 */
-#define TM_RETURN() { __tmNext__ = 0; return; }
+#define TM_RETURN()		\
+	{ __tmNext__ = 0; return; }
 
 
 /*!	\brief	Yield and return to the next statement
@@ -61,7 +62,8 @@
 	\param n -- an integer label.  The label should be unique for all of the TM_YIELD*()
 	routines in this task.
 */
-#define TM_YIELD(n)	{						\
+#define TM_YIELD(n)			\
+	{						\
 			__tmNext__ = n;					\
 			TaskMgr.yield();				\
 		case n:  ;   }
@@ -74,7 +76,8 @@
 	routines in this task.
 	\param ms -- a long integer value representing the time (in ms) for the delay.
 */
-#define TM_YIELDDELAY(n,ms)	{				\
+#define TM_YIELDDELAY(n,ms)			\
+	{				\
 			__tmNext__ = n;					\
 			TaskMgr.yieldDelay(ms);			\
 		case n: ; }
@@ -86,7 +89,8 @@
 	\param n -- an integer label.  The label should be unique for all of the TM_YIELD*()
 	routines in this task.
 */
-#define TM_YIELDMESSAGE(n)	{				\
+#define TM_YIELDMESSAGE(n)		\
+	{				\
 			__tmNext__ = n;					\
 			TaskMgr.yieldForMessage();		\
 		case n: ; }
@@ -99,7 +103,8 @@
 	routines in this task.
 	\param msTimeout -- the maximal amount of time the task will wait for the signal.
 */
-#define TM_YIELDMESSAGETIMEOUT(n,msTimeout)	{	\
+#define TM_YIELDMESSAGETIMEOUT(n,msTimeout)		\
+	{	\
 			__tmNext__ = n;					\
 			TaskMgr.yieldForMessage(msTimeout);	\
 		case n:  ; }
@@ -124,7 +129,8 @@
 	Note that the 'void subtask(){...}' will need to be defined elsewhere.
 	Note that this is an internal function and may not be available in later releases
 */
-#define TM_ADDSUBTASK(id, task) TaskMgr.addAutoWaitMessage(id, task);
+#define TM_ADDSUBTASK(id, task)		\
+	TaskMgr.addAutoWaitMessage(id, task);
 
 /*!	\brief Procedure definition header for subtask
 	TM_BEGINSUB() is used at the start of a subtask procedure.
@@ -155,7 +161,8 @@
 	TM_RETURNSUB() -- bare returns are not allowed.  TM_RETURNSUB() can be used
 	from multiple places within a subtask
 */
-#define TM_RETURNSUB()  { TaskMgr.sendMessage(__callingTask__, NULL, 0); __tmNext__ = 0; return; }
+#define TM_RETURNSUB()		\
+	{ TaskMgr.sendMessage(__callingTask__, NULL, 0); __tmNext__ = 0; return; }
 
 /*!	\brief Call a subtask
 	TM_CALL() calls a subtask.  When the subtask has been completed (via TM_SUBTASK_RETURN()), the
@@ -163,7 +170,8 @@
 	\param n - a unique (within the procedure) value
 	\param taskId - the taskId that is to be called
 */
-#define TM_CALL(n, taskId) { TaskMgr.sendMessage(taskId, NULL, 0); TM_YIELDMESSAGE(n); }
+#define TM_CALL(n, taskId)		\
+	{ TaskMgr.sendMessage(taskId, NULL, 0); TM_YIELDMESSAGE(n); }
 
 /*!	\brief Call a subtask, passing a parameter block
 	TM_CALL_P() calls a subtask.  When the subtask has been completed (via TM_SUBTASK_RETURN()), the

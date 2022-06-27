@@ -350,6 +350,7 @@ void TaskManager::loop() {
     // is encountered.  It'll be ignored anyway unless we are auto-yielddelay, which is the only one
     // that focuses on the start-start measurement of the period.  (All others are end-start.)
     nextTask->m_restartTime = millis() + nextTask->m_period;
+	//Serial << "About to run task " << nextTask->m_id << endl;
     //??delete??if(DEBUG && (nextTask->m_id==T1 || nextTask->m_id==T2)) Serial << "-->TaskManager::loop\n";
     if((jmpVal=setjmp(/*TaskMgr.*/taskJmpBuf))==0) {
         // this is the normal path we use to invoke and process "normal" returns

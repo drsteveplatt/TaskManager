@@ -71,28 +71,11 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
-<tr class="memitem:gaaab6d47865dfea563e732890e3b2ab27"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__global.html#gaaab6d47865dfea563e732890e3b2ab27">TASKMGR_MESSAGE_SIZE</a>&#160;&#160;&#160;(<a class="el" href="group__global.html#gaa6e8c5c9173205eeac6062b51140ca91">TASKMGR_MAX_PAYLOAD</a>-1-sizeof(tm_nodeId_t)-2*sizeof(tm_taskId_t))</td></tr>
+<tr class="memitem:gaaab6d47865dfea563e732890e3b2ab27"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__global.html#gaaab6d47865dfea563e732890e3b2ab27">TASKMGR_MESSAGE_SIZE</a>&#160;&#160;&#160;(TASKMGR_MAX_PAYLOAD-1-sizeof(tm_nodeId_t)-2*sizeof(tm_taskId_t))</td></tr>
 <tr class="separator:gaaab6d47865dfea563e732890e3b2ab27"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaa6e8c5c9173205eeac6062b51140ca91"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__global.html#gaa6e8c5c9173205eeac6062b51140ca91">TASKMGR_MAX_PAYLOAD</a>&#160;&#160;&#160;(250)</td></tr>
-<tr class="separator:gaa6e8c5c9173205eeac6062b51140ca91"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <h2 class="groupheader">Macro Definition Documentation</h2>
-<a id="gaa6e8c5c9173205eeac6062b51140ca91" name="gaa6e8c5c9173205eeac6062b51140ca91"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaa6e8c5c9173205eeac6062b51140ca91">&#9670;&nbsp;</a></span>TASKMGR_MAX_PAYLOAD</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define TASKMGR_MAX_PAYLOAD&#160;&#160;&#160;(250)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p >The maximum size of the payload (packet plus overhead) that the particular radio architecture supports. This differs for ESP and RF24 systems. </p>
-
-</div>
-</div>
 <a id="gaaab6d47865dfea563e732890e3b2ab27" name="gaaab6d47865dfea563e732890e3b2ab27"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#gaaab6d47865dfea563e732890e3b2ab27">&#9670;&nbsp;</a></span>TASKMGR_MESSAGE_SIZE</h2>
 
@@ -100,7 +83,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define TASKMGR_MESSAGE_SIZE&#160;&#160;&#160;(<a class="el" href="group__global.html#gaa6e8c5c9173205eeac6062b51140ca91">TASKMGR_MAX_PAYLOAD</a>-1-sizeof(tm_nodeId_t)-2*sizeof(tm_taskId_t))</td>
+          <td class="memname">#define TASKMGR_MESSAGE_SIZE&#160;&#160;&#160;(TASKMGR_MAX_PAYLOAD-1-sizeof(tm_nodeId_t)-2*sizeof(tm_taskId_t))</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -114,7 +97,7 @@ Macros</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Jun 22 2022 10:18:06 for TaskManager by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.4
+Generated on Wed Jun 22 2022 15:26:17 for TaskManager by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.4
 </small></address>
 </body>
 </html>

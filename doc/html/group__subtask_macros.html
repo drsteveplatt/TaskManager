@@ -71,7 +71,7 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
-<tr class="memitem:ga3c97121be787a2a0e342963ee41f520d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__subtask_macros.html#ga3c97121be787a2a0e342963ee41f520d">TM_ADDSUBTASK</a>(id,  task)&#160;&#160;&#160;TaskMgr.addAutoWaitMessage(id, task);</td></tr>
+<tr class="memitem:ga3c97121be787a2a0e342963ee41f520d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__subtask_macros.html#ga3c97121be787a2a0e342963ee41f520d">TM_ADDSUBTASK</a>(id,  task)&#160;&#160;&#160;	TaskMgr.addAutoWaitMessage(id, task);</td></tr>
 <tr class="memdesc:ga3c97121be787a2a0e342963ee41f520d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Define a callable subtask <a class="el" href="group__subtask_macros.html#ga3c97121be787a2a0e342963ee41f520d" title="Define a callable subtask TM_ADDSUBTASK() defines the task and prepares it to wait for activation....">TM_ADDSUBTASK()</a> defines the task and prepares it to wait for activation. It should be used instead of any of the <a class="el" href="group___task_manager.html#ga3b61b260f5ddd9676f7a6899da40ad9e" title="Add a simple task.">TaskManager.add</a>*() routines.  <a href="group__subtask_macros.html#ga3c97121be787a2a0e342963ee41f520d">More...</a><br /></td></tr>
 <tr class="separator:ga3c97121be787a2a0e342963ee41f520d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga1788f4117bcd1a4e69464f04d86a6b0c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__subtask_macros.html#ga1788f4117bcd1a4e69464f04d86a6b0c">TM_BEGINSUB</a>()</td></tr>
@@ -81,10 +81,10 @@ Macros</h2></td></tr>
 <tr class="memdesc:gaebdd4dfda705bb5b93f27e3b3ad531b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Procedure definition header for a subtask with parameters. <a class="el" href="group__subtask_macros.html#gaebdd4dfda705bb5b93f27e3b3ad531b1" title="Procedure definition header for a subtask with parameters. TM_BEGINSUB_P(vtype, vlocal) is used at th...">TM_BEGINSUB_P(vtype, vlocal)</a> is used at the start of a subtask procedure that is expecting a parameter of type vtype. This procedure should be called using <a class="el" href="group__subtask_macros.html#ga4f8360d4bf388bf85838f9b6d46055ff" title="Call a subtask, passing a parameter block TM_CALL_P() calls a subtask. When the subtask has been comp...">TM_CALL_P()</a>.  <a href="group__subtask_macros.html#gaebdd4dfda705bb5b93f27e3b3ad531b1">More...</a><br /></td></tr>
 <tr class="separator:gaebdd4dfda705bb5b93f27e3b3ad531b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga38c18f499a2c2ad8c831429f85b8a3a3"><td class="memItemLeft" align="right" valign="top"><a id="ga38c18f499a2c2ad8c831429f85b8a3a3" name="ga38c18f499a2c2ad8c831429f85b8a3a3"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>TM_RETURNSUB</b>()&#160;&#160;&#160;{ TaskMgr.sendMessage(__callingTask__, NULL, 0); __tmNext__ = 0; return; }</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>TM_RETURNSUB</b>()&#160;&#160;&#160;	{ TaskMgr.sendMessage(__callingTask__, NULL, 0); __tmNext__ = 0; return; }</td></tr>
 <tr class="memdesc:ga38c18f499a2c2ad8c831429f85b8a3a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return from a subtask <a class="el" href="group__subtask_macros.html#ga38c18f499a2c2ad8c831429f85b8a3a3" title="Return from a subtask TM_RETURNSUB() is used to return from a procedure. Note that all subtasks MUST ...">TM_RETURNSUB()</a> is used to return from a procedure. Note that all subtasks MUST use <a class="el" href="group__subtask_macros.html#ga38c18f499a2c2ad8c831429f85b8a3a3" title="Return from a subtask TM_RETURNSUB() is used to return from a procedure. Note that all subtasks MUST ...">TM_RETURNSUB()</a> &ndash; bare returns are not allowed. <a class="el" href="group__subtask_macros.html#ga38c18f499a2c2ad8c831429f85b8a3a3" title="Return from a subtask TM_RETURNSUB() is used to return from a procedure. Note that all subtasks MUST ...">TM_RETURNSUB()</a> can be used from multiple places within a subtask. <br /></td></tr>
 <tr class="separator:ga38c18f499a2c2ad8c831429f85b8a3a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga22125fd8a3cb9db92f2795d67cdd0792"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__subtask_macros.html#ga22125fd8a3cb9db92f2795d67cdd0792">TM_CALL</a>(n,  taskId)&#160;&#160;&#160;{ TaskMgr.sendMessage(taskId, NULL, 0); <a class="el" href="group__macros.html#gafb7bc1e4e3146740517648cf175e538c">TM_YIELDMESSAGE</a>(n); }</td></tr>
+<tr class="memitem:ga22125fd8a3cb9db92f2795d67cdd0792"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__subtask_macros.html#ga22125fd8a3cb9db92f2795d67cdd0792">TM_CALL</a>(n,  taskId)&#160;&#160;&#160;	{ TaskMgr.sendMessage(taskId, NULL, 0); <a class="el" href="group__macros.html#gafb7bc1e4e3146740517648cf175e538c">TM_YIELDMESSAGE</a>(n); }</td></tr>
 <tr class="memdesc:ga22125fd8a3cb9db92f2795d67cdd0792"><td class="mdescLeft">&#160;</td><td class="mdescRight">Call a subtask <a class="el" href="group__subtask_macros.html#ga22125fd8a3cb9db92f2795d67cdd0792" title="Call a subtask TM_CALL() calls a subtask. When the subtask has been completed (via TM_SUBTASK_RETURN(...">TM_CALL()</a> calls a subtask. When the subtask has been completed (via TM_SUBTASK_RETURN()), the calling routine will resume.  <a href="group__subtask_macros.html#ga22125fd8a3cb9db92f2795d67cdd0792">More...</a><br /></td></tr>
 <tr class="separator:ga22125fd8a3cb9db92f2795d67cdd0792"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga4f8360d4bf388bf85838f9b6d46055ff"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__subtask_macros.html#ga4f8360d4bf388bf85838f9b6d46055ff">TM_CALL_P</a>(n,  taskId,  vparam)</td></tr>
@@ -122,7 +122,7 @@ The parameter allParams is an array of paramType objects, ending with an entry w
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td>&#160;&#160;&#160;TaskMgr.addAutoWaitMessage(id, task);</td>
+          <td></td><td>&#160;&#160;&#160;	TaskMgr.addAutoWaitMessage(id, task);</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -182,7 +182,7 @@ The parameter allParams is an array of paramType objects, ending with an entry w
 <b>Value:</b><div class="fragment"><div class="line">    <span class="keyword">static</span> vtype vlocal;                    \</div>
 <div class="line">    TM_BEGINSUB();                          \</div>
 <div class="line">    memcpy((<span class="keywordtype">void</span>*)&amp;vlocal, TaskMgr.<a class="code hl_function" href="group__receive.html#gab7a70749690f57b64c4db036abf1fa9d">getMessage</a>(), <span class="keyword">sizeof</span>(vtype));</div>
-<div class="ttc" id="agroup__receive_html_gab7a70749690f57b64c4db036abf1fa9d"><div class="ttname"><a href="group__receive.html#gab7a70749690f57b64c4db036abf1fa9d">TaskManager::getMessage</a></div><div class="ttdeci">void * getMessage()</div><div class="ttdoc">Get a task's message buffer.</div><div class="ttdef"><b>Definition:</b> TaskManagerCore_2.h:1085</div></div>
+<div class="ttc" id="agroup__receive_html_gab7a70749690f57b64c4db036abf1fa9d"><div class="ttname"><a href="group__receive.html#gab7a70749690f57b64c4db036abf1fa9d">TaskManager::getMessage</a></div><div class="ttdeci">void * getMessage()</div><div class="ttdoc">Get a task's message buffer.</div><div class="ttdef"><b>Definition:</b> TaskManagerCore.h:1087</div></div>
 </div><!-- fragment -->
 <p>Procedure definition header for a subtask with parameters. <a class="el" href="group__subtask_macros.html#gaebdd4dfda705bb5b93f27e3b3ad531b1" title="Procedure definition header for a subtask with parameters. TM_BEGINSUB_P(vtype, vlocal) is used at th...">TM_BEGINSUB_P(vtype, vlocal)</a> is used at the start of a subtask procedure that is expecting a parameter of type vtype. This procedure should be called using <a class="el" href="group__subtask_macros.html#ga4f8360d4bf388bf85838f9b6d46055ff" title="Call a subtask, passing a parameter block TM_CALL_P() calls a subtask. When the subtask has been comp...">TM_CALL_P()</a>. </p>
 <dl class="params"><dt>Parameters</dt><dd>
@@ -217,7 +217,7 @@ The parameter allParams is an array of paramType objects, ending with an entry w
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td>&#160;&#160;&#160;{ TaskMgr.sendMessage(taskId, NULL, 0); <a class="el" href="group__macros.html#gafb7bc1e4e3146740517648cf175e538c">TM_YIELDMESSAGE</a>(n); }</td>
+          <td></td><td>&#160;&#160;&#160;	{ TaskMgr.sendMessage(taskId, NULL, 0); <a class="el" href="group__macros.html#gafb7bc1e4e3146740517648cf175e538c">TM_YIELDMESSAGE</a>(n); }</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -267,7 +267,7 @@ The parameter allParams is an array of paramType objects, ending with an entry w
 <b>Value:</b><div class="fragment"><div class="line">    {   TaskMgr.<a class="code hl_function" href="group__send.html#ga79227d756bef8d23a2be42ff60f1c606">sendMessage</a>(taskId, (<span class="keywordtype">void</span>*)&amp;vparam, <span class="keyword">sizeof</span>(vparam));        \</div>
 <div class="line">        TM_YIELDMESSAGE(n);                                                 \</div>
 <div class="line">    }</div>
-<div class="ttc" id="agroup__send_html_ga79227d756bef8d23a2be42ff60f1c606"><div class="ttname"><a href="group__send.html#ga79227d756bef8d23a2be42ff60f1c606">TaskManager::sendMessage</a></div><div class="ttdeci">bool sendMessage(tm_taskId_t taskId, char *message)</div><div class="ttdoc">Sends a string message to a task.</div><div class="ttdef"><b>Definition:</b> TaskManagerCore_2.h:1072</div></div>
+<div class="ttc" id="agroup__send_html_ga79227d756bef8d23a2be42ff60f1c606"><div class="ttname"><a href="group__send.html#ga79227d756bef8d23a2be42ff60f1c606">TaskManager::sendMessage</a></div><div class="ttdeci">bool sendMessage(tm_taskId_t taskId, char *message)</div><div class="ttdoc">Sends a string message to a task.</div><div class="ttdef"><b>Definition:</b> TaskManagerCore.h:1074</div></div>
 </div><!-- fragment -->
 <p>Call a subtask, passing a parameter block <a class="el" href="group__subtask_macros.html#ga4f8360d4bf388bf85838f9b6d46055ff" title="Call a subtask, passing a parameter block TM_CALL_P() calls a subtask. When the subtask has been comp...">TM_CALL_P()</a> calls a subtask. When the subtask has been completed (via TM_SUBTASK_RETURN()), the calling routine will resume. This version of CALL allows a single parameter, normally a struct/class object. The size of the object must be less than or equal to the size of a message. </p>
 <p >Both input and output parameters may be specified. Output parameters (return values) can be specified by including a pointer to a different object within the passed parameter, and manipulating this object through the pointer. </p><dl class="params"><dt>Parameters</dt><dd>
@@ -344,7 +344,7 @@ The parameter allParams is an array of paramType objects, ending with an entry w
 <div class="line">        if(__done) { localp = &amp;(allParams[__where]);    }                               \</div>
 <div class="line">        else <span class="keywordflow">return</span>;                                                                    \</div>
 <div class="line">    }</div>
-<div class="ttc" id="agroup__receive_html_ga087a0368a1dc5670757f56000b906e22"><div class="ttname"><a href="group__receive.html#ga087a0368a1dc5670757f56000b906e22">TaskManager::myId</a></div><div class="ttdeci">tm_taskId_t myId()</div><div class="ttdoc">Return the task ID of the currently running task.</div><div class="ttdef"><b>Definition:</b> TaskManagerCore_2.h:1058</div></div>
+<div class="ttc" id="agroup__receive_html_ga087a0368a1dc5670757f56000b906e22"><div class="ttname"><a href="group__receive.html#ga087a0368a1dc5670757f56000b906e22">TaskManager::myId</a></div><div class="ttdeci">tm_taskId_t myId()</div><div class="ttdoc">Return the task ID of the currently running task.</div><div class="ttdef"><b>Definition:</b> TaskManagerCore.h:1060</div></div>
 </div><!-- fragment -->
 <p>Reentrant Task Header <a class="el" href="group__subtask_macros.html#ga04c303739307c537a2474863b229d22f" title="Reentrant Task Header TM_REENTRANT() sets up a local variable block for a reentrant task....">TM_REENTRANT()</a> sets up a local variable block for a reentrant task. This should be called before the TM_BEGIN*() statement. paramType is a struct/class that must contain a tm_typeId_t member 'taskId'. It may contain whatever other persistent variables the routine requires. <br  />
  <br  />
@@ -363,7 +363,7 @@ The parameter allParams is an array of paramType objects, ending with an entry w
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Jun 22 2022 10:18:07 for TaskManager by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.4
+Generated on Wed Jun 22 2022 15:26:17 for TaskManager by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.4
 </small></address>
 </body>
 </html>

@@ -84,7 +84,7 @@ Macros</h2></td></tr>
 <tr class="memdesc:ga4d23ea00e7a4a4d2bf985d3c4953bb85"><td class="mdescLeft">&#160;</td><td class="mdescRight">Close out the TM macro component.  <a href="group__macros.html#ga4d23ea00e7a4a4d2bf985d3c4953bb85">More...</a><br /></td></tr>
 <tr class="separator:ga4d23ea00e7a4a4d2bf985d3c4953bb85"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga9a102d422a82c0d41c4f9f847ada98da"><td class="memItemLeft" align="right" valign="top"><a id="ga9a102d422a82c0d41c4f9f847ada98da" name="ga9a102d422a82c0d41c4f9f847ada98da"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>TM_RETURN</b>()&#160;&#160;&#160;{ __tmNext__ = 0; return; }</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>TM_RETURN</b>()&#160;&#160;&#160;	{ __tmNext__ = 0; return; }</td></tr>
 <tr class="memdesc:ga9a102d422a82c0d41c4f9f847ada98da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return from a task Cleans up and returns from a task. <br /></td></tr>
 <tr class="separator:ga9a102d422a82c0d41c4f9f847ada98da"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gac8c477311683ee6b7156c91cb21337a4"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__macros.html#gac8c477311683ee6b7156c91cb21337a4">TM_YIELD</a>(n)</td></tr>
@@ -99,6 +99,9 @@ Macros</h2></td></tr>
 <tr class="memitem:gac500d23abdbebcffa5fcf2efce458816"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__macros.html#gac500d23abdbebcffa5fcf2efce458816">TM_YIELDMESSAGETIMEOUT</a>(n,  msTimeout)</td></tr>
 <tr class="memdesc:gac500d23abdbebcffa5fcf2efce458816"><td class="mdescLeft">&#160;</td><td class="mdescRight">Yield until a message is received or a time has passed, and then return to the next statement.  <a href="group__macros.html#gac500d23abdbebcffa5fcf2efce458816">More...</a><br /></td></tr>
 <tr class="separator:gac500d23abdbebcffa5fcf2efce458816"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga0e850ff428fc97d26a1a87fdc1e9af49"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__macros.html#ga0e850ff428fc97d26a1a87fdc1e9af49">TM_READLINE</a>(stream_in,  string_out,  yield_id,  echo)</td></tr>
+<tr class="memdesc:ga0e850ff428fc97d26a1a87fdc1e9af49"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read a line from a stream into a String; non-blocking. Reads in a single line (terminated by \r or \n or \r\n) Processes backspaces. Optionally echoes chars back to the input stream.  <a href="group__macros.html#ga0e850ff428fc97d26a1a87fdc1e9af49">More...</a><br /></td></tr>
+<tr class="separator:ga0e850ff428fc97d26a1a87fdc1e9af49"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <h2 class="groupheader">Macro Definition Documentation</h2>
@@ -148,6 +151,88 @@ Macros</h2></td></tr>
 
 </div>
 </div>
+<a id="ga0e850ff428fc97d26a1a87fdc1e9af49" name="ga0e850ff428fc97d26a1a87fdc1e9af49"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga0e850ff428fc97d26a1a87fdc1e9af49">&#9670;&nbsp;</a></span>TM_READLINE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define TM_READLINE</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">stream_in, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">string_out, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">yield_id, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">echo&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">  { <span class="comment">/* read in a whole line of chars into cmd   */</span>                  \</div>
+<div class="line">    char ch;                                                        \</div>
+<div class="line">    bool done;                                                      \</div>
+<div class="line">    bool lastWasCr;                                                 \</div>
+<div class="line">    cmd = <span class="stringliteral">&quot;&quot;</span>;                                                       \</div>
+<div class="line">    done = <span class="keyword">false</span>;                                                   \</div>
+<div class="line">    lastWasCr = <span class="keyword">false</span>;                                              \</div>
+<div class="line">    while(!done) {                                                  \</div>
+<div class="line">      while(!stream_in.available()) { <a class="code hl_define" href="group__macros.html#gac8c477311683ee6b7156c91cb21337a4">TM_YIELD</a>(yield_id); }         \</div>
+<div class="line">      ch = stream_in.read();                                        \</div>
+<div class="line">      <span class="comment">/* Backspace processing for PuTTY */</span>                          \</div>
+<div class="line">      if(ch==0x08 &amp;&amp; echo) {                                        \</div>
+<div class="line">        if(cmd.length()&gt;0) {                                        \</div>
+<div class="line">          Serial &lt;&lt; <span class="charliteral">&#39;\b&#39;</span> &lt;&lt; <span class="charliteral">&#39; &#39;</span> &lt;&lt; <span class="charliteral">&#39;\b&#39;</span>;                            \</div>
+<div class="line">          cmd.remove(cmd.length()-1);                               \</div>
+<div class="line">        }                                                           \</div>
+<div class="line">      } <span class="keywordflow">else</span> {                                                      \</div>
+<div class="line">        <span class="comment">/* CR processing for PuTTY */</span>                               \</div>
+<div class="line">        if(ch==<span class="charliteral">&#39;\r&#39;</span>) { ch=<span class="charliteral">&#39;\n&#39;</span>; lastWasCr = <span class="keyword">true</span>; }                 \</div>
+<div class="line">        else <span class="keywordflow">if</span>(ch==<span class="charliteral">&#39;\n&#39;</span> &amp;&amp; lastWasCr) { lastWasCr=<span class="keyword">false</span>; <span class="keywordflow">continue</span>; } <span class="comment">/* crlf, skip the lf */</span>       \</div>
+<div class="line">        if(ch==<span class="charliteral">&#39;\n&#39;</span>) { Serial &lt;&lt; ch; lastWasCr = <span class="keyword">false</span>; done = <span class="keyword">true</span>; }                              \</div>
+<div class="line">        else {                                                      \</div>
+<div class="line">          if(echo)Serial &lt;&lt; ch;                                     \</div>
+<div class="line">          string_out += ch;                                         \</div>
+<div class="line">          lastWasCr = <span class="keyword">false</span>;                                        \</div>
+<div class="line">        } <span class="comment">/* end if(ch==&#39;\n&#39;) else */</span>                               \</div>
+<div class="line">      } <span class="comment">/* end if(ch==0x08) else */</span>                                 \</div>
+<div class="line">    } <span class="comment">/* end while */</span>                                               \</div>
+<div class="line">  } <span class="comment">/* end read in a whole line of chars */</span></div>
+<div class="ttc" id="agroup__macros_html_gac8c477311683ee6b7156c91cb21337a4"><div class="ttname"><a href="group__macros.html#gac8c477311683ee6b7156c91cb21337a4">TM_YIELD</a></div><div class="ttdeci">#define TM_YIELD(n)</div><div class="ttdoc">Yield and return to the next statement.</div><div class="ttdef"><b>Definition:</b> TaskManagerMacros.h:65</div></div>
+</div><!-- fragment -->
+<p>Read a line from a stream into a String; non-blocking. Reads in a single line (terminated by \r or \n or \r\n) Processes backspaces. Optionally echoes chars back to the input stream. </p>
+<p >Note that this routine uses the TM_YIELD macro. As such, it needs to be supplied with a yield_id value to use in the TM_YIELD. Also, any routine using this will need to be a <a class="el" href="class_task_manager.html" title="A cooperative multitasking manager.">TaskManager</a> task and use one of the TM_BEGIN family of macros along with the accompanying TM_END.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">stream_in</td><td>&ndash; the input stream. Also the output stream if echoing. </td></tr>
+    <tr><td class="paramname">string_out</td><td>&ndash; a String object. NOT cleared at entry. </td></tr>
+    <tr><td class="paramname">yield_id</td><td>&ndash; a unique integer to be used for the contained TM_YIELD </td></tr>
+    <tr><td class="paramname">echo</td><td>&ndash; true if chars are to be echoed back to the input stream. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="gac8c477311683ee6b7156c91cb21337a4" name="gac8c477311683ee6b7156c91cb21337a4"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#gac8c477311683ee6b7156c91cb21337a4">&#9670;&nbsp;</a></span>TM_YIELD</h2>
 
@@ -163,7 +248,7 @@ Macros</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">            {                       \</div>
+<b>Value:</b><div class="fragment"><div class="line">    {                       \</div>
 <div class="line">            __tmNext__ = n;                 \</div>
 <div class="line">            TaskMgr.yield();                \</div>
 <div class="line">        case n:  ;   }</div>
@@ -203,7 +288,7 @@ Macros</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">            {               \</div>
+<b>Value:</b><div class="fragment"><div class="line">    {               \</div>
 <div class="line">            __tmNext__ = n;                 \</div>
 <div class="line">            TaskMgr.yieldDelay(ms);         \</div>
 <div class="line">        case n: ; }</div>
@@ -234,7 +319,7 @@ Macros</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">            {               \</div>
+<b>Value:</b><div class="fragment"><div class="line">    {               \</div>
 <div class="line">            __tmNext__ = n;                 \</div>
 <div class="line">            TaskMgr.yieldForMessage();      \</div>
 <div class="line">        case n: ; }</div>
@@ -274,7 +359,7 @@ Macros</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">            {   \</div>
+<b>Value:</b><div class="fragment"><div class="line">    {   \</div>
 <div class="line">            __tmNext__ = n;                 \</div>
 <div class="line">            TaskMgr.yieldForMessage(msTimeout); \</div>
 <div class="line">        case n:  ; }</div>
@@ -293,7 +378,7 @@ Macros</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Jun 22 2022 10:18:07 for TaskManager by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.4
+Generated on Wed Jun 22 2022 15:26:17 for TaskManager by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.4
 </small></address>
 </body>
 </html>

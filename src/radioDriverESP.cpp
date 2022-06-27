@@ -73,6 +73,7 @@ static char* espErrText(esp_err_t err) {
 	else if(err==ESP_ERR_ESPNOW_ARG) return "ESP_ERR_ESPNOW_ARG";
 	else if(err==ESP_ERR_ESPNOW_INTERNAL) return "ESP_ERR_ESPNOW_INTERNAL";
 	else if(err==ESP_ERR_ESPNOW_IF) return "ESP_ERR_ESPNOW_IF";
+	else if(err==ESP_ERR_ESPNOW_NOT_FOUND) return "ESP_ERRNOW_NOT_FOUND";
 	else {
 		sprintf(buf,"ESP_ERR_UNKN_%d",(int)err);
 		return buf;
@@ -266,7 +267,7 @@ bool TaskManager::radioSender(tm_nodeId_t destNodeID) {
 	nodeMac[4] = (destNodeID>>8)&0x0ff;
 	nodeMac[5] = destNodeID&0x0ff;
 	m_lastESPError = esp_now_send(nodeMac, (byte*)&radioBuf, sizeof(radioBuf));
-	if(m_lastESPError!=ESP_OK) Serial << "***ERR " << espErrText(m_lastESPError) << "***\n";
+	if(m_lastESPError!=ESP_OK) Serial << "***ERR " << espErrText(m_lastESPError) << " sending to node " << destNodeID << "***\n";
 	return m_lastESPError == ESP_OK;
 }
 
@@ -354,6 +355,9 @@ bool TaskManager::unRegisterPeer(tm_nodeId_t nodeId){
 	return m_lastESPError==ESP_OK;
 }
 
+const char* TaskManager::lastESPError() {
+	return espErrText(m_lastESPError);
+}
 /*! @} */ // end TaskManagerRadioESP
 #endif // ESP
 
