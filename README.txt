@@ -3,18 +3,25 @@ TaskManager is a cooperative multitasking task-swapper. It allows the developer 
 create many independent tasks, which are called in a round-robin manner. 
 
 TaskManager offers the following: 
-•	Any number of tasks. 
-•	Extends the Arduino "setup/loop" paradigm – the programmer creates several 
+â€¢	Any number of tasks. 
+â€¢	Extends the Arduino "setup/loop" paradigm â€“ the programmer creates several 
 	"loop" routines (tasks) instead of one. So programming is simple and  
 	straightforward. 
-•	Tasks can communicate through signals or messages. A signal is an information-free  
+â€¢	Tasks can communicate through signals or messages. A signal is an information-free  
 	"poke" sent to whatever task is waiting for the poke. A message has information  
 	(string or data), and is passed to a particular task. 
-•	TaskManager programs can use RF24 2.4GHz radios to communicate between nodes.  
+â€¢	TaskManager programs can use RF24 2.4GHz radios to communicate between nodes.  
 	So tasks running on different nodes can communicate through signals and messages  
 	in the same manner as if they were on the same node.
 
 Release History:
+
+	2022/06:  Release 2.0:  Merged the AVR and ESP branches, and heavily updated the TaskManagerRF
+	(AVR with RF-24) branch.  The code now auto-detects the processor base and configures itself
+	accordingly
+	* TaskManager works on AVR and ESP-32 processors.  It includes mesh communications between nodes
+	in the ESP version.
+	* TaskManagerRF is a nearly-identical clone of TaskManager.  It includes RF drivers for AVR environments.
 
 	2017/1/2:  Release 1.2: Split RF code out of base Taskmanager.
 	This simplifies its use and reduces some memory consumption.
