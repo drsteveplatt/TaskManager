@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['miscellaneous_20and_20informational_20routines_0',['Miscellaneous and Informational Routines',['../group__misc.html',1,'']]]
+  ['internal_20components_0',['Internal components',['../group__internal.html',1,'']]]
 ];

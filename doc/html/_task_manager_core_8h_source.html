@@ -205,7 +205,7 @@ $(function() {
 <div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span> </div>
 <div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>    <span class="comment">// Miscellaneous methods</span></div>
 <div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span><span class="preprocessor">#if defined(TASKMANAGER_DEBUG)</span></div>
-<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>    <span class="keywordtype">size_t</span> printTo(Print&amp; p) <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>    <span class="keywordtype">size_t</span> <a class="code hl_function" href="group__misc.html#ga21237355dd68ae16aff8406d6ae145bb">printTo</a>(Print&amp; p) <span class="keyword">const</span>;</div>
 <div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>}; <span class="comment">// end TaskManagerTask</span></div>
 <div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span> </div>
@@ -372,7 +372,7 @@ $(function() {
 <div class="line"><a id="l00689" name="l00689"></a><span class="lineno">  689</span>    <span class="keywordtype">bool</span>    m_radioReceiverRunning;</div>
 <div class="line"><a id="l00690" name="l00690"></a><span class="lineno">  690</span><span class="preprocessor">#if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)</span></div>
 <div class="line"><a id="l00691" name="l00691"></a><span class="lineno">  691</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00693" name="l00693"></a><span class="lineno">  693</span>    SemaphoreHandle_t m_TaskManagerMessageQueueSemaphore;</div>
+<div class="line"><a id="l00693" name="l00693"></a><span class="lineno"><a class="line" href="class_task_manager.html#ada5584ddd8b8f8e816153967619398e6">  693</a></span>    SemaphoreHandle_t <a class="code hl_variable" href="class_task_manager.html#ada5584ddd8b8f8e816153967619398e6">m_TaskManagerMessageQueueSemaphore</a>;</div>
 <div class="line"><a id="l00695" name="l00695"></a><span class="lineno">  695</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00696" name="l00696"></a><span class="lineno">  696</span><span class="keyword">public</span>:</div>
 <div class="line"><a id="l00704" name="l00704"></a><span class="lineno"><a class="line" href="class_task_manager.html#a0189a1b17878cb115126da8dcf7822ae">  704</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="class_task_manager.html#a0189a1b17878cb115126da8dcf7822ae">tmRadioReceiverTask</a>();</div>
@@ -380,206 +380,211 @@ $(function() {
 <div class="line"><a id="l00706" name="l00706"></a><span class="lineno">  706</span><span class="preprocessor">#if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)</span></div>
 <div class="line"><a id="l00707" name="l00707"></a><span class="lineno">  707</span><span class="keyword">private</span>:</div>
 <div class="line"><a id="l00708" name="l00708"></a><span class="lineno">  708</span>    esp_err_t m_lastESPError;</div>
-<div class="line"><a id="l00709" name="l00709"></a><span class="lineno">  709</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00710" name="l00710"></a><span class="lineno">  710</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00711" name="l00711"></a><span class="lineno">  711</span> </div>
-<div class="line"><a id="l00726" name="l00726"></a><span class="lineno">  726</span><span class="preprocessor">#if (defined(ARDUINO_ARCH_AVR) &amp;&amp; defined(TASKMGR_AVR_RF24))</span></div>
-<div class="line"><a id="l00727" name="l00727"></a><span class="lineno">  727</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00739" name="l00739"></a><span class="lineno"><a class="line" href="group__radio.html#ga379de9acea847cd98206bb82376a65bc">  739</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="group__radio.html#ga379de9acea847cd98206bb82376a65bc">radioBegin</a>(tm_nodeId_t nodeId, <span class="keywordtype">byte</span> cePin, <span class="keywordtype">byte</span> csPin);</div>
-<div class="line"><a id="l00740" name="l00740"></a><span class="lineno">  740</span><span class="preprocessor">#elif defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)</span></div>
-<div class="line"><a id="l00741" name="l00741"></a><span class="lineno">  741</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00764" name="l00764"></a><span class="lineno"><a class="line" href="group__radio.html#gac745dd2b71d0d19a30f1fcfc486ae6bd">  764</a></span>    <span class="keywordtype">bool</span> <a class="code hl_function" href="group__radio.html#gac745dd2b71d0d19a30f1fcfc486ae6bd">radioBegin</a>(tm_nodeId_t nodeId, <span class="keyword">const</span> <span class="keywordtype">char</span>* ssid=NULL, <span class="keyword">const</span> <span class="keywordtype">char</span>* pw=NULL);</div>
-<div class="line"><a id="l00765" name="l00765"></a><span class="lineno">  765</span> </div>
-<div class="line"><a id="l00771" name="l00771"></a><span class="lineno"><a class="line" href="group__radio.html#ga9123028970afdce95b07e76adcd4b4ce">  771</a></span>    <span class="keywordtype">bool</span> <a class="code hl_function" href="group__radio.html#ga9123028970afdce95b07e76adcd4b4ce">registerPeer</a>(tm_nodeId_t nodeId);</div>
-<div class="line"><a id="l00772" name="l00772"></a><span class="lineno">  772</span> </div>
-<div class="line"><a id="l00777" name="l00777"></a><span class="lineno"><a class="line" href="group__radio.html#gaa94433d55bbcb0093c7c842e037cd171">  777</a></span>    <span class="keywordtype">bool</span> <a class="code hl_function" href="group__radio.html#gaa94433d55bbcb0093c7c842e037cd171">unRegisterPeer</a>(tm_nodeId_t nodeId);</div>
-<div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span> </div>
-<div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span><span class="preprocessor">#if (defined(ARDUINO_ARCH_AVR) &amp;&amp; defined(TASKMGR_AVR_RF24)) || defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)</span></div>
-<div class="line"><a id="l00786" name="l00786"></a><span class="lineno">  786</span>    tm_nodeId_t myNodeId();</div>
-<div class="line"><a id="l00787" name="l00787"></a><span class="lineno">  787</span><span class="preprocessor">#endif </span><span class="comment">// end radio</span></div>
-<div class="line"><a id="l00789" name="l00789"></a><span class="lineno">  789</span> </div>
-<div class="line"><a id="l00796" name="l00796"></a><span class="lineno">  796</span>    <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> runtime() <span class="keyword">const</span>;</div>
-<div class="line"><a id="l00797" name="l00797"></a><span class="lineno">  797</span><span class="preprocessor">#if defined(TASKMANAGER_DEBUG)</span></div>
-<div class="line"><a id="l00799" name="l00799"></a><span class="lineno">  799</span>    <span class="keywordtype">size_t</span> printTo(Print&amp; p) <span class="keyword">const</span>;</div>
-<div class="line"><a id="l00801" name="l00801"></a><span class="lineno">  801</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00805" name="l00805"></a><span class="lineno">  805</span>    <span class="keywordtype">bool</span> timedOut();</div>
-<div class="line"><a id="l00806" name="l00806"></a><span class="lineno">  806</span> </div>
-<div class="line"><a id="l00807" name="l00807"></a><span class="lineno">  807</span> <span class="comment">// end misc</span></div>
-<div class="line"><a id="l00809" name="l00809"></a><span class="lineno">  809</span>        <span class="keywordtype">void</span>* getMessage();</div>
-<div class="line"><a id="l00815" name="l00815"></a><span class="lineno">  815</span> </div>
-<div class="line"><a id="l00821" name="l00821"></a><span class="lineno">  821</span>    uint16_t getMessageLength();</div>
-<div class="line"><a id="l00822" name="l00822"></a><span class="lineno">  822</span>    </div>
-<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span>    tm_taskId_t myId();</div>
-<div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span> </div>
-<div class="line"><a id="l00829" name="l00829"></a><span class="lineno">  829</span>    <span class="comment">// We need a publicly available TaskManager::loop() so our global loop() can use it</span></div>
-<div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span>    <span class="keywordtype">void</span> loop();</div>
-<div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span> </div>
-<div class="line"><a id="l00832" name="l00832"></a><span class="lineno">  832</span><span class="keyword">protected</span>:</div>
-<div class="line"><a id="l00843" name="l00843"></a><span class="lineno">  843</span>    <span class="keywordtype">void</span> internalSendMessage(tm_nodeId_t fromNodeId, tm_taskId_t fromTaskId, tm_taskId_t taskId, <span class="keywordtype">char</span>* message);</div>
-<div class="line"><a id="l00844" name="l00844"></a><span class="lineno">  844</span> </div>
-<div class="line"><a id="l00856" name="l00856"></a><span class="lineno">  856</span>    <span class="keywordtype">void</span> internalSendMessage(tm_nodeId_t fromNodeId, tm_taskId_t fromTaskId, tm_taskId_t taskId, <span class="keywordtype">void</span>* buf, <span class="keywordtype">int</span> len);</div>
-<div class="line"><a id="l00857" name="l00857"></a><span class="lineno">  857</span> </div>
-<div class="line"><a id="l00858" name="l00858"></a><span class="lineno">  858</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00859" name="l00859"></a><span class="lineno">  859</span>    <span class="comment">// Find the next active task</span></div>
-<div class="line"><a id="l00860" name="l00860"></a><span class="lineno">  860</span>    <span class="comment">// Note: there will always be a runnable task (tne null task) on the list.</span></div>
-<div class="line"><a id="l00861" name="l00861"></a><span class="lineno">  861</span>    _TaskManagerTask* FindNextRunnable();</div>
+<div class="line"><a id="l00709" name="l00709"></a><span class="lineno">  709</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00713" name="l00713"></a><span class="lineno"><a class="line" href="class_task_manager.html#aa187de5f5ff98accacae03bf08653969">  713</a></span>    <span class="keyword">const</span> <span class="keywordtype">char</span>* <a class="code hl_function" href="class_task_manager.html#aa187de5f5ff98accacae03bf08653969">lastESPError</a>();</div>
+<div class="line"><a id="l00714" name="l00714"></a><span class="lineno">  714</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00715" name="l00715"></a><span class="lineno">  715</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00716" name="l00716"></a><span class="lineno">  716</span> </div>
+<div class="line"><a id="l00731" name="l00731"></a><span class="lineno">  731</span><span class="preprocessor">#if (defined(ARDUINO_ARCH_AVR) &amp;&amp; defined(TASKMGR_AVR_RF24))</span></div>
+<div class="line"><a id="l00732" name="l00732"></a><span class="lineno">  732</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00744" name="l00744"></a><span class="lineno"><a class="line" href="group__radio.html#ga379de9acea847cd98206bb82376a65bc">  744</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="group__radio.html#ga379de9acea847cd98206bb82376a65bc">radioBegin</a>(tm_nodeId_t nodeId, <span class="keywordtype">byte</span> cePin, <span class="keywordtype">byte</span> csPin);</div>
+<div class="line"><a id="l00745" name="l00745"></a><span class="lineno">  745</span><span class="preprocessor">#elif defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)</span></div>
+<div class="line"><a id="l00746" name="l00746"></a><span class="lineno">  746</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00769" name="l00769"></a><span class="lineno"><a class="line" href="group__radio.html#gac745dd2b71d0d19a30f1fcfc486ae6bd">  769</a></span>    <span class="keywordtype">bool</span> <a class="code hl_function" href="group__radio.html#gac745dd2b71d0d19a30f1fcfc486ae6bd">radioBegin</a>(tm_nodeId_t nodeId, <span class="keyword">const</span> <span class="keywordtype">char</span>* ssid=NULL, <span class="keyword">const</span> <span class="keywordtype">char</span>* pw=NULL);</div>
+<div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span> </div>
+<div class="line"><a id="l00776" name="l00776"></a><span class="lineno"><a class="line" href="group__radio.html#ga9123028970afdce95b07e76adcd4b4ce">  776</a></span>    <span class="keywordtype">bool</span> <a class="code hl_function" href="group__radio.html#ga9123028970afdce95b07e76adcd4b4ce">registerPeer</a>(tm_nodeId_t nodeId);</div>
+<div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span> </div>
+<div class="line"><a id="l00782" name="l00782"></a><span class="lineno"><a class="line" href="group__radio.html#gaa94433d55bbcb0093c7c842e037cd171">  782</a></span>    <span class="keywordtype">bool</span> <a class="code hl_function" href="group__radio.html#gaa94433d55bbcb0093c7c842e037cd171">unRegisterPeer</a>(tm_nodeId_t nodeId);</div>
+<div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span> </div>
+<div class="line"><a id="l00785" name="l00785"></a><span class="lineno">  785</span><span class="preprocessor">#if (defined(ARDUINO_ARCH_AVR) &amp;&amp; defined(TASKMGR_AVR_RF24)) || defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)</span></div>
+<div class="line"><a id="l00791" name="l00791"></a><span class="lineno">  791</span>    tm_nodeId_t myNodeId();</div>
+<div class="line"><a id="l00792" name="l00792"></a><span class="lineno">  792</span><span class="preprocessor">#endif </span><span class="comment">// end radio</span></div>
+<div class="line"><a id="l00794" name="l00794"></a><span class="lineno">  794</span> </div>
+<div class="line"><a id="l00801" name="l00801"></a><span class="lineno">  801</span>    <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> runtime() <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00802" name="l00802"></a><span class="lineno">  802</span><span class="preprocessor">#if defined(TASKMANAGER_DEBUG)</span></div>
+<div class="line"><a id="l00804" name="l00804"></a><span class="lineno"><a class="line" href="group__misc.html#ga21237355dd68ae16aff8406d6ae145bb">  804</a></span>    <span class="keywordtype">size_t</span> <a class="code hl_function" href="group__misc.html#ga21237355dd68ae16aff8406d6ae145bb">printTo</a>(Print&amp; p) <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00806" name="l00806"></a><span class="lineno">  806</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00810" name="l00810"></a><span class="lineno">  810</span>    <span class="keywordtype">bool</span> timedOut();</div>
+<div class="line"><a id="l00811" name="l00811"></a><span class="lineno">  811</span> </div>
+<div class="line"><a id="l00812" name="l00812"></a><span class="lineno">  812</span> <span class="comment">// end misc</span></div>
+<div class="line"><a id="l00814" name="l00814"></a><span class="lineno">  814</span>        <span class="keywordtype">void</span>* getMessage();</div>
+<div class="line"><a id="l00820" name="l00820"></a><span class="lineno">  820</span> </div>
+<div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span>    uint16_t getMessageLength();</div>
+<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span>    </div>
+<div class="line"><a id="l00832" name="l00832"></a><span class="lineno">  832</span>    tm_taskId_t myId();</div>
+<div class="line"><a id="l00833" name="l00833"></a><span class="lineno">  833</span> </div>
+<div class="line"><a id="l00834" name="l00834"></a><span class="lineno">  834</span>    <span class="comment">// We need a publicly available TaskManager::loop() so our global loop() can use it</span></div>
+<div class="line"><a id="l00835" name="l00835"></a><span class="lineno">  835</span>    <span class="keywordtype">void</span> loop();</div>
+<div class="line"><a id="l00836" name="l00836"></a><span class="lineno">  836</span> </div>
+<div class="line"><a id="l00837" name="l00837"></a><span class="lineno">  837</span><span class="keyword">protected</span>:</div>
+<div class="line"><a id="l00848" name="l00848"></a><span class="lineno">  848</span>    <span class="keywordtype">void</span> internalSendMessage(tm_nodeId_t fromNodeId, tm_taskId_t fromTaskId, tm_taskId_t taskId, <span class="keywordtype">char</span>* message);</div>
+<div class="line"><a id="l00849" name="l00849"></a><span class="lineno">  849</span> </div>
+<div class="line"><a id="l00861" name="l00861"></a><span class="lineno">  861</span>    <span class="keywordtype">void</span> internalSendMessage(tm_nodeId_t fromNodeId, tm_taskId_t fromTaskId, tm_taskId_t taskId, <span class="keywordtype">void</span>* buf, <span class="keywordtype">int</span> len);</div>
 <div class="line"><a id="l00862" name="l00862"></a><span class="lineno">  862</span> </div>
-<div class="line"><a id="l00863" name="l00863"></a><span class="lineno">  863</span>    <span class="comment">// internal utility</span></div>
-<div class="line"><a id="l00864" name="l00864"></a><span class="lineno">  864</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00865" name="l00865"></a><span class="lineno">  865</span>    _TaskManagerTask* findTaskById(tm_taskId_t <span class="keywordtype">id</span>);</div>
-<div class="line"><a id="l00866" name="l00866"></a><span class="lineno">  866</span> </div>
-<div class="line"><a id="l00867" name="l00867"></a><span class="lineno">  867</span>}; <span class="comment">// end TaskManager</span></div>
-<div class="line"><a id="l00869" name="l00869"></a><span class="lineno">  869</span> </div>
-<div class="line"><a id="l00870" name="l00870"></a><span class="lineno">  870</span><span class="comment">//</span></div>
-<div class="line"><a id="l00871" name="l00871"></a><span class="lineno">  871</span><span class="comment">// Inline stuff</span></div>
-<div class="line"><a id="l00872" name="l00872"></a><span class="lineno">  872</span><span class="comment">//</span></div>
-<div class="line"><a id="l00873" name="l00873"></a><span class="lineno">  873</span> </div>
-<div class="line"><a id="l00877" name="l00877"></a><span class="lineno">  877</span><span class="comment">// _TaskManagerTask Things</span></div>
+<div class="line"><a id="l00863" name="l00863"></a><span class="lineno">  863</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00864" name="l00864"></a><span class="lineno">  864</span>    <span class="comment">// Find the next active task</span></div>
+<div class="line"><a id="l00865" name="l00865"></a><span class="lineno">  865</span>    <span class="comment">// Note: there will always be a runnable task (tne null task) on the list.</span></div>
+<div class="line"><a id="l00866" name="l00866"></a><span class="lineno">  866</span>    _TaskManagerTask* FindNextRunnable();</div>
+<div class="line"><a id="l00867" name="l00867"></a><span class="lineno">  867</span> </div>
+<div class="line"><a id="l00868" name="l00868"></a><span class="lineno">  868</span>    <span class="comment">// internal utility</span></div>
+<div class="line"><a id="l00869" name="l00869"></a><span class="lineno">  869</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00870" name="l00870"></a><span class="lineno">  870</span>    _TaskManagerTask* findTaskById(tm_taskId_t <span class="keywordtype">id</span>);</div>
+<div class="line"><a id="l00871" name="l00871"></a><span class="lineno">  871</span> </div>
+<div class="line"><a id="l00872" name="l00872"></a><span class="lineno">  872</span>}; <span class="comment">// end TaskManager</span></div>
+<div class="line"><a id="l00874" name="l00874"></a><span class="lineno">  874</span> </div>
+<div class="line"><a id="l00875" name="l00875"></a><span class="lineno">  875</span><span class="comment">//</span></div>
+<div class="line"><a id="l00876" name="l00876"></a><span class="lineno">  876</span><span class="comment">// Inline stuff</span></div>
+<div class="line"><a id="l00877" name="l00877"></a><span class="lineno">  877</span><span class="comment">//</span></div>
 <div class="line"><a id="l00878" name="l00878"></a><span class="lineno">  878</span> </div>
-<div class="line"><a id="l00879" name="l00879"></a><span class="lineno">  879</span><span class="comment">// Constructor and destructor</span></div>
-<div class="line"><a id="l00885" name="l00885"></a><span class="lineno">  885</span><span class="comment"></span><span class="keyword">inline</span> _TaskManagerTask::_TaskManagerTask(): m_id(0), m_fn(NULL), m_stateFlags(0)</div>
-<div class="line"><a id="l00886" name="l00886"></a><span class="lineno">  886</span>{</div>
-<div class="line"><a id="l00887" name="l00887"></a><span class="lineno">  887</span>}</div>
-<div class="line"><a id="l00888" name="l00888"></a><span class="lineno">  888</span> </div>
-<div class="line"><a id="l00893" name="l00893"></a><span class="lineno">  893</span><span class="keyword">inline</span> _TaskManagerTask::_TaskManagerTask(tm_taskId_t taskId, <span class="keywordtype">void</span> (*fn)()): m_id(taskId), m_fn(fn), m_stateFlags(0) {</div>
-<div class="line"><a id="l00894" name="l00894"></a><span class="lineno">  894</span>}</div>
-<div class="line"><a id="l00897" name="l00897"></a><span class="lineno">  897</span><span class="keyword">inline</span> _TaskManagerTask::~_TaskManagerTask() {</div>
-<div class="line"><a id="l00898" name="l00898"></a><span class="lineno">  898</span>}</div>
-<div class="line"><a id="l00899" name="l00899"></a><span class="lineno">  899</span> </div>
-<div class="line"><a id="l00900" name="l00900"></a><span class="lineno">  900</span><span class="comment">// Setting the task&#39;s state</span></div>
-<div class="line"><a id="l00903" name="l00903"></a><span class="lineno">  903</span><span class="comment"></span><span class="keyword">inline</span> <span class="keywordtype">void</span> _TaskManagerTask::setRunnable() {</div>
-<div class="line"><a id="l00904" name="l00904"></a><span class="lineno">  904</span>    stateClear(WaitMessage+WaitUntil+Suspended);</div>
-<div class="line"><a id="l00905" name="l00905"></a><span class="lineno">  905</span>}</div>
-<div class="line"><a id="l00908" name="l00908"></a><span class="lineno">  908</span><span class="keyword">inline</span> <span class="keywordtype">void</span> _TaskManagerTask::setSuspended() {</div>
-<div class="line"><a id="l00909" name="l00909"></a><span class="lineno">  909</span>    stateSet(Suspended);</div>
+<div class="line"><a id="l00882" name="l00882"></a><span class="lineno">  882</span><span class="comment">// _TaskManagerTask Things</span></div>
+<div class="line"><a id="l00883" name="l00883"></a><span class="lineno">  883</span> </div>
+<div class="line"><a id="l00884" name="l00884"></a><span class="lineno">  884</span><span class="comment">// Constructor and destructor</span></div>
+<div class="line"><a id="l00890" name="l00890"></a><span class="lineno">  890</span><span class="comment"></span><span class="keyword">inline</span> _TaskManagerTask::_TaskManagerTask(): m_id(0), m_fn(NULL), m_stateFlags(0)</div>
+<div class="line"><a id="l00891" name="l00891"></a><span class="lineno">  891</span>{</div>
+<div class="line"><a id="l00892" name="l00892"></a><span class="lineno">  892</span>}</div>
+<div class="line"><a id="l00893" name="l00893"></a><span class="lineno">  893</span> </div>
+<div class="line"><a id="l00898" name="l00898"></a><span class="lineno">  898</span><span class="keyword">inline</span> _TaskManagerTask::_TaskManagerTask(tm_taskId_t taskId, <span class="keywordtype">void</span> (*fn)()): m_id(taskId), m_fn(fn), m_stateFlags(0) {</div>
+<div class="line"><a id="l00899" name="l00899"></a><span class="lineno">  899</span>}</div>
+<div class="line"><a id="l00902" name="l00902"></a><span class="lineno">  902</span><span class="keyword">inline</span> _TaskManagerTask::~_TaskManagerTask() {</div>
+<div class="line"><a id="l00903" name="l00903"></a><span class="lineno">  903</span>}</div>
+<div class="line"><a id="l00904" name="l00904"></a><span class="lineno">  904</span> </div>
+<div class="line"><a id="l00905" name="l00905"></a><span class="lineno">  905</span><span class="comment">// Setting the task&#39;s state</span></div>
+<div class="line"><a id="l00908" name="l00908"></a><span class="lineno">  908</span><span class="comment"></span><span class="keyword">inline</span> <span class="keywordtype">void</span> _TaskManagerTask::setRunnable() {</div>
+<div class="line"><a id="l00909" name="l00909"></a><span class="lineno">  909</span>    stateClear(WaitMessage+WaitUntil+Suspended);</div>
 <div class="line"><a id="l00910" name="l00910"></a><span class="lineno">  910</span>}</div>
-<div class="line"><a id="l00914" name="l00914"></a><span class="lineno">  914</span><span class="keyword">inline</span> <span class="keywordtype">void</span> _TaskManagerTask::clearSuspended() {</div>
-<div class="line"><a id="l00915" name="l00915"></a><span class="lineno">  915</span>    stateClear(Suspended);</div>
-<div class="line"><a id="l00916" name="l00916"></a><span class="lineno">  916</span>}</div>
-<div class="line"><a id="l00924" name="l00924"></a><span class="lineno">  924</span><span class="keyword">inline</span> <span class="keywordtype">void</span> _TaskManagerTask::setWaitUntil(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> when) {</div>
-<div class="line"><a id="l00925" name="l00925"></a><span class="lineno">  925</span>    m_restartTime=when;</div>
-<div class="line"><a id="l00926" name="l00926"></a><span class="lineno">  926</span>    stateSet(WaitUntil);</div>
-<div class="line"><a id="l00927" name="l00927"></a><span class="lineno">  927</span>}</div>
-<div class="line"><a id="l00934" name="l00934"></a><span class="lineno">  934</span><span class="keyword">inline</span> <span class="keywordtype">void</span> _TaskManagerTask::setWaitDelay(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> ms)  {</div>
-<div class="line"><a id="l00935" name="l00935"></a><span class="lineno">  935</span>    setWaitUntil(millis()+ms);</div>
-<div class="line"><a id="l00936" name="l00936"></a><span class="lineno">  936</span>}</div>
-<div class="line"><a id="l00951" name="l00951"></a><span class="lineno">  951</span><span class="keyword">inline</span> <span class="keywordtype">void</span> _TaskManagerTask::setAutoDelay(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> ms) {</div>
-<div class="line"><a id="l00952" name="l00952"></a><span class="lineno">  952</span>    <span class="keywordflow">if</span>(ms&gt;0) {</div>
-<div class="line"><a id="l00953" name="l00953"></a><span class="lineno">  953</span>        m_period = ms;</div>
-<div class="line"><a id="l00954" name="l00954"></a><span class="lineno">  954</span>        stateSet(AutoReWaitUntil);</div>
-<div class="line"><a id="l00955" name="l00955"></a><span class="lineno">  955</span>    }</div>
-<div class="line"><a id="l00956" name="l00956"></a><span class="lineno">  956</span>}</div>
-<div class="line"><a id="l00957" name="l00957"></a><span class="lineno">  957</span> </div>
-<div class="line"><a id="l00965" name="l00965"></a><span class="lineno">  965</span><span class="keyword">inline</span> <span class="keywordtype">void</span> _TaskManagerTask::setWaitMessage(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> msTimeout<span class="comment">/*=0*/</span>)  {</div>
-<div class="line"><a id="l00966" name="l00966"></a><span class="lineno">  966</span>    stateSet(WaitMessage);</div>
-<div class="line"><a id="l00967" name="l00967"></a><span class="lineno">  967</span>    <span class="keywordflow">if</span>(msTimeout&gt;0) setWaitDelay(msTimeout);</div>
-<div class="line"><a id="l00968" name="l00968"></a><span class="lineno">  968</span>}</div>
-<div class="line"><a id="l00985" name="l00985"></a><span class="lineno">  985</span><span class="keyword">inline</span> <span class="keywordtype">void</span> _TaskManagerTask::setAutoMessage(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> msTimeout<span class="comment">/*=0*/</span>)  {</div>
-<div class="line"><a id="l00986" name="l00986"></a><span class="lineno">  986</span>    stateSet(AutoReWaitMessage);</div>
-<div class="line"><a id="l00987" name="l00987"></a><span class="lineno">  987</span>    setAutoDelay(msTimeout);</div>
-<div class="line"><a id="l00988" name="l00988"></a><span class="lineno">  988</span>}</div>
-<div class="line"><a id="l00989" name="l00989"></a><span class="lineno">  989</span> </div>
-<div class="line"><a id="l00990" name="l00990"></a><span class="lineno">  990</span><span class="comment">//</span></div>
-<div class="line"><a id="l00991" name="l00991"></a><span class="lineno">  991</span><span class="comment">// Sending messages to a task</span></div>
-<div class="line"><a id="l00992" name="l00992"></a><span class="lineno">  992</span><span class="comment">//</span></div>
-<div class="line"><a id="l00993" name="l00993"></a><span class="lineno">  993</span> </div>
-<div class="line"><a id="l01001" name="l01001"></a><span class="lineno"> 1001</span><span class="keyword">inline</span> <span class="keywordtype">void</span> _TaskManagerTask::putMessage(<span class="keywordtype">void</span>* buf, <span class="keywordtype">int</span> len) {</div>
-<div class="line"><a id="l01002" name="l01002"></a><span class="lineno"> 1002</span>    <span class="keywordflow">if</span>(len&lt;=<a class="code hl_define" href="group__global.html#gaaab6d47865dfea563e732890e3b2ab27">TASKMGR_MESSAGE_SIZE</a>) {</div>
-<div class="line"><a id="l01003" name="l01003"></a><span class="lineno"> 1003</span>        memcpy(m_message, buf, len);</div>
-<div class="line"><a id="l01004" name="l01004"></a><span class="lineno"> 1004</span>        m_messageLength = len;</div>
-<div class="line"><a id="l01005" name="l01005"></a><span class="lineno"> 1005</span>        stateClear(WaitMessage+WaitUntil+TimedOut);</div>
-<div class="line"><a id="l01006" name="l01006"></a><span class="lineno"> 1006</span>    }</div>
-<div class="line"><a id="l01007" name="l01007"></a><span class="lineno"> 1007</span>}</div>
-<div class="line"><a id="l01008" name="l01008"></a><span class="lineno"> 1008</span> </div>
-<div class="line"><a id="l01009" name="l01009"></a><span class="lineno"> 1009</span><span class="comment">//</span></div>
-<div class="line"><a id="l01010" name="l01010"></a><span class="lineno"> 1010</span><span class="comment">// Testing the status bits of the task</span></div>
-<div class="line"><a id="l01011" name="l01011"></a><span class="lineno"> 1011</span><span class="comment">//</span></div>
-<div class="line"><a id="l01016" name="l01016"></a><span class="lineno"> 1016</span><span class="comment"></span><span class="keyword">inline</span> <span class="keywordtype">bool</span> _TaskManagerTask::anyStateSet(<span class="keywordtype">byte</span> bits) {</div>
-<div class="line"><a id="l01017" name="l01017"></a><span class="lineno"> 1017</span>    <span class="keywordflow">return</span> (m_stateFlags&amp;bits) != 0;</div>
-<div class="line"><a id="l01018" name="l01018"></a><span class="lineno"> 1018</span>}</div>
-<div class="line"><a id="l01023" name="l01023"></a><span class="lineno"> 1023</span><span class="keyword">inline</span> <span class="keywordtype">bool</span> _TaskManagerTask::allStateSet(<span class="keywordtype">byte</span> bits) {</div>
-<div class="line"><a id="l01024" name="l01024"></a><span class="lineno"> 1024</span>    <span class="keywordflow">return</span> (m_stateFlags&amp;bits) == bits;</div>
-<div class="line"><a id="l01025" name="l01025"></a><span class="lineno"> 1025</span>}</div>
-<div class="line"><a id="l01030" name="l01030"></a><span class="lineno"> 1030</span><span class="keyword">inline</span> <span class="keywordtype">bool</span> _TaskManagerTask::stateTestBit(<span class="keywordtype">byte</span> bit) {</div>
-<div class="line"><a id="l01031" name="l01031"></a><span class="lineno"> 1031</span>    <span class="keywordflow">return</span> anyStateSet(bit);</div>
-<div class="line"><a id="l01032" name="l01032"></a><span class="lineno"> 1032</span>}</div>
-<div class="line"><a id="l01036" name="l01036"></a><span class="lineno"> 1036</span><span class="keyword">inline</span> <span class="keywordtype">void</span> _TaskManagerTask::stateSet(<span class="keywordtype">byte</span> bits) {</div>
-<div class="line"><a id="l01037" name="l01037"></a><span class="lineno"> 1037</span>    m_stateFlags |= bits;</div>
-<div class="line"><a id="l01038" name="l01038"></a><span class="lineno"> 1038</span>}</div>
-<div class="line"><a id="l01042" name="l01042"></a><span class="lineno"> 1042</span><span class="keyword">inline</span> <span class="keywordtype">void</span> _TaskManagerTask::stateClear(<span class="keywordtype">byte</span> bits) {</div>
-<div class="line"><a id="l01043" name="l01043"></a><span class="lineno"> 1043</span>    m_stateFlags &amp;= (~bits);</div>
-<div class="line"><a id="l01044" name="l01044"></a><span class="lineno"> 1044</span>}</div>
-<div class="line"><a id="l01047" name="l01047"></a><span class="lineno"> 1047</span><span class="keyword">inline</span> <span class="keywordtype">void</span> _TaskManagerTask::resetCurrentStateBits() {</div>
-<div class="line"><a id="l01048" name="l01048"></a><span class="lineno"> 1048</span>    m_stateFlags = (m_stateFlags&amp;0xf8) + ((m_stateFlags&gt;&gt;3)&amp;0x07);</div>
-<div class="line"><a id="l01049" name="l01049"></a><span class="lineno"> 1049</span>} <span class="comment">// end TaskManagerTask</span></div>
-<div class="line"><a id="l01051" name="l01051"></a><span class="lineno"> 1051</span> </div>
-<div class="line"><a id="l01052" name="l01052"></a><span class="lineno"> 1052</span><span class="comment"> /*************** TaskManager Implementation ****************/</span></div>
-<div class="line"><a id="l01057" name="l01057"></a><span class="lineno"> 1057</span><span class="comment">/* \ingroup  task </span></div>
-<div class="line"><a id="l01058" name="l01058"></a><span class="lineno"> 1058</span><span class="comment">    @{</span></div>
-<div class="line"><a id="l01059" name="l01059"></a><span class="lineno"> 1059</span><span class="comment">*/</span></div>
-<div class="line"><a id="l01060" name="l01060"></a><span class="lineno"><a class="line" href="group__receive.html#ga087a0368a1dc5670757f56000b906e22"> 1060</a></span><span class="keyword">inline</span> tm_taskId_t <a class="code hl_function" href="group__receive.html#ga087a0368a1dc5670757f56000b906e22">TaskManager::myId</a>() {</div>
-<div class="line"><a id="l01061" name="l01061"></a><span class="lineno"> 1061</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="class_task_manager.html#a01f290a48b9f1f9ad4fdb08cffddaca5">m_theTasks</a>.front().m_id;</div>
-<div class="line"><a id="l01062" name="l01062"></a><span class="lineno"> 1062</span>};</div>
-<div class="line"><a id="l01063" name="l01063"></a><span class="lineno"> 1063</span><span class="comment">/* @} */</span> <span class="comment">// end task</span></div>
-<div class="line"><a id="l01067" name="l01067"></a><span class="lineno"><a class="line" href="group__receive.html#gae7641b79a5efb0a5e640daa8f623fa5c"> 1067</a></span><span class="comment"></span><span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="group__receive.html#gae7641b79a5efb0a5e640daa8f623fa5c">TaskManager::timedOut</a>() {</div>
-<div class="line"><a id="l01068" name="l01068"></a><span class="lineno"> 1068</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="class_task_manager.html#a01f290a48b9f1f9ad4fdb08cffddaca5">m_theTasks</a>.front().stateTestBit(_TaskManagerTask::TimedOut);</div>
-<div class="line"><a id="l01069" name="l01069"></a><span class="lineno"> 1069</span>} <span class="comment">// end receive</span></div>
-<div class="line"><a id="l01074" name="l01074"></a><span class="lineno"><a class="line" href="group__send.html#ga79227d756bef8d23a2be42ff60f1c606"> 1074</a></span><span class="comment"></span><span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="group__send.html#ga79227d756bef8d23a2be42ff60f1c606">TaskManager::sendMessage</a>(tm_taskId_t taskId, <span class="keywordtype">char</span>* message) {</div>
-<div class="line"><a id="l01075" name="l01075"></a><span class="lineno"> 1075</span>    <a class="code hl_function" href="group___task_manager.html#ga09bb6c7863e8d8f3744b8d6da95a56bf">internalSendMessage</a>(0, <a class="code hl_function" href="group__receive.html#ga087a0368a1dc5670757f56000b906e22">myId</a>(), taskId, message);</div>
-<div class="line"><a id="l01076" name="l01076"></a><span class="lineno"> 1076</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a id="l01077" name="l01077"></a><span class="lineno"> 1077</span>}</div>
-<div class="line"><a id="l01078" name="l01078"></a><span class="lineno"> 1078</span> </div>
-<div class="line"><a id="l01079" name="l01079"></a><span class="lineno"><a class="line" href="group__send.html#ga2668163bdcc5cd6057041cf766ed5e68"> 1079</a></span><span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="group__send.html#ga79227d756bef8d23a2be42ff60f1c606">TaskManager::sendMessage</a>(tm_taskId_t taskId, <span class="keywordtype">void</span>* buf, <span class="keywordtype">int</span> len) {</div>
-<div class="line"><a id="l01080" name="l01080"></a><span class="lineno"> 1080</span>    <a class="code hl_function" href="group___task_manager.html#ga09bb6c7863e8d8f3744b8d6da95a56bf">internalSendMessage</a>(0, <a class="code hl_function" href="group__receive.html#ga087a0368a1dc5670757f56000b906e22">myId</a>(), taskId, buf, len);</div>
+<div class="line"><a id="l00913" name="l00913"></a><span class="lineno">  913</span><span class="keyword">inline</span> <span class="keywordtype">void</span> _TaskManagerTask::setSuspended() {</div>
+<div class="line"><a id="l00914" name="l00914"></a><span class="lineno">  914</span>    stateSet(Suspended);</div>
+<div class="line"><a id="l00915" name="l00915"></a><span class="lineno">  915</span>}</div>
+<div class="line"><a id="l00919" name="l00919"></a><span class="lineno">  919</span><span class="keyword">inline</span> <span class="keywordtype">void</span> _TaskManagerTask::clearSuspended() {</div>
+<div class="line"><a id="l00920" name="l00920"></a><span class="lineno">  920</span>    stateClear(Suspended);</div>
+<div class="line"><a id="l00921" name="l00921"></a><span class="lineno">  921</span>}</div>
+<div class="line"><a id="l00929" name="l00929"></a><span class="lineno">  929</span><span class="keyword">inline</span> <span class="keywordtype">void</span> _TaskManagerTask::setWaitUntil(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> when) {</div>
+<div class="line"><a id="l00930" name="l00930"></a><span class="lineno">  930</span>    m_restartTime=when;</div>
+<div class="line"><a id="l00931" name="l00931"></a><span class="lineno">  931</span>    stateSet(WaitUntil);</div>
+<div class="line"><a id="l00932" name="l00932"></a><span class="lineno">  932</span>}</div>
+<div class="line"><a id="l00939" name="l00939"></a><span class="lineno">  939</span><span class="keyword">inline</span> <span class="keywordtype">void</span> _TaskManagerTask::setWaitDelay(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> ms)  {</div>
+<div class="line"><a id="l00940" name="l00940"></a><span class="lineno">  940</span>    setWaitUntil(millis()+ms);</div>
+<div class="line"><a id="l00941" name="l00941"></a><span class="lineno">  941</span>}</div>
+<div class="line"><a id="l00956" name="l00956"></a><span class="lineno">  956</span><span class="keyword">inline</span> <span class="keywordtype">void</span> _TaskManagerTask::setAutoDelay(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> ms) {</div>
+<div class="line"><a id="l00957" name="l00957"></a><span class="lineno">  957</span>    <span class="keywordflow">if</span>(ms&gt;0) {</div>
+<div class="line"><a id="l00958" name="l00958"></a><span class="lineno">  958</span>        m_period = ms;</div>
+<div class="line"><a id="l00959" name="l00959"></a><span class="lineno">  959</span>        stateSet(AutoReWaitUntil);</div>
+<div class="line"><a id="l00960" name="l00960"></a><span class="lineno">  960</span>    }</div>
+<div class="line"><a id="l00961" name="l00961"></a><span class="lineno">  961</span>}</div>
+<div class="line"><a id="l00962" name="l00962"></a><span class="lineno">  962</span> </div>
+<div class="line"><a id="l00970" name="l00970"></a><span class="lineno">  970</span><span class="keyword">inline</span> <span class="keywordtype">void</span> _TaskManagerTask::setWaitMessage(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> msTimeout<span class="comment">/*=0*/</span>)  {</div>
+<div class="line"><a id="l00971" name="l00971"></a><span class="lineno">  971</span>    stateSet(WaitMessage);</div>
+<div class="line"><a id="l00972" name="l00972"></a><span class="lineno">  972</span>    <span class="keywordflow">if</span>(msTimeout&gt;0) setWaitDelay(msTimeout);</div>
+<div class="line"><a id="l00973" name="l00973"></a><span class="lineno">  973</span>}</div>
+<div class="line"><a id="l00990" name="l00990"></a><span class="lineno">  990</span><span class="keyword">inline</span> <span class="keywordtype">void</span> _TaskManagerTask::setAutoMessage(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> msTimeout<span class="comment">/*=0*/</span>)  {</div>
+<div class="line"><a id="l00991" name="l00991"></a><span class="lineno">  991</span>    stateSet(AutoReWaitMessage);</div>
+<div class="line"><a id="l00992" name="l00992"></a><span class="lineno">  992</span>    setAutoDelay(msTimeout);</div>
+<div class="line"><a id="l00993" name="l00993"></a><span class="lineno">  993</span>}</div>
+<div class="line"><a id="l00994" name="l00994"></a><span class="lineno">  994</span> </div>
+<div class="line"><a id="l00995" name="l00995"></a><span class="lineno">  995</span><span class="comment">//</span></div>
+<div class="line"><a id="l00996" name="l00996"></a><span class="lineno">  996</span><span class="comment">// Sending messages to a task</span></div>
+<div class="line"><a id="l00997" name="l00997"></a><span class="lineno">  997</span><span class="comment">//</span></div>
+<div class="line"><a id="l00998" name="l00998"></a><span class="lineno">  998</span> </div>
+<div class="line"><a id="l01006" name="l01006"></a><span class="lineno"> 1006</span><span class="keyword">inline</span> <span class="keywordtype">void</span> _TaskManagerTask::putMessage(<span class="keywordtype">void</span>* buf, <span class="keywordtype">int</span> len) {</div>
+<div class="line"><a id="l01007" name="l01007"></a><span class="lineno"> 1007</span>    <span class="keywordflow">if</span>(len&lt;=<a class="code hl_define" href="group__global.html#gaaab6d47865dfea563e732890e3b2ab27">TASKMGR_MESSAGE_SIZE</a>) {</div>
+<div class="line"><a id="l01008" name="l01008"></a><span class="lineno"> 1008</span>        memcpy(m_message, buf, len);</div>
+<div class="line"><a id="l01009" name="l01009"></a><span class="lineno"> 1009</span>        m_messageLength = len;</div>
+<div class="line"><a id="l01010" name="l01010"></a><span class="lineno"> 1010</span>        stateClear(WaitMessage+WaitUntil+TimedOut);</div>
+<div class="line"><a id="l01011" name="l01011"></a><span class="lineno"> 1011</span>    }</div>
+<div class="line"><a id="l01012" name="l01012"></a><span class="lineno"> 1012</span>}</div>
+<div class="line"><a id="l01013" name="l01013"></a><span class="lineno"> 1013</span> </div>
+<div class="line"><a id="l01014" name="l01014"></a><span class="lineno"> 1014</span><span class="comment">//</span></div>
+<div class="line"><a id="l01015" name="l01015"></a><span class="lineno"> 1015</span><span class="comment">// Testing the status bits of the task</span></div>
+<div class="line"><a id="l01016" name="l01016"></a><span class="lineno"> 1016</span><span class="comment">//</span></div>
+<div class="line"><a id="l01021" name="l01021"></a><span class="lineno"> 1021</span><span class="comment"></span><span class="keyword">inline</span> <span class="keywordtype">bool</span> _TaskManagerTask::anyStateSet(<span class="keywordtype">byte</span> bits) {</div>
+<div class="line"><a id="l01022" name="l01022"></a><span class="lineno"> 1022</span>    <span class="keywordflow">return</span> (m_stateFlags&amp;bits) != 0;</div>
+<div class="line"><a id="l01023" name="l01023"></a><span class="lineno"> 1023</span>}</div>
+<div class="line"><a id="l01028" name="l01028"></a><span class="lineno"> 1028</span><span class="keyword">inline</span> <span class="keywordtype">bool</span> _TaskManagerTask::allStateSet(<span class="keywordtype">byte</span> bits) {</div>
+<div class="line"><a id="l01029" name="l01029"></a><span class="lineno"> 1029</span>    <span class="keywordflow">return</span> (m_stateFlags&amp;bits) == bits;</div>
+<div class="line"><a id="l01030" name="l01030"></a><span class="lineno"> 1030</span>}</div>
+<div class="line"><a id="l01035" name="l01035"></a><span class="lineno"> 1035</span><span class="keyword">inline</span> <span class="keywordtype">bool</span> _TaskManagerTask::stateTestBit(<span class="keywordtype">byte</span> bit) {</div>
+<div class="line"><a id="l01036" name="l01036"></a><span class="lineno"> 1036</span>    <span class="keywordflow">return</span> anyStateSet(bit);</div>
+<div class="line"><a id="l01037" name="l01037"></a><span class="lineno"> 1037</span>}</div>
+<div class="line"><a id="l01041" name="l01041"></a><span class="lineno"> 1041</span><span class="keyword">inline</span> <span class="keywordtype">void</span> _TaskManagerTask::stateSet(<span class="keywordtype">byte</span> bits) {</div>
+<div class="line"><a id="l01042" name="l01042"></a><span class="lineno"> 1042</span>    m_stateFlags |= bits;</div>
+<div class="line"><a id="l01043" name="l01043"></a><span class="lineno"> 1043</span>}</div>
+<div class="line"><a id="l01047" name="l01047"></a><span class="lineno"> 1047</span><span class="keyword">inline</span> <span class="keywordtype">void</span> _TaskManagerTask::stateClear(<span class="keywordtype">byte</span> bits) {</div>
+<div class="line"><a id="l01048" name="l01048"></a><span class="lineno"> 1048</span>    m_stateFlags &amp;= (~bits);</div>
+<div class="line"><a id="l01049" name="l01049"></a><span class="lineno"> 1049</span>}</div>
+<div class="line"><a id="l01052" name="l01052"></a><span class="lineno"> 1052</span><span class="keyword">inline</span> <span class="keywordtype">void</span> _TaskManagerTask::resetCurrentStateBits() {</div>
+<div class="line"><a id="l01053" name="l01053"></a><span class="lineno"> 1053</span>    m_stateFlags = (m_stateFlags&amp;0xf8) + ((m_stateFlags&gt;&gt;3)&amp;0x07);</div>
+<div class="line"><a id="l01054" name="l01054"></a><span class="lineno"> 1054</span>} <span class="comment">// end TaskManagerTask</span></div>
+<div class="line"><a id="l01056" name="l01056"></a><span class="lineno"> 1056</span> </div>
+<div class="line"><a id="l01057" name="l01057"></a><span class="lineno"> 1057</span><span class="comment"> /*************** TaskManager Implementation ****************/</span></div>
+<div class="line"><a id="l01062" name="l01062"></a><span class="lineno"> 1062</span><span class="comment">/* \ingroup  task </span></div>
+<div class="line"><a id="l01063" name="l01063"></a><span class="lineno"> 1063</span><span class="comment">    @{</span></div>
+<div class="line"><a id="l01064" name="l01064"></a><span class="lineno"> 1064</span><span class="comment">*/</span></div>
+<div class="line"><a id="l01065" name="l01065"></a><span class="lineno"><a class="line" href="group__receive.html#ga087a0368a1dc5670757f56000b906e22"> 1065</a></span><span class="keyword">inline</span> tm_taskId_t <a class="code hl_function" href="group__receive.html#ga087a0368a1dc5670757f56000b906e22">TaskManager::myId</a>() {</div>
+<div class="line"><a id="l01066" name="l01066"></a><span class="lineno"> 1066</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="class_task_manager.html#a01f290a48b9f1f9ad4fdb08cffddaca5">m_theTasks</a>.front().m_id;</div>
+<div class="line"><a id="l01067" name="l01067"></a><span class="lineno"> 1067</span>};</div>
+<div class="line"><a id="l01068" name="l01068"></a><span class="lineno"> 1068</span><span class="comment">/* @} */</span> <span class="comment">// end task</span></div>
+<div class="line"><a id="l01072" name="l01072"></a><span class="lineno"><a class="line" href="group__receive.html#gae7641b79a5efb0a5e640daa8f623fa5c"> 1072</a></span><span class="comment"></span><span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="group__receive.html#gae7641b79a5efb0a5e640daa8f623fa5c">TaskManager::timedOut</a>() {</div>
+<div class="line"><a id="l01073" name="l01073"></a><span class="lineno"> 1073</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="class_task_manager.html#a01f290a48b9f1f9ad4fdb08cffddaca5">m_theTasks</a>.front().stateTestBit(_TaskManagerTask::TimedOut);</div>
+<div class="line"><a id="l01074" name="l01074"></a><span class="lineno"> 1074</span>} <span class="comment">// end receive</span></div>
+<div class="line"><a id="l01079" name="l01079"></a><span class="lineno"><a class="line" href="group__send.html#ga79227d756bef8d23a2be42ff60f1c606"> 1079</a></span><span class="comment"></span><span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="group__send.html#ga79227d756bef8d23a2be42ff60f1c606">TaskManager::sendMessage</a>(tm_taskId_t taskId, <span class="keywordtype">char</span>* message) {</div>
+<div class="line"><a id="l01080" name="l01080"></a><span class="lineno"> 1080</span>    <a class="code hl_function" href="group___task_manager.html#ga09bb6c7863e8d8f3744b8d6da95a56bf">internalSendMessage</a>(0, <a class="code hl_function" href="group__receive.html#ga087a0368a1dc5670757f56000b906e22">myId</a>(), taskId, message);</div>
 <div class="line"><a id="l01081" name="l01081"></a><span class="lineno"> 1081</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a id="l01082" name="l01082"></a><span class="lineno"> 1082</span>} <span class="comment">// end send</span></div>
-<div class="line"><a id="l01087" name="l01087"></a><span class="lineno"><a class="line" href="group__receive.html#gab7a70749690f57b64c4db036abf1fa9d"> 1087</a></span><span class="comment"></span><span class="keyword">inline</span> <span class="keywordtype">void</span>* <a class="code hl_function" href="group__receive.html#gab7a70749690f57b64c4db036abf1fa9d">TaskManager::getMessage</a>() {</div>
-<div class="line"><a id="l01088" name="l01088"></a><span class="lineno"> 1088</span>    <span class="keywordflow">return</span> (<span class="keywordtype">void</span>*)(&amp;(<a class="code hl_variable" href="class_task_manager.html#a01f290a48b9f1f9ad4fdb08cffddaca5">m_theTasks</a>.front().m_message));</div>
-<div class="line"><a id="l01089" name="l01089"></a><span class="lineno"> 1089</span>}</div>
-<div class="line"><a id="l01090" name="l01090"></a><span class="lineno"> 1090</span> </div>
-<div class="line"><a id="l01091" name="l01091"></a><span class="lineno"><a class="line" href="group__receive.html#ga2512563ba937a3542cbe564830ce1ae0"> 1091</a></span><span class="keyword">inline</span> uint16_t <a class="code hl_function" href="group__receive.html#ga2512563ba937a3542cbe564830ce1ae0">TaskManager::getMessageLength</a>() {</div>
-<div class="line"><a id="l01092" name="l01092"></a><span class="lineno"> 1092</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="class_task_manager.html#a01f290a48b9f1f9ad4fdb08cffddaca5">m_theTasks</a>.front().m_messageLength;</div>
-<div class="line"><a id="l01093" name="l01093"></a><span class="lineno"> 1093</span>}</div>
-<div class="line"><a id="l01094" name="l01094"></a><span class="lineno"> 1094</span> </div>
-<div class="line"><a id="l01095" name="l01095"></a><span class="lineno"><a class="line" href="group__receive.html#ga0f4e11619ef42339d1a20fa2d31b2b72"> 1095</a></span><span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code hl_function" href="group__receive.html#ga0f4e11619ef42339d1a20fa2d31b2b72">TaskManager::getSource</a>(tm_taskId_t&amp; fromTaskId) {</div>
-<div class="line"><a id="l01096" name="l01096"></a><span class="lineno"> 1096</span>    fromTaskId = <a class="code hl_variable" href="class_task_manager.html#a01f290a48b9f1f9ad4fdb08cffddaca5">m_theTasks</a>.front().m_fromTaskId;</div>
-<div class="line"><a id="l01097" name="l01097"></a><span class="lineno"> 1097</span>} <span class="comment">// end receive</span></div>
-<div class="line"><a id="l01102" name="l01102"></a><span class="lineno"><a class="line" href="group__misc.html#ga966e7f218ea93bfb36020814ed489517"> 1102</a></span><span class="comment"></span><span class="keyword">inline</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <a class="code hl_function" href="group__misc.html#ga966e7f218ea93bfb36020814ed489517">TaskManager::runtime</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> millis()-m_startTime; } <span class="comment">// end misc  // end taskmanager</span></div>
-<div class="line"><a id="l01105" name="l01105"></a><span class="lineno"> 1105</span> </div>
-<div class="line"><a id="l01106" name="l01106"></a><span class="lineno"> 1106</span><span class="comment">/**************** Network ************************/</span></div>
-<div class="line"><a id="l01110" name="l01110"></a><span class="lineno"> 1110</span><span class="preprocessor">#if (defined(ARDUINO_ARCH_AVR) &amp;&amp; defined(TASKMGR_AVR_RF24)) || defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)</span></div>
-<div class="line"><a id="l01111" name="l01111"></a><span class="lineno"><a class="line" href="group___task_manager.html#gab797d73ccb1b1a13c797bd1262249dea"> 1111</a></span><span class="keyword">inline</span> tm_nodeId_t <a class="code hl_function" href="group___task_manager.html#gab797d73ccb1b1a13c797bd1262249dea">TaskManager::myNodeId</a>() {</div>
-<div class="line"><a id="l01112" name="l01112"></a><span class="lineno"> 1112</span>    <span class="keywordflow">return</span> m_myNodeId;</div>
-<div class="line"><a id="l01113" name="l01113"></a><span class="lineno"> 1113</span>}</div>
-<div class="line"><a id="l01114" name="l01114"></a><span class="lineno"> 1114</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l01115" name="l01115"></a><span class="lineno"> 1115</span> </div>
-<div class="line"><a id="l01118" name="l01118"></a><span class="lineno"> 1118</span><span class="preprocessor">#endif </span><span class="comment">// TASKMANAGER_H_INCLUDED</span></div>
-<div class="line"><a id="l01119" name="l01119"></a><span class="lineno"> 1119</span> </div>
+<div class="line"><a id="l01082" name="l01082"></a><span class="lineno"> 1082</span>}</div>
+<div class="line"><a id="l01083" name="l01083"></a><span class="lineno"> 1083</span> </div>
+<div class="line"><a id="l01084" name="l01084"></a><span class="lineno"><a class="line" href="group__send.html#ga2668163bdcc5cd6057041cf766ed5e68"> 1084</a></span><span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="group__send.html#ga79227d756bef8d23a2be42ff60f1c606">TaskManager::sendMessage</a>(tm_taskId_t taskId, <span class="keywordtype">void</span>* buf, <span class="keywordtype">int</span> len) {</div>
+<div class="line"><a id="l01085" name="l01085"></a><span class="lineno"> 1085</span>    <a class="code hl_function" href="group___task_manager.html#ga09bb6c7863e8d8f3744b8d6da95a56bf">internalSendMessage</a>(0, <a class="code hl_function" href="group__receive.html#ga087a0368a1dc5670757f56000b906e22">myId</a>(), taskId, buf, len);</div>
+<div class="line"><a id="l01086" name="l01086"></a><span class="lineno"> 1086</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a id="l01087" name="l01087"></a><span class="lineno"> 1087</span>} <span class="comment">// end send</span></div>
+<div class="line"><a id="l01092" name="l01092"></a><span class="lineno"><a class="line" href="group__receive.html#gab7a70749690f57b64c4db036abf1fa9d"> 1092</a></span><span class="comment"></span><span class="keyword">inline</span> <span class="keywordtype">void</span>* <a class="code hl_function" href="group__receive.html#gab7a70749690f57b64c4db036abf1fa9d">TaskManager::getMessage</a>() {</div>
+<div class="line"><a id="l01093" name="l01093"></a><span class="lineno"> 1093</span>    <span class="keywordflow">return</span> (<span class="keywordtype">void</span>*)(&amp;(<a class="code hl_variable" href="class_task_manager.html#a01f290a48b9f1f9ad4fdb08cffddaca5">m_theTasks</a>.front().m_message));</div>
+<div class="line"><a id="l01094" name="l01094"></a><span class="lineno"> 1094</span>}</div>
+<div class="line"><a id="l01095" name="l01095"></a><span class="lineno"> 1095</span> </div>
+<div class="line"><a id="l01096" name="l01096"></a><span class="lineno"><a class="line" href="group__receive.html#ga2512563ba937a3542cbe564830ce1ae0"> 1096</a></span><span class="keyword">inline</span> uint16_t <a class="code hl_function" href="group__receive.html#ga2512563ba937a3542cbe564830ce1ae0">TaskManager::getMessageLength</a>() {</div>
+<div class="line"><a id="l01097" name="l01097"></a><span class="lineno"> 1097</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="class_task_manager.html#a01f290a48b9f1f9ad4fdb08cffddaca5">m_theTasks</a>.front().m_messageLength;</div>
+<div class="line"><a id="l01098" name="l01098"></a><span class="lineno"> 1098</span>}</div>
+<div class="line"><a id="l01099" name="l01099"></a><span class="lineno"> 1099</span> </div>
+<div class="line"><a id="l01100" name="l01100"></a><span class="lineno"><a class="line" href="group__receive.html#ga0f4e11619ef42339d1a20fa2d31b2b72"> 1100</a></span><span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code hl_function" href="group__receive.html#ga0f4e11619ef42339d1a20fa2d31b2b72">TaskManager::getSource</a>(tm_taskId_t&amp; fromTaskId) {</div>
+<div class="line"><a id="l01101" name="l01101"></a><span class="lineno"> 1101</span>    fromTaskId = <a class="code hl_variable" href="class_task_manager.html#a01f290a48b9f1f9ad4fdb08cffddaca5">m_theTasks</a>.front().m_fromTaskId;</div>
+<div class="line"><a id="l01102" name="l01102"></a><span class="lineno"> 1102</span>} <span class="comment">// end receive</span></div>
+<div class="line"><a id="l01107" name="l01107"></a><span class="lineno"><a class="line" href="group__misc.html#ga966e7f218ea93bfb36020814ed489517"> 1107</a></span><span class="comment"></span><span class="keyword">inline</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <a class="code hl_function" href="group__misc.html#ga966e7f218ea93bfb36020814ed489517">TaskManager::runtime</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> millis()-m_startTime; } <span class="comment">// end misc  // end taskmanager</span></div>
+<div class="line"><a id="l01110" name="l01110"></a><span class="lineno"> 1110</span> </div>
+<div class="line"><a id="l01111" name="l01111"></a><span class="lineno"> 1111</span><span class="comment">/**************** Network ************************/</span></div>
+<div class="line"><a id="l01115" name="l01115"></a><span class="lineno"> 1115</span><span class="preprocessor">#if (defined(ARDUINO_ARCH_AVR) &amp;&amp; defined(TASKMGR_AVR_RF24)) || defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)</span></div>
+<div class="line"><a id="l01116" name="l01116"></a><span class="lineno"><a class="line" href="group___task_manager.html#gab797d73ccb1b1a13c797bd1262249dea"> 1116</a></span><span class="keyword">inline</span> tm_nodeId_t <a class="code hl_function" href="group___task_manager.html#gab797d73ccb1b1a13c797bd1262249dea">TaskManager::myNodeId</a>() {</div>
+<div class="line"><a id="l01117" name="l01117"></a><span class="lineno"> 1117</span>    <span class="keywordflow">return</span> m_myNodeId;</div>
+<div class="line"><a id="l01118" name="l01118"></a><span class="lineno"> 1118</span>}</div>
+<div class="line"><a id="l01119" name="l01119"></a><span class="lineno"> 1119</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l01120" name="l01120"></a><span class="lineno"> 1120</span> </div>
+<div class="line"><a id="l01123" name="l01123"></a><span class="lineno"> 1123</span><span class="preprocessor">#endif </span><span class="comment">// TASKMANAGER_H_INCLUDED</span></div>
+<div class="line"><a id="l01124" name="l01124"></a><span class="lineno"> 1124</span> </div>
 <div class="ttc" id="aclass_task_manager_html"><div class="ttname"><a href="class_task_manager.html">TaskManager</a></div><div class="ttdoc">A cooperative multitasking manager.</div><div class="ttdef"><b>Definition:</b> TaskManagerCore.h:231</div></div>
 <div class="ttc" id="aclass_task_manager_html_a0189a1b17878cb115126da8dcf7822ae"><div class="ttname"><a href="class_task_manager.html#a0189a1b17878cb115126da8dcf7822ae">TaskManager::tmRadioReceiverTask</a></div><div class="ttdeci">void tmRadioReceiverTask()</div><div class="ttdoc">General radio receiver task. Each driver is required to provide a radio receiver task....</div></div>
 <div class="ttc" id="aclass_task_manager_html_a01f290a48b9f1f9ad4fdb08cffddaca5"><div class="ttname"><a href="class_task_manager.html#a01f290a48b9f1f9ad4fdb08cffddaca5">TaskManager::m_theTasks</a></div><div class="ttdeci">ring&lt; _TaskManagerTask &gt; m_theTasks</div><div class="ttdoc">The ring of all tasks. For internal use only.</div><div class="ttdef"><b>Definition:</b> TaskManagerCore.h:238</div></div>
+<div class="ttc" id="aclass_task_manager_html_aa187de5f5ff98accacae03bf08653969"><div class="ttname"><a href="class_task_manager.html#aa187de5f5ff98accacae03bf08653969">TaskManager::lastESPError</a></div><div class="ttdeci">const char * lastESPError()</div><div class="ttdoc">Return a textual description of the last ESP error message.</div></div>
+<div class="ttc" id="aclass_task_manager_html_ada5584ddd8b8f8e816153967619398e6"><div class="ttname"><a href="class_task_manager.html#ada5584ddd8b8f8e816153967619398e6">TaskManager::m_TaskManagerMessageQueueSemaphore</a></div><div class="ttdeci">SemaphoreHandle_t m_TaskManagerMessageQueueSemaphore</div><div class="ttdef"><b>Definition:</b> TaskManagerCore.h:693</div></div>
 <div class="ttc" id="aclassring_html"><div class="ttname"><a href="classring.html">ring&lt; _TaskManagerTask &gt;</a></div></div>
 <div class="ttc" id="agroup___task_manager_html_ga09bb6c7863e8d8f3744b8d6da95a56bf"><div class="ttname"><a href="group___task_manager.html#ga09bb6c7863e8d8f3744b8d6da95a56bf">TaskManager::internalSendMessage</a></div><div class="ttdeci">void internalSendMessage(tm_nodeId_t fromNodeId, tm_taskId_t fromTaskId, tm_taskId_t taskId, char *message)</div><div class="ttdoc">Sends a string message to a task on this system. Send a null-terminated (string) message to a task ru...</div><div class="ttdef"><b>Definition:</b> TaskManager.cpp:239</div></div>
-<div class="ttc" id="agroup___task_manager_html_gab797d73ccb1b1a13c797bd1262249dea"><div class="ttname"><a href="group___task_manager.html#gab797d73ccb1b1a13c797bd1262249dea">TaskManager::myNodeId</a></div><div class="ttdeci">tm_nodeId_t myNodeId()</div><div class="ttdoc">Return the node ID of this system.</div><div class="ttdef"><b>Definition:</b> TaskManagerCore.h:1111</div></div>
+<div class="ttc" id="agroup___task_manager_html_gab797d73ccb1b1a13c797bd1262249dea"><div class="ttname"><a href="group___task_manager.html#gab797d73ccb1b1a13c797bd1262249dea">TaskManager::myNodeId</a></div><div class="ttdeci">tm_nodeId_t myNodeId()</div><div class="ttdoc">Return the node ID of this system.</div><div class="ttdef"><b>Definition:</b> TaskManagerCore.h:1116</div></div>
 <div class="ttc" id="agroup__global_html_gaaab6d47865dfea563e732890e3b2ab27"><div class="ttname"><a href="group__global.html#gaaab6d47865dfea563e732890e3b2ab27">TASKMGR_MESSAGE_SIZE</a></div><div class="ttdeci">#define TASKMGR_MESSAGE_SIZE</div><div class="ttdef"><b>Definition:</b> TaskManagerCore.h:56</div></div>
-<div class="ttc" id="agroup__misc_html_ga966e7f218ea93bfb36020814ed489517"><div class="ttname"><a href="group__misc.html#ga966e7f218ea93bfb36020814ed489517">TaskManager::runtime</a></div><div class="ttdeci">unsigned long runtime() const</div><div class="ttdoc">Return the time since the start of the run, in milliseconds.</div><div class="ttdef"><b>Definition:</b> TaskManagerCore.h:1102</div></div>
+<div class="ttc" id="agroup__misc_html_ga21237355dd68ae16aff8406d6ae145bb"><div class="ttname"><a href="group__misc.html#ga21237355dd68ae16aff8406d6ae145bb">TaskManager::printTo</a></div><div class="ttdeci">size_t printTo(Print &amp;p) const</div></div>
+<div class="ttc" id="agroup__misc_html_ga966e7f218ea93bfb36020814ed489517"><div class="ttname"><a href="group__misc.html#ga966e7f218ea93bfb36020814ed489517">TaskManager::runtime</a></div><div class="ttdeci">unsigned long runtime() const</div><div class="ttdoc">Return the time since the start of the run, in milliseconds.</div><div class="ttdef"><b>Definition:</b> TaskManagerCore.h:1107</div></div>
 <div class="ttc" id="agroup__radio_html_ga379de9acea847cd98206bb82376a65bc"><div class="ttname"><a href="group__radio.html#ga379de9acea847cd98206bb82376a65bc">TaskManager::radioBegin</a></div><div class="ttdeci">void radioBegin(tm_nodeId_t nodeId, byte cePin, byte csPin)</div><div class="ttdoc">Create the radio and start it receiving.</div></div>
 <div class="ttc" id="agroup__radio_html_ga9123028970afdce95b07e76adcd4b4ce"><div class="ttname"><a href="group__radio.html#ga9123028970afdce95b07e76adcd4b4ce">TaskManager::registerPeer</a></div><div class="ttdeci">bool registerPeer(tm_nodeId_t nodeId)</div><div class="ttdoc">Add a peer for ESP-Now communications.</div></div>
 <div class="ttc" id="agroup__radio_html_gaa94433d55bbcb0093c7c842e037cd171"><div class="ttname"><a href="group__radio.html#gaa94433d55bbcb0093c7c842e037cd171">TaskManager::unRegisterPeer</a></div><div class="ttdeci">bool unRegisterPeer(tm_nodeId_t nodeId)</div><div class="ttdoc">Remove a peer from ESP-Now communications.</div></div>
 <div class="ttc" id="agroup__radio_html_gac745dd2b71d0d19a30f1fcfc486ae6bd"><div class="ttname"><a href="group__radio.html#gac745dd2b71d0d19a30f1fcfc486ae6bd">TaskManager::radioBegin</a></div><div class="ttdeci">bool radioBegin(tm_nodeId_t nodeId, const char *ssid=NULL, const char *pw=NULL)</div><div class="ttdoc">Create the radio and start it receiving.</div></div>
-<div class="ttc" id="agroup__receive_html_ga087a0368a1dc5670757f56000b906e22"><div class="ttname"><a href="group__receive.html#ga087a0368a1dc5670757f56000b906e22">TaskManager::myId</a></div><div class="ttdeci">tm_taskId_t myId()</div><div class="ttdoc">Return the task ID of the currently running task.</div><div class="ttdef"><b>Definition:</b> TaskManagerCore.h:1060</div></div>
-<div class="ttc" id="agroup__receive_html_ga0f4e11619ef42339d1a20fa2d31b2b72"><div class="ttname"><a href="group__receive.html#ga0f4e11619ef42339d1a20fa2d31b2b72">TaskManager::getSource</a></div><div class="ttdeci">void getSource(tm_taskId_t &amp;fromTaskId)</div><div class="ttdoc">Get task ID of last message/signal.</div><div class="ttdef"><b>Definition:</b> TaskManagerCore.h:1095</div></div>
-<div class="ttc" id="agroup__receive_html_ga2512563ba937a3542cbe564830ce1ae0"><div class="ttname"><a href="group__receive.html#ga2512563ba937a3542cbe564830ce1ae0">TaskManager::getMessageLength</a></div><div class="ttdeci">uint16_t getMessageLength()</div><div class="ttdoc">Get the length of the message in the buffer.</div><div class="ttdef"><b>Definition:</b> TaskManagerCore.h:1091</div></div>
-<div class="ttc" id="agroup__receive_html_gab7a70749690f57b64c4db036abf1fa9d"><div class="ttname"><a href="group__receive.html#gab7a70749690f57b64c4db036abf1fa9d">TaskManager::getMessage</a></div><div class="ttdeci">void * getMessage()</div><div class="ttdoc">Get a task's message buffer.</div><div class="ttdef"><b>Definition:</b> TaskManagerCore.h:1087</div></div>
-<div class="ttc" id="agroup__receive_html_gae7641b79a5efb0a5e640daa8f623fa5c"><div class="ttname"><a href="group__receive.html#gae7641b79a5efb0a5e640daa8f623fa5c">TaskManager::timedOut</a></div><div class="ttdeci">bool timedOut()</div><div class="ttdoc">Tell if the current task has timed out while waiting for a signal or message.</div><div class="ttdef"><b>Definition:</b> TaskManagerCore.h:1067</div></div>
-<div class="ttc" id="agroup__send_html_ga79227d756bef8d23a2be42ff60f1c606"><div class="ttname"><a href="group__send.html#ga79227d756bef8d23a2be42ff60f1c606">TaskManager::sendMessage</a></div><div class="ttdeci">bool sendMessage(tm_taskId_t taskId, char *message)</div><div class="ttdoc">Sends a string message to a task.</div><div class="ttdef"><b>Definition:</b> TaskManagerCore.h:1074</div></div>
+<div class="ttc" id="agroup__receive_html_ga087a0368a1dc5670757f56000b906e22"><div class="ttname"><a href="group__receive.html#ga087a0368a1dc5670757f56000b906e22">TaskManager::myId</a></div><div class="ttdeci">tm_taskId_t myId()</div><div class="ttdoc">Return the task ID of the currently running task.</div><div class="ttdef"><b>Definition:</b> TaskManagerCore.h:1065</div></div>
+<div class="ttc" id="agroup__receive_html_ga0f4e11619ef42339d1a20fa2d31b2b72"><div class="ttname"><a href="group__receive.html#ga0f4e11619ef42339d1a20fa2d31b2b72">TaskManager::getSource</a></div><div class="ttdeci">void getSource(tm_taskId_t &amp;fromTaskId)</div><div class="ttdoc">Get task ID of last message/signal.</div><div class="ttdef"><b>Definition:</b> TaskManagerCore.h:1100</div></div>
+<div class="ttc" id="agroup__receive_html_ga2512563ba937a3542cbe564830ce1ae0"><div class="ttname"><a href="group__receive.html#ga2512563ba937a3542cbe564830ce1ae0">TaskManager::getMessageLength</a></div><div class="ttdeci">uint16_t getMessageLength()</div><div class="ttdoc">Get the length of the message in the buffer.</div><div class="ttdef"><b>Definition:</b> TaskManagerCore.h:1096</div></div>
+<div class="ttc" id="agroup__receive_html_gab7a70749690f57b64c4db036abf1fa9d"><div class="ttname"><a href="group__receive.html#gab7a70749690f57b64c4db036abf1fa9d">TaskManager::getMessage</a></div><div class="ttdeci">void * getMessage()</div><div class="ttdoc">Get a task's message buffer.</div><div class="ttdef"><b>Definition:</b> TaskManagerCore.h:1092</div></div>
+<div class="ttc" id="agroup__receive_html_gae7641b79a5efb0a5e640daa8f623fa5c"><div class="ttname"><a href="group__receive.html#gae7641b79a5efb0a5e640daa8f623fa5c">TaskManager::timedOut</a></div><div class="ttdeci">bool timedOut()</div><div class="ttdoc">Tell if the current task has timed out while waiting for a signal or message.</div><div class="ttdef"><b>Definition:</b> TaskManagerCore.h:1072</div></div>
+<div class="ttc" id="agroup__send_html_ga79227d756bef8d23a2be42ff60f1c606"><div class="ttname"><a href="group__send.html#ga79227d756bef8d23a2be42ff60f1c606">TaskManager::sendMessage</a></div><div class="ttdeci">bool sendMessage(tm_taskId_t taskId, char *message)</div><div class="ttdoc">Sends a string message to a task.</div><div class="ttdef"><b>Definition:</b> TaskManagerCore.h:1079</div></div>
 <div class="ttc" id="agroup__task_html_ga6ffabf2edb1ba7bc18785fc4217a3505"><div class="ttname"><a href="group__task.html#ga6ffabf2edb1ba7bc18785fc4217a3505">TaskManager::resume</a></div><div class="ttdeci">bool resume(tm_nodeId_t nodeId, tm_taskId_t taskId)</div><div class="ttdoc">Resume the given task on the given node.</div></div>
 <div class="ttc" id="agroup__task_html_ga9bb954eabd1933e6e846285210fff088"><div class="ttname"><a href="group__task.html#ga9bb954eabd1933e6e846285210fff088">TaskManager::suspend</a></div><div class="ttdeci">bool suspend(tm_nodeId_t nodeId, tm_taskId_t taskId)</div><div class="ttdoc">Suspend the given task on the given node.</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Jun 22 2022 15:26:17 for TaskManager by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.4
+Generated on Tue Jul 5 2022 13:15:22 for TaskManager by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.4
 </small></address>
 </body>
 </html>

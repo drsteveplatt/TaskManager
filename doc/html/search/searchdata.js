@@ -5,7 +5,7 @@ var indexSectionsWithContent =
   2: "t",
   3: "abcefgilmoprstuy~",
   4: "m",
-  5: "_acgimnprsty",
+  5: "_abcgimnprsty",
   6: "t"
 };
 

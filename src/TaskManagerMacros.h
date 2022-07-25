@@ -24,6 +24,10 @@
 	control.
 */
 
+/*! \defgroup primary Basic TM Macros
+	\ingroup macros
+	@{
+*/
 /*!	\brief Prepare the procedure for the TM macros
 
 	TM_BEGIN() creates the initial code enabling the macros to execute correctly.
@@ -39,7 +43,7 @@
 
 /*!	\brief	Close out the TM macro component
 
-	TM_END() balances TM_BEGIN(), closing the control structures TM_INIT() had
+	TM_END() balances TM_BEGIN(), closing the control structures TM_BEGIN() had
 	created.  It should be placed near the bottom of the procedure.  No TM_YIELD*()
 	calls can come after it.
 */
@@ -89,8 +93,8 @@
 	\param n -- an integer label.  The label should be unique for all of the TM_YIELD*()
 	routines in this task.
 */
-#define TM_YIELDMESSAGE(n)		\
-	{				\
+#define TM_YIELDMESSAGE(n)					\
+	{										\
 			__tmNext__ = n;					\
 			TaskMgr.yieldForMessage();		\
 		case n: ; }
@@ -108,7 +112,7 @@
 			__tmNext__ = n;					\
 			TaskMgr.yieldForMessage(msTimeout);	\
 		case n:  ; }
-
+/*!	@} */ // End primary
 
 /*!	\defgroup subtaskMacros Task Manager Callable Subtasks
 	\ingroup macros
@@ -138,8 +142,8 @@
 
 */
 #define TM_BEGINSUB()						\
-	static byte __callingTask__; 			\
-	TM_BEGIN();								\
+	static tm_taskId_t __callingTask__; 	\
+	TM_BEGIN();							    \	
 	TaskMgr.getSource(__callingTask__);
 
 /*!	\brief Procedure definition header for a subtask with parameters.
@@ -171,7 +175,8 @@
 	\param taskId - the taskId that is to be called
 */
 #define TM_CALL(n, taskId)		\
-	{ TaskMgr.sendMessage(taskId, NULL, 0); TM_YIELDMESSAGE(n); }
+	{ TaskMgr.sendMessage(taskId, NULL, 0); \
+	  TM_YIELDMESSAGE(n); }
 
 /*!	\brief Call a subtask, passing a parameter block
 	TM_CALL_P() calls a subtask.  When the subtask has been completed (via TM_SUBTASK_RETURN()), the
@@ -187,7 +192,8 @@
 	\param vparam - the object being passed
 */
 #define TM_CALL_P(n, taskId, vparam)										\
-	{ 	TaskMgr.sendMessage(taskId, (void*)&vparam, sizeof(vparam));		\
+	{																		\
+		TaskMgr.sendMessage(taskId, (void*)&vparam, sizeof(vparam));		\
 		TM_YIELDMESSAGE(n);													\
 	}
 
@@ -201,7 +207,107 @@
 	TaskMgr.sendMessage(__callingTask__, NULL, 0);	\
 	__tmNext__ = 0;
 
+/*!	@} */ // end subtask
 
+/* TMR macros -- Reentrant task management */
+/*!	\defgroup reentrant Macros to support reentrant task code
+	\ingroup macros
+	@{
+*/
+
+/*!	\brief Start a reentrant task
+
+	Functionally similar to TM_BEGIN, except all static/local variables are stored
+	in an external structure.  The external structure has two fields, "tm_taskId_t taskId"
+	and "uint32_t tmrNext".  In addition, it has routine-specific fields.  The macro creates
+	a variable:  "someType* myData".  
+	
+	Individual variables used by the task are referenced through myData.  For example if the
+	struct contains a field "int i", "i" can be used "myData->i = 7;".
+	\param someType -- the type (struct/class) used to store task-specific information.
+	\param someArr -- an array of someType objects.  Must be sized with one entry for each
+	task that will use this code, and the "taskId" of each entry must match one of the tasks.
+	\param arrSize -- the integer size of someArr.
+	\sa TM_BEGIN
+*/
+#define TMR_BEGIN(someType, someArr, arrSize)                                       \
+  someType* myData;                                                                 \
+  int i;                                                                            \
+  for(i=0; i<arrSize; i++) if(someArr[i].taskID==TaskMgr.myId()) break;           \
+  if(i==arrSize) return; /* no assocated task  */                                   \
+  myData = &someArr[i];                                                             \
+  switch(myData->tmrNext) {                                                       \
+    case 0:
+
+/*! \brief Designates the end of the code implementing the task.  This is
+	placed at the end of the actual code.
+*/
+#define TMR_END()                       \
+    default:                            \
+      myData->tmrNext = 0;            \
+      break;                            \
+  }                                     \
+  myData->tmrNext = 0;
+
+/*!	\brief Yield and return to the next statement
+
+	Perform a yield() operation.  Upon return to this task, execution will continue at
+	the next statement.
+	\param n -- an integer label.  The label should be unique for all of the TM_YIELD*()
+	routines in this task.
+	\sa TM_YIELD
+*/
+#define TMR_YIELD(n)              \
+      myData->tmrNext = n;         \
+      TaskMgr.yield();        \
+    case n:
+
+/*!	\brief	Yield with a delay and return to the next statement
+
+	Perform a yieldDelay(ms) operation.  Upon return to this task, execution will continue at
+	the next statement.
+	\param n -- an integer label.  The label should be unique for all of the TM_YIELD*()
+	routines in this task.
+	\param ms -- a long integer value representing the time (in ms) for the delay.
+	\sa TM_YIELDDELAY
+*/#define TMR_YIELDDELAY(n,ms)          \
+      myData->tmrNext = n;         \
+      TaskMgr.yieldDelay(ms);     \
+    case n:
+
+/*!	\brief	Yield until a message has been received, and then return to the next statement
+
+	Perform a yieldForMessage() operation.  Upon return to this task, execution will continue at
+	the next statement.
+	\param n -- an integer label.  The label should be unique for all of the TM_YIELD*()
+	routines in this task.
+	\sa TMR_YIELDMESSAGE
+*/
+#define TMR_YIELDMESSAGE(n)          \
+      myData->tmrNext = n;         \
+      TaskMgr.yieldForMessage();    \
+    case n:
+
+/*!	\brief	Yield until a message is received or a time has passed, and then return to the next statement
+
+	Perform a yieldForMessage(timeout) operation.  Upon return to this task, execution will continue at
+	the next statement.
+	\param n -- an integer label.  The label should be unique for all of the TM_YIELD*()
+	routines in this task.
+	\param msTimeout -- the maximal amount of time the task will wait for the signal.
+*/
+#define TMR_YIELDMESSAGETIMEOUT(n,msTimeout)    \
+      myData->tmrNext = n;         \
+      TaskMgr.yieldForMessage(msTimeout);  \
+    case n:
+
+/*!	@} */ // end reentrant
+/*! @} */ // end macros
+	
+#if false
+/* ***** NOTE ***** */
+/* TM_REENTRANT will be replaced by the TMR_* group */
+/* TM_REENTRANT DOES NOT WORK */
 /*!	\brief Reentrant Task Header
 	TM_REENTRANT() sets up a local variable block for a reentrant task.  This should be called before the TM_BEGIN*()
 	statement.	paramType is a struct/class that must contain
@@ -214,6 +320,7 @@
 	\param paramType -- the type (struct/class name) of the parameter
 	\param allParams -- an array of paramType objects
 	\param localp -- the variable that will be a pointer to an entry in allParams.
+	\note DO NOT USE THIS MACRO.  It will be replace by the TMR family of calls.
 */
 #define TM_REENTRANT(paramType, allParams, localp)										\
 	paramType*	localp;																	\
@@ -225,6 +332,6 @@
 		if(__done) { localp = &(allParams[__where]);	}								\
 		else return;																	\
 	}
-/*! @} */ // subtaskMacros
-/*! @} */ // macros
-#endif
+#endif // if false for TM_REENTRANT
+
+#endif	// if defined TM_MACROS

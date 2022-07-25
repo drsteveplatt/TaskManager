@@ -87,6 +87,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a0189a1b17878cb115126da8dcf7822ae"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#a0189a1b17878cb115126da8dcf7822ae">tmRadioReceiverTask</a> ()</td></tr>
 <tr class="memdesc:a0189a1b17878cb115126da8dcf7822ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">General radio receiver task. Each driver is required to provide a radio receiver task. The radio receiver task is a full fledged <a class="el" href="class_task_manager.html" title="A cooperative multitasking manager.">TaskManager</a> task, and is called on schedule with all other tasks.  <a href="class_task_manager.html#a0189a1b17878cb115126da8dcf7822ae">More...</a><br /></td></tr>
 <tr class="separator:a0189a1b17878cb115126da8dcf7822ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa187de5f5ff98accacae03bf08653969"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#aa187de5f5ff98accacae03bf08653969">lastESPError</a> ()</td></tr>
+<tr class="memdesc:aa187de5f5ff98accacae03bf08653969"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a textual description of the last ESP error message.  <a href="class_task_manager.html#aa187de5f5ff98accacae03bf08653969">More...</a><br /></td></tr>
+<tr class="separator:aa187de5f5ff98accacae03bf08653969"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga379de9acea847cd98206bb82376a65bc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__radio.html#ga379de9acea847cd98206bb82376a65bc">radioBegin</a> (tm_nodeId_t nodeId, byte cePin, byte csPin)</td></tr>
 <tr class="memdesc:ga379de9acea847cd98206bb82376a65bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create the radio and start it receiving.  <a href="group__radio.html#ga379de9acea847cd98206bb82376a65bc">More...</a><br /></td></tr>
 <tr class="separator:ga379de9acea847cd98206bb82376a65bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -99,6 +102,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:gaa94433d55bbcb0093c7c842e037cd171"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__radio.html#gaa94433d55bbcb0093c7c842e037cd171">unRegisterPeer</a> (tm_nodeId_t nodeId)</td></tr>
 <tr class="memdesc:gaa94433d55bbcb0093c7c842e037cd171"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove a peer from ESP-Now communications.  <a href="group__radio.html#gaa94433d55bbcb0093c7c842e037cd171">More...</a><br /></td></tr>
 <tr class="separator:gaa94433d55bbcb0093c7c842e037cd171"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga21237355dd68ae16aff8406d6ae145bb"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__misc.html#ga21237355dd68ae16aff8406d6ae145bb">printTo</a> (Print &amp;p) const</td></tr>
+<tr class="separator:ga21237355dd68ae16aff8406d6ae145bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><div class="groupHeader"></div></td></tr>
 <tr class="memitem:ga79227d756bef8d23a2be42ff60f1c606"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__send.html#ga79227d756bef8d23a2be42ff60f1c606">sendMessage</a> (tm_taskId_t taskId, char *message)</td></tr>
 <tr class="memdesc:ga79227d756bef8d23a2be42ff60f1c606"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a string message to a task.  <a href="group__send.html#ga79227d756bef8d23a2be42ff60f1c606">More...</a><br /></td></tr>
@@ -138,6 +143,8 @@ Public Attributes</h2></td></tr>
 <a class="el" href="classring.html">ring</a>&lt; _TaskManagerTask &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_theTasks</b></td></tr>
 <tr class="memdesc:a01f290a48b9f1f9ad4fdb08cffddaca5"><td class="mdescLeft">&#160;</td><td class="mdescRight">The ring of all tasks. For internal use only. <br /></td></tr>
 <tr class="separator:a01f290a48b9f1f9ad4fdb08cffddaca5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ada5584ddd8b8f8e816153967619398e6"><td class="memItemLeft" align="right" valign="top">SemaphoreHandle_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_task_manager.html#ada5584ddd8b8f8e816153967619398e6">m_TaskManagerMessageQueueSemaphore</a></td></tr>
+<tr class="separator:ada5584ddd8b8f8e816153967619398e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga491dc7a77a5381675f614a411755ef64"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___task_manager.html#ga491dc7a77a5381675f614a411755ef64">TaskManager</a> ()</td></tr>
 <tr class="memdesc:ga491dc7a77a5381675f614a411755ef64"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor, Creates an empty task.  <a href="group___task_manager.html#ga491dc7a77a5381675f614a411755ef64">More...</a><br /></td></tr>
 <tr class="separator:ga491dc7a77a5381675f614a411755ef64"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -199,6 +206,26 @@ Public Attributes</h2></td></tr>
 <p >Manages a set of cooperative tasks. This includes round-robin scheduling, yielding, and inter-task messaging and signaling. It also replaces the <a class="el" href="group___task_manager.html#ga2b88a62f061cbc8159a101844d8e5469" title="Implements a single pass for the system loop() routine.">loop()</a> function in standard Arduino programs. Nominally, there is a single instance of <a class="el" href="class_task_manager.html" title="A cooperative multitasking manager.">TaskManager</a> called TaskMgr. TaskMgr is used for all actual task control.</p>
 <p >Each task has a taskID. By convention, user tasks' taskID values are in the range [0 127]. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="aa187de5f5ff98accacae03bf08653969" name="aa187de5f5ff98accacae03bf08653969"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa187de5f5ff98accacae03bf08653969">&#9670;&nbsp;</a></span>lastESPError()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char * TaskManager::lastESPError </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Return a textual description of the last ESP error message. </p>
+<dl class="section return"><dt>Returns</dt><dd>A const char* with text describing the last error. </dd></dl>
+
+</div>
+</div>
 <a id="a0189a1b17878cb115126da8dcf7822ae" name="a0189a1b17878cb115126da8dcf7822ae"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0189a1b17878cb115126da8dcf7822ae">&#9670;&nbsp;</a></span>tmRadioReceiverTask()</h2>
 
@@ -215,7 +242,24 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>General radio receiver task. Each driver is required to provide a radio receiver task. The radio receiver task is a full fledged <a class="el" href="class_task_manager.html" title="A cooperative multitasking manager.">TaskManager</a> task, and is called on schedule with all other tasks. </p>
+<p >endcond</p>
 <p >The radio receiver task should empty the incoming message queue of all messages and distribute them to the appropriate target tasks. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a id="ada5584ddd8b8f8e816153967619398e6" name="ada5584ddd8b8f8e816153967619398e6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ada5584ddd8b8f8e816153967619398e6">&#9670;&nbsp;</a></span>m_TaskManagerMessageQueueSemaphore</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">SemaphoreHandle_t TaskManager::m_TaskManagerMessageQueueSemaphore</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p >cond IGNORE </p>
 
 </div>
 </div>
@@ -226,7 +270,7 @@ Public Attributes</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Jun 22 2022 15:26:17 for TaskManager by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.4
+Generated on Tue Jul 5 2022 13:15:22 for TaskManager by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.4
 </small></address>
 </body>
 </html>

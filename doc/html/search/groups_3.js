@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['global_20values_0',['Global Values',['../group__global.html',1,'']]]
+  ['constructor_20and_20destructor_0',['Constructor and Destructor',['../group__constructor.html',1,'']]],
+  ['constructors_20and_20destructor_1',['Constructors and Destructor',['../group__constructors.html',1,'']]]
 ];

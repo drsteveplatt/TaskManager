@@ -246,6 +246,8 @@ void TaskManager::tmRadioReceiverTask() {
 			case tmrTaskAck:	// NYI
 				break;
 			case tmrMessage:
+//Serial << "radioReceiverTask: msg from n/t " << radioBuf.m_fromNodeId << "/" << radioBuf.m_fromTaskId 
+//<< " for t " << radioBuf.m_data[0] << " swarm cmd " << radioBuf.m_data[1] << endl;
 				internalSendMessage(radioBuf.m_fromNodeId, radioBuf.m_fromTaskId,
 					radioBuf.m_data[0], &radioBuf.m_data[1], TASKMGR_MESSAGE_SIZE);
 				break;
@@ -264,9 +266,13 @@ void TaskManager::tmRadioReceiverTask() {
 
 // General purpose sender.  Sends a message somewhere (varying with the kind of radio)
 bool TaskManager::radioSender(tm_nodeId_t destNodeID) {
+//Serial << "radioSender, sending to node " << destNodeID << " from n/t " 
+//<< radioBuf.m_fromNodeId << "/" << radioBuf.m_fromTaskId 
+//<< " for t " << radioBuf.m_data[0] << " swarm cmd " << radioBuf.m_data[1] << endl;
 	nodeMac[4] = (destNodeID>>8)&0x0ff;
 	nodeMac[5] = destNodeID&0x0ff;
 	m_lastESPError = esp_now_send(nodeMac, (byte*)&radioBuf, sizeof(radioBuf));
+//Serial << "radioSender, error code is " << m_lastESPError << endl;
 	if(m_lastESPError!=ESP_OK) Serial << "***ERR " << espErrText(m_lastESPError) << " sending to node " << destNodeID << "***\n";
 	return m_lastESPError == ESP_OK;
 }

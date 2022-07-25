@@ -796,13 +796,17 @@ public:
 		\ingroup TaskManager
 	    @{ */
 		
+	/*! \brief TaskManager initialization
+	*/
+	void begin() {}
+		
 	/*! \brief Return the time since the start of the run, in milliseconds
 	*/
     unsigned long runtime() const;
 #if defined(TASKMANAGER_DEBUG)
-/*!	\cond DO_NOT_PROCESS */
+/*!	\ignore DO_NOT_PROCESS */
     size_t printTo(Print& p) const;
-/*!	\endcond */
+/*!	\endignore */
 #endif
     /*! \brief Tell if the current task has timed out while waiting for a signal or message
     	\return true if the task started due to timing out while waiting for a signal or message; false otherwise.
