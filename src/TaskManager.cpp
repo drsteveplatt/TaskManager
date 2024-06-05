@@ -6,6 +6,8 @@
 
 #define DEBUG false
 
+
+
 /*! \file TaskManager.cpp
     Implementation file for Arduino Task Manager
 */
@@ -89,12 +91,13 @@ _TaskManagerTask& _TaskManagerTask::operator=(_TaskManagerTask& rhs){
     m_stateFlags = rhs.m_stateFlags;
 
     m_restartTime = rhs.m_restartTime;
-    memcpy(m_message, rhs.m_message, TASKMGR_MESSAGE_SIZE);
+    memcpy(m_message, rhs.m_message, TASKMGR_MESSAGE_SIZE+1);
 
     m_period = rhs.m_period;
 
     m_id = rhs.m_id;
     m_fn = rhs.m_fn;
+	return *this;
 }
 
 /*! \brief Compare the data contents of two tasks
@@ -118,8 +121,6 @@ size_t _TaskManagerTask::printTo(Print& p) const {
     ret += p.print(this->m_restartTime);
     p.print(F(" period:"));
     ret += p.print(this->m_period);
-    p.print(F(" sig:"));
-    ret += p.print(this->m_sigNum);
     p.print(F(" fn:"));
     ret += p.print((int)(this->m_fn), HEX);
     p.print(F(" now: "));
@@ -145,6 +146,7 @@ TaskManager::TaskManager() {
     add(TASKMGR_NULL_TASK, nullTask);
     m_startTime = millis();
 
+#if TM_USING_RADIO
 #if (defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24)) 
 	m_rf24 = NULL;
 	m_myNodeId = 0;
@@ -153,27 +155,28 @@ TaskManager::TaskManager() {
 	m_myNodeId = 0;
 	m_radioReceiverRunning = false;
 	m_TaskManagerMessageQueueSemaphore = xSemaphoreCreateBinary();
-#endif	
+#endif	// which architecture
+#endif // TM_USING_RADIO
 
 }
 
 TaskManager::~TaskManager() {
+#if TM_USING_RADIO
 #if (defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24)) 
 	if(m_rf24!=NULL) delete m_rf24;
 #elif defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
 	vSemaphoreDelete(m_TaskManagerMessageQueueSemaphore);
-#endif
+#endif // architecture selection
+#endif // TM_USING_RADIO
 }
 
 //
 //  Add a new task
 //
-
 void TaskManager::add(tm_taskId_t taskId, void (*fn)()) {
     _TaskManagerTask newTask(taskId, fn);
     m_theTasks.push_back(newTask);
 }
-
 
 void TaskManager::addWaitDelay(tm_taskId_t taskId, void(*fn)(), unsigned long msDelay) {
     addWaitUntil(taskId, fn, millis() + msDelay);
@@ -207,6 +210,7 @@ void TaskManager::addAutoWaitMessage(tm_taskId_t taskId, void (*fn)(), unsigned 
     newTask.setAutoMessage(timeout);
     m_theTasks.push_back(newTask);
 }
+
 //
 // Yield functions
 //
@@ -248,9 +252,13 @@ void TaskManager::internalSendMessage(tm_nodeId_t fromNodeId, tm_taskId_t fromTa
 
 void TaskManager::internalSendMessage(tm_nodeId_t fromNodeId, tm_taskId_t fromTaskId, tm_taskId_t taskId, void* buf, int len) {
     _TaskManagerTask* tsk;
+	//Serial.printf("ism: from n/t %d/%d to task %d, msg len %d\n", fromNodeId, fromTaskId, taskId, len);
     if(len>TASKMGR_MESSAGE_SIZE) return;
+	//Serial.printf("len is okay");
     tsk = findTaskById(taskId);
+	//Serial.printf("back from findTaskById, %s\n",tsk==NULL?"did not find":"found");
     if(tsk==NULL) return;
+	//Serial.printf(" task was found\n");
     tsk->m_fromNodeId = fromNodeId;
     tsk->m_fromTaskId = fromTaskId;
     tsk->putMessage(buf, len);
@@ -310,25 +318,35 @@ _TaskManagerTask* TaskManager::findTaskById(tm_taskId_t id) {
     _TaskManagerTask* tmt;
     _TaskManagerTask* last;
     _TaskManagerTask* theTask = NULL;
+	//Serial.printf("Entering ftbId\n");
 
     tmpTasks = m_theTasks;
+	//Serial.printf("\t1\n");
     bool found = false;
+	//Serial.printf("\t2\n");
     last = &(m_theTasks.back());
+	//Serial.printf("\t3\n");
 
     // scan for the first thing that has the given id
+	//Serial.printf("ftbId: looking for %d\n", id);
     while(&(tmpTasks.front())!=last && !found) {
         tmt = &(tmpTasks.front());
+		//Serial.printf("\tloop: comparing with %d\n", tmt->m_id);
         if(tmt->m_id==id) {
             found = true;
             theTask = tmt;
         }
         tmpTasks.move_next();
     }
+	//Serial.printf("\tpast loop: %sfound\n", found?"":"not ");
     // check the last one if we haven't found it yet
     if(!found && last->m_id==id) {
+		//Serial.printf("\tbut found it at the end.\n");
         found = true;
         theTask = last;
     }
+	//if(theTask==NULL) Serial.printf("\tat end, not found\n");
+	//else Serial.printf("\tat end, found\n");
     return theTask;
 }
 
@@ -342,6 +360,7 @@ _TaskManagerTask* TaskManager::findTaskById(tm_taskId_t id) {
 */
 //??delete??  #define T1	20
 //??delete??  #define	T2	20
+
 void TaskManager::loop() {
     int jmpVal; // return value from setjmp, indicates longjmp type
     _TaskManagerTask* nextTask;
@@ -438,7 +457,7 @@ bool TaskManager::resume(tm_taskId_t taskId) {
 // Network/Mesh tasks
 //
 
-#if (defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24)) || defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
+#if TM_USING_RADIO && ((defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24)) || defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32))
 
 bool TaskManager::sendMessage(tm_nodeId_t nodeId, tm_taskId_t taskId, char* message) {
 	if(nodeId==0 || nodeId==myNodeId()) { TaskManager::sendMessage(taskId, message); return true; }
@@ -452,6 +471,7 @@ bool TaskManager::sendMessage(tm_nodeId_t nodeId, tm_taskId_t taskId, char* mess
 	} else {
 		strcpy((char*)&radioBuf.m_data[1], message);
 	}
+	Serial.printf("sendmessage: calling radiosender\n");
 	return radioSender(nodeId);
 }
 
@@ -494,8 +514,8 @@ void TaskManager::getSource(tm_nodeId_t& fromNodeId, tm_taskId_t& fromTaskId) {
 	fromNodeId = m_theTasks.front().m_fromNodeId;
 	fromTaskId = m_theTasks.front().m_fromTaskId;
 }
+#endif // USING_RADIO && architecture
 
-#endif
 /*!	@}
 */
-	
+

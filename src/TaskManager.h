@@ -10,10 +10,13 @@
 // These need to be here to ensure these are declared.
 // Note that each main-file include in the TaskManager family has one of these.
 // This ensures that the correct TaskMgr is used.
+//#if false
 TaskManager TaskMgr;
 void loop() {
     TaskMgr.loop();
 }
 #endif // TASKMANAGER_H_INCLUDED
+
+
 
 

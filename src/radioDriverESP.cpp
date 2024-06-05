@@ -1,3 +1,4 @@
+
 //
 // Low level drivers for ESP radio communications
 //  This includes everything from radioBegin down.
@@ -9,6 +10,8 @@
 //  the targeted task's message buffer).
 
 // Only use this in an ESP device
+#define NEWAPI true
+
 #if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
 
 #include <arduino.h>
@@ -205,11 +208,15 @@ static void msg_send_cb(const uint8_t* mac, esp_now_send_status_t sendStatus) {
 	// for now, do nothing.
 }
 
+#if defined(NEWAPI)
+static void msg_recv_cb(const esp_now_recv_info_t *mac, const uint8_t* data, int len) {
+#else
 static void msg_recv_cb(const uint8_t *mac, const uint8_t* data, int len) {
+#endif
 	// We have received a message from the given MAC with the accompanying data.
 	// Save the data in the "incoming message" queue
 	// We don't use taskENTER_CRITICAL here because 'add' does it as needed.
-	if(DEBUG) Serial << "-->msg_recv_cb\nreceived message\n";
+	if(DEBUG) Serial << "-->msg_recv_cb\nreceived message len=" << len << "\n";
 	_TaskManagerIncomingMessages.add(data, len&0x0ff);
 	if(DEBUG) Serial << "Queue is now " << (_TaskManagerIncomingMessages.isEmpty() ? " " : "not ") << "empty\n";
 	if(DEBUG) Serial << "Queue size is now " << _TaskManagerIncomingMessages.size() << endl;
@@ -229,7 +236,7 @@ void TaskManager::tmRadioReceiverTask() {
 //			break;
 			return;
 		}
-		if(DEBUG) "-->TaskManagerESP::tmRadioReceiverTask\n";
+		if(DEBUG) Serial << "-->TaskManagerESP::tmRadioReceiverTask\n";
 		// read a packet
 		//m_rf24->read((void*)(&radioBuf), sizeof(radioBuf));
 		_TaskManagerIncomingMessages.remove((uint8_t*)&radioBuf, &len);
@@ -246,8 +253,8 @@ void TaskManager::tmRadioReceiverTask() {
 			case tmrTaskAck:	// NYI
 				break;
 			case tmrMessage:
-//Serial << "radioReceiverTask: msg from n/t " << radioBuf.m_fromNodeId << "/" << radioBuf.m_fromTaskId 
-//<< " for t " << radioBuf.m_data[0] << " swarm cmd " << radioBuf.m_data[1] << endl;
+				if(DEBUG) Serial << "radioReceiverTask: msg from n/t " << radioBuf.m_fromNodeId << "/" << radioBuf.m_fromTaskId 
+					<< " for task " << radioBuf.m_data[0] << endl;
 				internalSendMessage(radioBuf.m_fromNodeId, radioBuf.m_fromTaskId,
 					radioBuf.m_data[0], &radioBuf.m_data[1], TASKMGR_MESSAGE_SIZE);
 				break;
@@ -284,7 +291,11 @@ bool TaskManager::radioBegin(tm_nodeId_t nodeID, const char* ssid, const char* p
 	WiFi.mode(ssid==NULL ? WIFI_STA : WIFI_AP_STA);
 	nodeMac[4] = (nodeID>>8)&0x0ff;
 	nodeMac[5] = nodeID & 0x0ff;
+#if defined(NEWAPI)
+	m_lastESPError = esp_wifi_set_mac(WIFI_IF_STA, nodeMac);
+#else
 	m_lastESPError = esp_wifi_set_mac(ESP_IF_WIFI_STA, nodeMac);
+#endif
 	if(m_lastESPError!=ESP_OK) return false;
 	if(ssid==NULL) {
 		// ESP-NOW only
@@ -347,7 +358,11 @@ bool TaskManager::registerPeer(tm_nodeId_t nodeId) {
 	nodeMac[5] = nodeId & 0x0ff;
 	memcpy(peer.peer_addr, &nodeMac, 6);
 	peer.channel = WIFI_CHANNEL;
+#if defined(NEWAPI)
+	peer.ifidx = WIFI_IF_STA;
+#else
 	peer.ifidx = ESP_IF_WIFI_STA;
+#endif
 	peer.encrypt=false;
 	m_lastESPError = esp_now_add_peer(&peer);
 	return m_lastESPError==ESP_OK;
@@ -366,4 +381,5 @@ const char* TaskManager::lastESPError() {
 }
 /*! @} */ // end TaskManagerRadioESP
 #endif // ESP
+
 

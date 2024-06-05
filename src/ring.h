@@ -1,7 +1,7 @@
 #ifndef RING_H_INCLUDED
 #define RING_H_INCLUDED
 
-//#include "Streaming.h"
+#include "Streaming.h"
 
 //#define RING_DEBUG
 /*! \defgroup ring Ring: An STL-style templated Ring class
@@ -54,6 +54,7 @@ template<class T> void _ringNode<T>::DebugDump(Print& p) const {
     must have a constructor and a destructor as well as operator=.  It should also
     have the printTo member function if any form of serialization is to be done.
 */
+
 #if defined(RING_DEBUG)
 template<class T>class ring: public Printable {
 #else
@@ -61,12 +62,12 @@ template<class T>class ring {
 #endif
 	private:
     _ringNode<T>* m_cur;
-    char* m_prefix;
+    //char* m_prefix;
 
 public:
     //***** Constructor, destructor
     //! \brief Construct an empty ring
-    ring(): m_cur(NULL), m_prefix((char*)"r: ") {}
+    ring(): m_cur(NULL) { /*m_prefix = new char[4]; strcpy(m_prefix,"r: ");*/ }
     //! \brief Destroy a ring.
     /*!
     	As part of this process, the destructors for all of the stored objects will be called.
@@ -125,18 +126,26 @@ public:
 */
 template<class T>void ring<T>::push_front(T val) {
     _ringNode<T>* newNode;
+	//Serial.printf("push_front entered\n");
+	//DebugDump(Serial);
     newNode = new _ringNode<T>();
+	//Serial.printf("about to copy val\n");
     newNode->m_val = val;
+	//Serial.printf("new node allocated, is %snull\n", newNode==NULL?"":"not");
     if(m_cur==NULL) {
+		//Serial.printf("m_cur is null\n");
         newNode->m_next = newNode;
         newNode->m_prev = newNode;
     } else {
+		//Serial.printf("m_cur is not null\n");
         newNode->m_next = m_cur;
         newNode->m_prev = m_cur->m_prev;
         m_cur->m_prev->m_next = newNode;
         m_cur->m_prev = newNode;
     }
     m_cur = newNode;
+	//Serial.printf("push_front exiting.");
+	//DebugDump(Serial);
 }
 
 /*! \brief Push an element onto the back of the ring.  The current element is left
@@ -147,8 +156,11 @@ template<class T>void ring<T>::push_front(T val) {
 	\sa back(), push_back();
 */
 template<class T> inline void ring<T>::push_back(T val) {
+	//Serial.printf("push_back entered\n");
     this->push_front(val);
+	//Serial.printf("push_back: middle\n");
     this->move_next();
+	//Serial.printf("push_back: after move_next\n");
 }
 
 /*! \brief Removes the first element from the ring.
@@ -275,6 +287,7 @@ template<class T> size_t ring<T>::size() const {
 */
 template<class T> inline ring<T>& ring<T>::operator=(ring<T>& r) {
     m_cur = r.m_cur;
+	return *this;
 }
 
 /*! \brief Compare two rings for equality
@@ -302,8 +315,8 @@ template<class T>size_t ring<T>::printTo(Print& p) const {
     _ringNode<T>* last;
     _ringNode<T>* cur;
     size_t len = 0;
-    len += p.print("[");
-    len += p.print(m_prefix);
+    len += p.print("[r: ");
+    //len += p.print(m_prefix);
     if(m_cur!=NULL) {
         for(cur=m_cur, last=m_cur->m_prev; cur!=last; cur=cur->m_next) {
             len += p.print(cur->m_val);
@@ -326,7 +339,7 @@ template<class T>void ring<T>::DebugDump(Print& p) const {
     Serial.print("m_cur: 0x"); Serial.print((int)m_cur, HEX);
     _ringNode<T>* cur;
     _ringNode<T>* last;
-    if(m_cur==NULL) { p.print("[]"); return; }
+    if(m_cur==NULL) { p.print("[empty]"); return; }
     p.print("[");
     for(cur=m_cur, last=m_cur->m_prev; cur!=last; cur=cur->m_next) {
         cur->DebugDump(p);

@@ -27,7 +27,7 @@
 	The number of messages that can be buffered before the radio receiver task is called.
 	Any more than this and messages are discarded.
 */
-#define TASKMGR_MESSAGE_QUEUE_SIZE 10
+#define TASKMGR_MESSAGE_QUEUE_SIZE 50
 
 /*!	\struct	_TaskManagerRadioPacket
 	A packet of information being sent by radio between two TaskManager nodes
@@ -52,4 +52,5 @@ static byte _TaskManagerMAC[] = { 0xA6, 'T', 'M',  0, 0x00, 0x00 };
 
 #endif // ESP
 
-#endif // __TASKMANAGER_RF24
+#endif // __TASKMANAGER_ESP
+

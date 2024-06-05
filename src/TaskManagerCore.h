@@ -3,11 +3,16 @@
    This will incorporate RF24 components into AVR compilations.
    Any AVR program using this will also have to #include <RF24.h> prior #include <TaskManagerRF24.h>
 */
-//#define TASKMGR_AVR_RF24
 
 #ifndef TASKMANAGERCORE_H_INCLUDED
 #define TASKMANAGERCORE_H_INCLUDED
 
+// Are we including the radio routines in this build?
+// comment out to no use radio
+#define TM_USING_RADIO true
+
+//#define TASKMANAGER_DEBUG
+//#define TASKMGR_AVR_RF24
 
 //#include <Streaming.h>
 #include "ring.h"
@@ -57,11 +62,14 @@ typedef uint8_t tm_taskId_t;
 /*! @} */ // end global
 
 // Process includes for networking code
+#if TM_USING_RADIO
 #if defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24)
 #include "radioDriverRF.h"
 #elif  defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
 #include "radioDriverESP.h"
-#endif
+#endif // architecture selection
+#endif // TM_USING_RADIO
+
 
 
 /*! \defgroup TaskManager TaskManager
@@ -230,7 +238,9 @@ class TaskManager: public Printable {
 #else
 class TaskManager {
 #endif
-#if (defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24))
+//public: void testMe() { Serial.printf("here\n"); }
+
+#if (defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24) && TM_USING_RADIO)
 private:
 	RF24*	m_rf24;				// Our radio (dynamically allocated)	
 #endif
@@ -239,6 +249,7 @@ public:
 
 private:
     unsigned long m_startTime;  // Start clock time.  Used to calculate runtime. For internal use only.
+
 public:
 	/*! \defgroup constructor Constructor and Destructor
 		\ingroup TaskManager
@@ -260,6 +271,7 @@ public:
 	/*! @} */ // end constructor
 
     // Things used by yield
+
 private:
     /* Defines the different methods a process may yield control.
 
@@ -278,6 +290,7 @@ private:
     jmp_buf  taskJmpBuf;    // Jump buffer used by yield.  For internal use only.
 
 public:
+	//void printMe() { Serial.printf("Here\n"); }
 	/*!	\defgroup add Adding Tasks
 		\ingroup TaskManager
 		@{
@@ -395,6 +408,7 @@ public:
 	    if the task was an Auto task, it will be automatically rescheduled according to its Auto specifications.
 	    \sa yieldDelay(), yieldUntil(), yieldSignal(), yieldMessage(), addAutoWaitDelay(), addAutoWaitSignal(), addAutoWaitMessage()
 	*/
+
     void yield();
 
     /*! \brief Exit from the task manager and do not restart this task until after a specified period.
@@ -491,7 +505,7 @@ public:
     bool sendMessage(tm_taskId_t taskId, void* buf, int len);
 	/*!	@} */ // end send
 	
-#if (defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24)) || defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
+#if TM_USING_RADIO && ((defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24)) || defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32))
 	/*! \brief  Sends a string message to a task
 		\ingroup send
 
@@ -551,7 +565,7 @@ public:
 		\param[out] fromTaskId -- the taskId that sent the last message or signal
 	*/
 	void getSource(tm_taskId_t& fromTaskId);
-#if (defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24)) || defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
+#if TM_USING_RADIO && ((defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24)) || defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32))
 	/*!	\brief Get source node/task ID of last message/signal
 
 		Returns the nodeId and taskId of the node/task that last sent a signal or message
@@ -598,7 +612,7 @@ public:
 	*/
     bool suspend(tm_taskId_t taskId);					// task
 	
-#if (defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24)) || defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
+#if TM_USING_RADIO && ((defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24)) || defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32))
 	/*!	\brief Suspend the given task on the given node
 
 		Suspends a task on any node.  If nodeID==0, it suspends a task on this node. If the node or task
@@ -627,7 +641,7 @@ public:
 	*/
 	bool resume(tm_taskId_t taskId);					// task
 	
-#if (defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24)) || defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
+#if TM_USING_RADIO && ((defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24)) || defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32))
 	/*!	\brief Resume the given task on the given node
 
 		Resumes a task on any node.  If nodeID==0, it resumes a task on this node.  If the node or task
@@ -645,7 +659,7 @@ public:
 	/*! @} */	// end task */
 	
 	/* **** Mesh/Radio Internal Routines */
-#if (defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24)) || defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
+#if TM_USING_RADIO && ((defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24)) || defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32) )
 private:
 	tm_nodeId_t m_myNodeId;
 	/*!	\defgroup internal Internal components
@@ -711,8 +725,8 @@ public:
 		\returns A const char* with text describing the last error.
 	*/
 	const char* lastESPError();
-#endif
-#endif
+#endif // ESP error info
+#endif // mesh/radio internal routines
 
 	/*! \defgroup radio Network/mesh functions
 		\ingroup TaskManager
@@ -728,7 +742,7 @@ public:
 		any other node within radio range.
 		@{
 	*/
-#if (defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24))
+#if TM_USING_RADIO && (defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24))
 public:
 	/*! \brief Create the radio and start it receiving
 
@@ -742,7 +756,7 @@ public:
 		\note This routine is only available on ESP and RF24-enabled AVR environments.
 	*/
 	void radioBegin(tm_nodeId_t nodeId, byte cePin, byte csPin);
-#elif defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
+#elif TM_USING_RADIO && defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
 public:
 	/*! \brief Create the radio and start it receiving
 
@@ -780,9 +794,9 @@ public:
 		\note This routine is only available on ESP environments.
 	*/
 	bool unRegisterPeer(tm_nodeId_t nodeId);
-#endif
+#endif // radio start/stop
 
-#if (defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24)) || defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
+#if TM_USING_RADIO && ((defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24)) || defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32) )
 	/*!	\brief Return the node ID of this system.
 		\return The byte value that is the current node's radio ID.  If the radio has not been
 		enabled, returns 0.
@@ -795,7 +809,8 @@ public:
 	/*! \defgroup misc Miscellaneous and Informational Routines
 		\ingroup TaskManager
 	    @{ */
-		
+
+
 	/*! \brief TaskManager initialization
 	*/
 	void begin() {}
@@ -836,7 +851,9 @@ public:
     tm_taskId_t myId();
 
     // We need a publicly available TaskManager::loop() so our global loop() can use it
+
     void loop();
+
 
 protected:
 	/*!	\brief Sends a string message to a task on this system.
@@ -1116,7 +1133,7 @@ inline unsigned long TaskManager::runtime() const { return millis()-m_startTime;
 /*! \ingroup TaskManager
  *	@{
 */
-#if (defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24)) || defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
+#if TM_USING_RADIO && ((defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24)) || defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32) )
 inline tm_nodeId_t TaskManager::myNodeId() {
 	return m_myNodeId;
 }
@@ -1231,3 +1248,4 @@ inline tm_nodeId_t TaskManager::myNodeId() {
 	libraries and identify the transaction-safety of each.
 	\li Suspend, resume, and kill.  These routines haven't been fully tested.
 */
+
