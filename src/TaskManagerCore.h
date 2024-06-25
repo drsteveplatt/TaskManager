@@ -20,9 +20,11 @@
 #if defined(ARDUINO_ARCH_AVR)
 typedef uint8_t tm_nodeId_t;
 typedef uint8_t tm_taskId_t;
+typedef uint8_t tm_netId_t;
 #elif defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
 typedef uint16_t tm_nodeId_t;
 typedef uint8_t tm_taskId_t;
+typedef uint8_t tm_netId_t;
 #else
 #endif
 
@@ -58,6 +60,7 @@ typedef uint8_t tm_taskId_t;
 #define TASKMGR_MAX_PAYLOAD (250)
 #else
 #endif
+
 #define TASKMGR_MESSAGE_SIZE (TASKMGR_MAX_PAYLOAD-1-sizeof(tm_nodeId_t)-2*sizeof(tm_taskId_t))
 /*! @} */ // end global
 
@@ -70,7 +73,9 @@ typedef uint8_t tm_taskId_t;
 #endif // architecture selection
 #endif // TM_USING_RADIO
 
-
+// Clock adjustment routines
+void TmAdjustClockOffset(unsigned long offsetDelta);
+unsigned long TmMillis();
 
 /*! \defgroup TaskManager TaskManager
  * @{
@@ -86,8 +91,12 @@ typedef uint8_t tm_taskId_t;
 */
 #if defined(ARDUINO_ARCH_AVR)
 #define TASKMGR_MAX_TASK 255
+#define TASKMGR_MAX_NODE 255
+#define TASKMGR_MAX_NET 255
 #elif defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
 #define TASKMGR_MAX_TASK 255
+#define TASKMGR_MAX_NODE 65535
+#define TASKMGR_MAX_NET	 255
 #endif
 /*! \def TASKMGR_NULL_TASK
 	The TaskID of the null task.  At present, 255 for both AVR and ESP.  We
@@ -109,9 +118,23 @@ typedef uint8_t tm_taskId_t;
 	The task that monitors button presses for the LCD menu subsystem
 */
 #define TASKMGR_MENU_MONITOR_TASK (TASKMGR_NULL_TASK-3)
+
+/*!	\def TASKMGR_CLOCK_SYNC_SERVER_TASK
+	The task that receives clock synchronization time requests.
+	This runs on the clock server and receives the requests from clients.
+	Available on ESP only.
+*/
+#define	TASKMGR_CLOCK_SYNC_SERVER_TASK (TASKMGR_NULL_TASK-4)
+
+/*!	\def TASKMGR_CLOCK_SYNC_CLIENT_TASK
+	The task that receives clock synchronization messages from a clock server.
+	This runs on clients.
+	Available on ESP only.
+*/
+#define TASKMGR_CLOCK_SYNC_CLIENT_TASK (TASKMGR_NULL_TASK-5)
+
 	/*! @} */ // group fixed
- /*! @} */ // group TaskManager
- 
+
 /*! \defgroup TaskManagerTask _TaskManagerTask
    @{
 */ 
@@ -158,6 +181,7 @@ protected:
     // case of messaging, the response)
     unsigned long m_restartTime;  //!< Used by WaitUntil to determine the restart time.
                                     //!< This is compared to the absolute ms clock maintained by the processor
+									//!<Updated for net clock: compared to TaskManager.millis() ms clock
 
 
     char m_message[TASKMGR_MESSAGE_SIZE+1];   //!<  The message sent to this task (if waiting for a message)
@@ -198,10 +222,10 @@ protected:
 	void setSuspended();
 	void clearSuspended();
     void setWaitUntil(unsigned long);
-    void setWaitDelay(unsigned int);
-    void setAutoDelay(unsigned int);
-    void setWaitMessage(unsigned int msTimeout=0);
-    void setAutoMessage(unsigned int msTimeout=0);
+    void setWaitDelay(unsigned long);
+    void setAutoDelay(unsigned long);
+    void setWaitMessage(unsigned long msTimeout=0);
+    void setAutoMessage(unsigned long msTimeout=0);
 
     // How to receive a signal/message
     void signal();
@@ -218,6 +242,7 @@ public:
 #endif
 };
 /*! @} */ // end TaskManagerTask
+
 
 /**********************************************************************************************************/
 
@@ -238,7 +263,6 @@ class TaskManager: public Printable {
 #else
 class TaskManager {
 #endif
-//public: void testMe() { Serial.printf("here\n"); }
 
 #if (defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24) && TM_USING_RADIO)
 private:
@@ -249,7 +273,9 @@ public:
 
 private:
     unsigned long m_startTime;  // Start clock time.  Used to calculate runtime. For internal use only.
-
+#if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
+	//unsigned long m_clockOffset;	// for cross-node clock synchronization
+#endif
 public:
 	/*! \defgroup constructor Constructor and Destructor
 		\ingroup TaskManager
@@ -374,7 +400,8 @@ public:
 
 		The task will be added, but will be set to be waiting for the listed signal.  If the signal does
 		not arrive before the timeout period (in milliseconds), then the routine will be activated.  The
-		routine may use TaskManager::timedOut() to determine whether it timed our or received the signal.
+		routine may use TaskManager::
+		() to determine whether it timed our or received the signal.
 		\param taskId - the task's ID.  For normal user tasks, this should be a byte value in the range [0 127].
 		System tasks have taskId values in the range [128 255].
 		\param fn -- this is a void function with no arguments.  This is the procedure that is called every time
@@ -550,7 +577,7 @@ public:
 	bool sendMessage(tm_nodeId_t nodeId, tm_taskId_t taskId, void* buf, int len);
 
 
-#endif
+#endif // using radio && (atmel || esp)
 
 	/*!	\defgroup receive Receiving Messages
 		\ingroup TaskManager
@@ -578,7 +605,7 @@ public:
 		\param[out] fromTaskId -- the taskId that sent the last message or signal
 	*/
 	void getSource(tm_nodeId_t& fromNodeId, tm_taskId_t& fromTaskId);
-#endif
+#endif // using radio && (atmel || esp)
 
 	/*! @} */ // end receive
 
@@ -597,6 +624,7 @@ public:
 	*/
 
 	/*  @} */
+
 
     /*!	@defgroup task Task Management
 		\ingroup TaskManager
@@ -627,7 +655,7 @@ public:
 		\sa resume()
 	*/
 	bool suspend(tm_nodeId_t nodeId, tm_taskId_t taskId);			// node, task
-#endif	
+#endif	// using radio && (atmel || esp)
 
 	/*!	\brief Resume the given task on this node
 
@@ -654,7 +682,7 @@ public:
 		\sa suspend()
 	*/
 	bool resume(tm_nodeId_t nodeId, tm_taskId_t taskId);			// node, task
-#endif
+#endif // using radio && (atmel || esp)
 
 	/*! @} */	// end task */
 	
@@ -706,7 +734,7 @@ public:
 /*!	\ignore */
 	SemaphoreHandle_t m_TaskManagerMessageQueueSemaphore;
 /*! \endignore */
-#endif
+#endif // esp
 public:
 	/*!	\brief General radio receiver task.
 		Each driver is required to provide a radio receiver task.  The radio receiver task is 
@@ -725,8 +753,8 @@ public:
 		\returns A const char* with text describing the last error.
 	*/
 	const char* lastESPError();
-#endif // ESP error info
-#endif // mesh/radio internal routines
+#endif // esp: ESP error info 
+#endif // using radio && (atmel || esp) :: mesh/radio internal routines
 
 	/*! \defgroup radio Network/mesh functions
 		\ingroup TaskManager
@@ -794,7 +822,7 @@ public:
 		\note This routine is only available on ESP environments.
 	*/
 	bool unRegisterPeer(tm_nodeId_t nodeId);
-#endif // radio start/stop
+#endif // using radio: radio start/stop
 
 #if TM_USING_RADIO && ((defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24)) || defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32) )
 	/*!	\brief Return the node ID of this system.
@@ -803,7 +831,7 @@ public:
 		\note This routine is only available on ESP environments.
 	*/
     tm_nodeId_t myNodeId();
-#endif
+#endif // using radio && (atmel || esp)
 	/*! @} */ // end radio
 
 	/*! \defgroup misc Miscellaneous and Informational Routines
@@ -822,20 +850,20 @@ public:
 /*!	\ignore DO_NOT_PROCESS */
     size_t printTo(Print& p) const;
 /*!	\endignore */
-#endif
+#endif // debug
     /*! \brief Tell if the current task has timed out while waiting for a signal or message
     	\return true if the task started due to timing out while waiting for a signal or message; false otherwise.
 	*/
 	bool timedOut();
-
-
+	
 	/*! @} */ // end misc
 	
 	/*! \brief Get a task's message buffer
 		\ingroup receive
 		\return A pointer to the actual message buffer.  Use the contents of the buffer but do NOT modify it.
 		If a task is killed, this pointer becomes invalid.
-	*/	void* getMessage();
+	*/
+	void* getMessage();
 
 	/*!	\brief Get the length of the message in the buffer
 		\ingroup receive
@@ -853,6 +881,23 @@ public:
     // We need a publicly available TaskManager::loop() so our global loop() can use it
 
     void loop();
+
+#if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
+	/*!	\brief resync Synchronize this node's millis() timer to a remote time server node's millis()
+		\ingroup task
+		\param remoteMillis -- the millis() value from a master time server.
+	*/
+	void resync(unsigned long remoteMillis);
+	
+	/*!	\brief Synchronized millisecond clock
+		\ingroup task
+		This is the virtual network clock value.  It is the local clock, adjusted by the recorded
+		offset between the local clock and the network clock.
+		\return unsigned long int millisecond clock that is synchronized with the millis()of a clock server.
+		Note that if no clock server is defined, TaskManager::millis() returns ::millis().
+	*/
+	unsigned long int millis() const;
+#endif // ESP
 
 
 protected:
@@ -890,8 +935,12 @@ private:
 public:
     _TaskManagerTask* findTaskById(tm_taskId_t id);
 
+
+
 };
 /*! @} */ // end TaskManager
+
+
 
 //
 // Inline stuff
@@ -947,6 +996,7 @@ inline void _TaskManagerTask::clearSuspended() {
     \param when -- the CPU clock time to wait until/after, in ms.
     \sa setWaitUntil
 */
+
 inline void _TaskManagerTask::setWaitUntil(unsigned long when) {
     m_restartTime=when;
     stateSet(WaitUntil);
@@ -957,8 +1007,8 @@ inline void _TaskManagerTask::setWaitUntil(unsigned long when) {
     \param ms -- The number of milliseconds to wait for.
     \sa setWaitUntil
 */
-inline void _TaskManagerTask::setWaitDelay(unsigned int ms)  {
-    setWaitUntil(millis()+ms);
+inline void _TaskManagerTask::setWaitDelay(unsigned long ms)  {
+    setWaitUntil(TmMillis()+ms);
 }
 /*! \brief Sets the task to automatically restart with the given delay whenever it exits normally (non-yield).
 
@@ -974,7 +1024,7 @@ inline void _TaskManagerTask::setWaitDelay(unsigned int ms)  {
     will cause the auto-delay to be ignored.
     \sa setWaitDelay, setAutoSignal, setAutoMessage
 */
-inline void _TaskManagerTask::setAutoDelay(unsigned int ms) {
+inline void _TaskManagerTask::setAutoDelay(unsigned long ms) {
     if(ms>0) {
         m_period = ms;
         stateSet(AutoReWaitUntil);
@@ -988,7 +1038,7 @@ inline void _TaskManagerTask::setAutoDelay(unsigned int ms) {
     the task will wait forever until the message is received.
     \param msTimeout -- The timeout on the message.  Optional, default is zero.  If zero, then there is no timeout.
 */
-inline void _TaskManagerTask::setWaitMessage(unsigned int msTimeout/*=0*/)  {
+inline void _TaskManagerTask::setWaitMessage(unsigned long msTimeout/*=0*/)  {
     stateSet(WaitMessage);
     if(msTimeout>0) setWaitDelay(msTimeout);
 }
@@ -1008,7 +1058,7 @@ inline void _TaskManagerTask::setWaitMessage(unsigned int msTimeout/*=0*/)  {
     \param msTimeout -- The timeout on th emssage.  Optional, defau
     \sa setWaitDelay, setAutoSignal, setAutoMessage
 */
-inline void _TaskManagerTask::setAutoMessage(unsigned int msTimeout/*=0*/)  {
+inline void _TaskManagerTask::setAutoMessage(unsigned long msTimeout/*=0*/)  {
     stateSet(AutoReWaitMessage);
     setAutoDelay(msTimeout);
 }
@@ -1075,6 +1125,7 @@ inline void _TaskManagerTask::resetCurrentStateBits() {
 }
  /*! @} */ // end TaskManagerTask
  
+
  /*************** TaskManager Implementation ****************/
 /*! \ingroup TaskManager
  * @{
@@ -1125,7 +1176,7 @@ inline void TaskManager::getSource(tm_taskId_t& fromTaskId) {
 /*! \ingroup misc		
 	@{
 */
-inline unsigned long TaskManager::runtime() const { return millis()-m_startTime; }
+inline unsigned long TaskManager::runtime() const { return ::millis()-m_startTime; }
 	/*! @} */ // end misc
 /*! @} */	// end taskmanager
  
@@ -1137,11 +1188,10 @@ inline unsigned long TaskManager::runtime() const { return millis()-m_startTime;
 inline tm_nodeId_t TaskManager::myNodeId() {
 	return m_myNodeId;
 }
-#endif
+#endif // using radio && (atmel || esp)
 
 /*! @}
 */
-#endif // TASKMANAGER_H_INCLUDED
 
 /*!
 	\mainpage TaskManger - Cooperative Multitasking System for Arduino
@@ -1249,3 +1299,4 @@ inline tm_nodeId_t TaskManager::myNodeId() {
 	\li Suspend, resume, and kill.  These routines haven't been fully tested.
 */
 
+#endif // __TASKMANAGERCORE_H_INCLUDED__

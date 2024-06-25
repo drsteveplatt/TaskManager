@@ -77,8 +77,9 @@ public:
 
 
     void push_front(T val);
-
     void push_back(T val);
+	
+	bool isNull();
 
     //***** removal
 
@@ -115,6 +116,12 @@ public:
     // mapping operations
     void map(void (*fn)(T& ));
     void map(void (*fn)(T& , void* ), void* );
+};
+
+/*!	\brief See if the ring is null (invalid).  Note this is different from being a valid, empty ring.
+*/
+template<class T>inline bool ring<T>::isNull() {
+	return m_cur==NULL;
 };
 
 //! \brief Push an element onto the front of the ring.  The element will be the new current element

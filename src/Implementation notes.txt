@@ -1,0 +1,71 @@
+*** Ring through TaskManager classes
+
+*** Clock Synchronization (external)
+This outlines how clocks ("millis()") can be synchronized between multiple ESP-class systems.
+
+1. All systems that are part of a clock synchronization framework need 
+to "#include <TaskManagerClockSync.h>".
+2. There is a time server.  It will run the task TmClockServerTask() task.  This should be
+started using "TaskMgr.addAutoWaitMessage(TASKMGR_CLOCK_SYNC_SERVER_TASK, TmClockServerTask);".
+Note that "TaskMgr.radioBegin(TASKMGR_CLOCK_SYNC_SERVER_NODE, TASKMGR_CLOCK_SYNC_SERVER_TASK);"
+should be used to invoke the networking framework.  All of these constants are defined in 
+"TaskManagerClockSync.h".  The time server can run other tasks, but tasks should be sufficiently
+responsive to ensure that the system does not spend too much time in side-tasks.  Ideally, a received
+message from a client should be responded to within 20ms.
+3. Each worker system should also run the time synchronization client task.  This should be started
+using "TaskMgr.autoAddWaitDelay(TASKMGR_CLOCK_SYNC_CLIENT_TASK, TmClockClientTask, 60000L)";  The last
+parameter is the time (in ms) between syncs with the server.  Clocks are fairly stable; every ten or
+more minutes should probably suffice.
+
+*** Clock Syncronization (implementation)
+The client sends a time request to the server.  Time requests are serialized; the response will have a 
+matching serial number and non-matching responses will be ignored. This is to ensure that the client does
+not receive a stale/old time.  The response from the server will contain the server's "::millis()" at the
+time the response is created.  The client TaskMgr will use this to create a value for "TaskMgr.millis()" that
+should be reasonably close (within 1-2 ms) of the time server's "::millis()" value.
+The client waits 20ms for a response, and will ignore responses past this point.  It  will retry five times,
+and if no response, it will not update its internal clock.
+
+The client system can/should use "TaskMgr.millis()" for clock values for all network-synchronized timings.
+This will be the projected network time.  "::millis()" will return the local time, not the approximated network time.
+
+Internally, the client maintains the following TaskMgr member values
+   m_startTime -- the local time at which TaskMgr was started.  Used solely to compute "TaskMgr.runtime()".
+   m_offset -- the difference between timeserver.millis() and ::millis().  This is calculated as 
+		timeserver.millis()-::millis() whenever TmClockClientTask(local) requests the network time from TmClockServerTask(remote)
+		Note that TaskMgr.millis() returns "::millis()+m_offset".
+	NOTE: TaskManager.m_offset has been replaced by TmClockOffset (static, in TaskManager.cpp)
+Additionally, each task (_TaskManagerTask) has the following member values:
+	m_restartTime -- if the task is waiting for a timeout (either waitDelay(...) or waitMessage(..., timeout), 
+		this is the TaskMgr.millis() value of the end time before the task will restart.
+		When the wait starts, m_restartTime is set to TaskMgr.millis()+specifiedDelay
+The following happens whenever TmClockClientTask requests a time update from TmClockServerTask:
+1. Request the time.  Repeat up to 5 times until a reply with a valid serial number arrives within 10ms.  If
+this does not happen (no legitimate reply), just return with the clock unchanged
+2. Save the old_m_offset value.
+3. Recompute m_offset as "::millis()-timeserver.millis()"
+4. Compute offset_delta as "m_offset - old_m_offset".  This will be the adjustment for any saved time goals.
+5. For each task that uses m_restartTime, compute "m_restartTime -= offset_delta;".  This updates the
+end times for each task to one based on the new TaskMgr.mills() (and the new m_offset).
+Internals
+1. TaskManager.cpp -- add in "static unsigned long int TmClockOffset" and "static unsigned long TmMillis() {return ::millis()-TmClockOffset
+
+***  Doxygen organization
+This describes the section/subsection layering for routines within Doxygen
+Each line is the internal name followed by the label to use for the section heading.
+
+TaskManager Taskmanager
+	tmGlobals Global Variables
+	tmEnums Enums
+	tmGeneral General
+	tmAdd Adding Tasks
+	tmYield Yielding
+	tmMessaging Messaging
+	tmRadio Radio
+	tmTaskMgmt Task Management
+Tools Tools and Utilities
+	tmMacros TM_Macros
+	tmSh TaskManagerSh
+	tmClockSync TaskManagerClockSync
+	
+	

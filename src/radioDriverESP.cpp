@@ -231,10 +231,10 @@ void TaskManager::tmRadioReceiverTask() {
 	// We need to find the destination task and save the fromNode and fromTask.
 	// They are saved on the task instead of the TaskManager object in case several
 	// messages/signals have been received.
-//	while(true) {
+	while(true) {	// process all messages
 		if(_TaskManagerIncomingMessages.isEmpty()) {
-//			break;
-			return;
+			break;
+//			return;
 		}
 		if(DEBUG) Serial << "-->TaskManagerESP::tmRadioReceiverTask\n";
 		// read a packet
@@ -268,7 +268,7 @@ void TaskManager::tmRadioReceiverTask() {
 		if(DEBUG) Serial << "<--TaskManager:tmRadioReceiverTask finished a message\n";
 		if(DEBUG) Serial << "   Queue is now " << (_TaskManagerIncomingMessages.isEmpty() ? " " : "not ") << "empty\n";
 		if(DEBUG) Serial << "   Queue size is now " << _TaskManagerIncomingMessages.size() << endl;
-//	}  // end while true
+	}  // end while true
 }
 
 // General purpose sender.  Sends a message somewhere (varying with the kind of radio)
@@ -288,7 +288,9 @@ bool TaskManager::radioSender(tm_nodeId_t destNodeID) {
 
 bool TaskManager::radioBegin(tm_nodeId_t nodeID, const char* ssid, const char* pw) {
 	// Initialize ESP-NOW and WiFi system
+	if(DEBUG) { Serial << "-->radioBegin  nodeID=" << nodeID <<"\n"; }
 	WiFi.mode(ssid==NULL ? WIFI_STA : WIFI_AP_STA);
+	if(DEBUG) { Serial << "\tradioBegin: past Wifi.mode()\n"; }
 	nodeMac[4] = (nodeID>>8)&0x0ff;
 	nodeMac[5] = nodeID & 0x0ff;
 #if defined(NEWAPI)
@@ -296,10 +298,16 @@ bool TaskManager::radioBegin(tm_nodeId_t nodeID, const char* ssid, const char* p
 #else
 	m_lastESPError = esp_wifi_set_mac(ESP_IF_WIFI_STA, nodeMac);
 #endif
-	if(m_lastESPError!=ESP_OK) return false;
+	if(DEBUG) Serial << "\tradioBegin: past esp_wifi_set_mac()\n";
+	if(m_lastESPError!=ESP_OK) {
+		if(DEBUG) Serial << "<--radioBegin error, can't set_mac()\n";
+		return false;
+	}
 	if(ssid==NULL) {
 		// ESP-NOW only
+		if(DEBUG) Serial << "\tradioBegin: esp-now only, about to WiFi.disconnect()\n";
 		WiFi.disconnect();
+		if(DEBUG) Serial << "\tradioBegin esp-now only: past Wifi.disconnect()\n";
 	} else {
 		// ESP-NOW, but project uses WiFi
 		// Get channel
@@ -320,7 +328,10 @@ bool TaskManager::radioBegin(tm_nodeId_t nodeID, const char* ssid, const char* p
 			// we need to configure the WiFi link to the access point
 			WiFi.begin(ssid, pw);
 			for(int i=0; i<10 && WiFi.status()!=WL_CONNECTED; i++) delay(500);
-			if(WiFi.status()!=WL_CONNECTED) return false;
+			if(WiFi.status()!=WL_CONNECTED) {
+				if(DEBUG) Serial << "<--radioBegin error, Wifi.begin(ssid,pw) failed.\n";
+				return false;
+			}
 		} else {
 			WiFi.disconnect();
 		}
@@ -329,15 +340,24 @@ bool TaskManager::radioBegin(tm_nodeId_t nodeID, const char* ssid, const char* p
 
 	/////
 	m_lastESPError = esp_now_init();
-	if(m_lastESPError!=ESP_OK) return false;
+	if(m_lastESPError!=ESP_OK) {
+		if(DEBUG) Serial << "<--radioBegin error, esp_now_init() failed\n";
+		return false;
+	}
 
 	delay(10);
 
 	// register callbacks
 	m_lastESPError = esp_now_register_recv_cb(msg_recv_cb);
-	if(m_lastESPError!=ESP_OK) return false;
+	if(m_lastESPError!=ESP_OK) {
+		Serial << "<--radioBegin error, esp_now_register_recv_cb() failed\n";
+		return false;
+	}
 	m_lastESPError = esp_now_register_send_cb(msg_send_cb);
-	if(m_lastESPError!=ESP_OK) return false;
+	if(m_lastESPError!=ESP_OK) {
+		Serial << "<--radioBegin error, esp_now_register_send_cb() failed\n";
+		return false;
+	}
 
 	// create our semaphore
 	m_TaskManagerMessageQueueSemaphore = xSemaphoreCreateMutex();
@@ -348,6 +368,7 @@ bool TaskManager::radioBegin(tm_nodeId_t nodeID, const char* ssid, const char* p
 	// final cleanup
 	m_myNodeId = nodeID;
 	m_radioReceiverRunning = true;
+	if(DEBUG) Serial << "<--radioBegin successful return\n";
 	return true;
 }
 

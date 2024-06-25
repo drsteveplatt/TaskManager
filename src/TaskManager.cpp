@@ -2,6 +2,7 @@
 
 #include <arduino.h>
 #include <TaskManagerCore.h>
+#include <TaskManagerMacros.h>
 #include <Streaming.h>
 
 #define DEBUG false
@@ -21,10 +22,26 @@
 static void nullTask() {
 }
 
+// Globals used to support network clock synchronization
+// TmClockOffset -- the offset between this system's clock and the network server's clock
+// Defined as netMillis - ::millis(), depending on the value of the network millisecond timer
+// when clock resyncing is performed
+// Set to 0 at the start.
+#if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
+unsigned long TmClockOffset = 0;
+unsigned long TmMillis() {
+	return ::millis() + TmClockOffset;
+}
+void TmAdjustClockOffset(unsigned long offsetDelta) {
+	TmClockOffset += offsetDelta;
+}
+#endif // static global network clock
+
 // *******************************************************************
 // Implementation of _TaskManagerTask
 //
-/*! \ingroup _TaskManagerTask
+/*! \defgroup clocksync Cross-Node Clock Synchronization
+	\ingroup _TaskManagerTask
 	@{
 */
 /*! \brief Determine whether or not a task can be run NOW
@@ -44,13 +61,15 @@ bool _TaskManagerTask::isRunnable()  {
     // process has received a message.  We will clear WaitUntil here.
     // Also, if a process has been (WaitUntil+WaitMessage) and it
     // times out, the accompanying WaitMessage will be cleared.
+	//
+	// millisNow is a passed value to allow TaskManager to work with virtual/network clocks.
     bool ret;
     if(stateTestBit(Suspended)) {
 		ret = false;
 	} else if(stateTestBit(WaitMessage)) {
 		if(stateTestBit(WaitUntil)) {
 			// waiting for message or timeout, act based on timeout
-			if(m_restartTime<millis()) {
+			if(m_restartTime<TmMillis()) {
 				// timed out
 				stateClear(WaitUntil);
 				stateSet(TimedOut);
@@ -64,7 +83,7 @@ bool _TaskManagerTask::isRunnable()  {
 			ret = false;
 		}
 	} else if(stateTestBit(WaitUntil)) {
-		if(m_restartTime<millis()) {
+		if(m_restartTime<TmMillis()) {
 			// yes waiting for a time and the time has passed
 			stateClear(WaitUntil);
 			ret = true;
@@ -145,6 +164,9 @@ size_t _TaskManagerTask::printTo(Print& p) const {
 TaskManager::TaskManager() {
     add(TASKMGR_NULL_TASK, nullTask);
     m_startTime = millis();
+#if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
+	TmClockOffset = 0;
+#endif
 
 #if TM_USING_RADIO
 #if (defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24)) 
@@ -273,6 +295,8 @@ void TaskManager::internalSendMessage(tm_nodeId_t fromNodeId, tm_taskId_t fromTa
     is a null task and it is always runnable, FindNextRunnable() is guaranteed to find a runnable task.
 	
     This routine is for internal use only.
+	
+	/param millisNow -- the unsigned long time to use to check for waitUntil events.
 */
 _TaskManagerTask* TaskManager::FindNextRunnable() {
     // Note:  This is the ONLY routine that should modify the m_theTasks ring's position pointer.
@@ -358,9 +382,6 @@ _TaskManagerTask* TaskManager::findTaskById(tm_taskId_t id) {
 
     This routine is for internal use only.
 */
-//??delete??  #define T1	20
-//??delete??  #define	T2	20
-
 void TaskManager::loop() {
     int jmpVal; // return value from setjmp, indicates longjmp type
     _TaskManagerTask* nextTask;
@@ -370,7 +391,6 @@ void TaskManager::loop() {
     // that focuses on the start-start measurement of the period.  (All others are end-start.)
     nextTask->m_restartTime = millis() + nextTask->m_period;
 	//Serial << "About to run task " << nextTask->m_id << endl;
-    //??delete??if(DEBUG && (nextTask->m_id==T1 || nextTask->m_id==T2)) Serial << "-->TaskManager::loop\n";
     if((jmpVal=setjmp(/*TaskMgr.*/taskJmpBuf))==0) {
         // this is the normal path we use to invoke and process "normal" returns
     	//??delete??if(DEBUG && (nextTask->m_id==T1 || nextTask->m_id==T2)) Serial << "about to run task " << nextTask->m_id
@@ -471,7 +491,6 @@ bool TaskManager::sendMessage(tm_nodeId_t nodeId, tm_taskId_t taskId, char* mess
 	} else {
 		strcpy((char*)&radioBuf.m_data[1], message);
 	}
-	Serial.printf("sendmessage: calling radiosender\n");
 	return radioSender(nodeId);
 }
 
@@ -516,6 +535,54 @@ void TaskManager::getSource(tm_nodeId_t& fromNodeId, tm_taskId_t& fromTaskId) {
 }
 #endif // USING_RADIO && architecture
 
-/*!	@}
+// Internals for network clock resyncing
+#if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
+void TaskManager::resync(unsigned long int remoteMillis) {
+	// offsetDelta is the difference between the old offset and the new offset.
+	// It is how far the server clock is ahead of the local clock.  So we add this value to
+	// ::millis to get the network millis().
+	// It is used to update all m_restartTime values on the task ring, so they will
+	// be in sync with the new clock after the update
+	// Synchronization will be m_restartTime += offsetDelta
+	unsigned long int oldOffset, offsetDelta;
+	// calc oldOffset and offsetDelta; calc new TmClockOffset
+	oldOffset = TmClockOffset;
+	TmClockOffset = remoteMillis - ::millis();
+	offsetDelta = TmClockOffset - oldOffset;
+	// now update the things on the task ring
+	// Step through all of the  tasks.  Anything that has stateTestBit(AutoReWaitUntil) 
+	// will have its m_restartTime adjusted
+	ring<_TaskManagerTask> tmpTasks;
+	_TaskManagerTask* tmt;
+	_TaskManagerTask* last;
+	_TaskManagerTask* theTask;
+	if(m_theTasks.isNull()) return;
+	tmpTasks = m_theTasks;
+	last = &(m_theTasks.back());
+	//Serial.printf("\tfirst task is %d, last task is %d\n", int(tmt->m_id), 0/*int(last->m_id)*/);
+	// do all of the tasks up to [last]
+	while(&(tmpTasks.front())!=last) {
+		tmt = &(tmpTasks.front());
+		if(tmt->stateTestBit(_TaskManagerTask::WaitUntil) || tmt->m_id==TASKMGR_CLOCK_SYNC_CLIENT_TASK) {
+			tmt->m_restartTime += offsetDelta;
+		} else {
+		}
+		tmpTasks.move_next();
+	}
+	// do [last]
+	if(last->stateTestBit(_TaskManagerTask::WaitUntil) /*|| last->m_id==TASKMGR_CLOCK_SYNC_CLIENT_TASK*/ ) {
+		last->m_restartTime += offsetDelta;
+	} else {
+	}
+}
+
+unsigned long TaskManager::millis() const {
+		return ::millis() + TmClockOffset;
+	}
+#endif // ESP resync
+
+
+/*!	@}  end ingroup TaskManager
 */
+
 
