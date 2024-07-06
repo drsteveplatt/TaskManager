@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['taskmanager_0',['TaskManager',['../class_task_manager.html',1,'']]]
+  ['messagequeue_0',['MessageQueue',['../class_message_queue.html',1,'']]]
 ];

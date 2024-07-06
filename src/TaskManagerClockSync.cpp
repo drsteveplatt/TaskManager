@@ -6,7 +6,7 @@
 #include <TaskManagerClockSync.h>
 
 #if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
-/*!	\ingroup Clock Synchronization
+/*!	\ingroup ClockSync
 	@{
 */
 /*!	\brief TmClockSyncServerTask
@@ -98,6 +98,6 @@ void TmClockSyncClientTask() {
 	// to try again.
 	TM_END();
 }
-	/*!	@} */ // end clock synchronization group
+/*!	@} */ // ingroup ClockSync
 #endif // ESP
 

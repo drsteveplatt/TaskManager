@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['empty_0',['empty',['../group__ring.html#ga1800422d7f49e93354e0f8e7730bdcb6',1,'ring']]]
+  ['clear_0',['clear',['../classring.html#a65033722386b6afe9d7cd03e5dc95bb5',1,'ring']]],
+  ['clearsuspended_1',['clearSuspended',['../class___task_manager_task.html#ad29695b6fd1daf8fb52613814a9e3c8e',1,'_TaskManagerTask']]]
 ];

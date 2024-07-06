@@ -10,9 +10,10 @@
 //  the targeted task's message buffer).
 
 // Only use this in an ESP device
+
 #define NEWAPI true
 
-#if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
+#if defined(DOXYGEN_ALL) || (defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32))
 
 #include <arduino.h>
 
@@ -40,6 +41,13 @@
 extern TaskManager TaskMgr;
 /*! \endcond */
 
+/*!	\brief General radio receiver task.
+	Each driver is required to provide a radio receiver task.  The radio receiver task is 
+	a full fledged TaskManager task, and is called on schedule with all other tasks.
+	
+	The radio receiver task should empty the incoming message queue of all messages and distribute them
+	to the appropriate target tasks.
+*/
 static void radioReceiverTask() {
 	TaskMgr.tmRadioReceiverTask();
 }
@@ -83,6 +91,7 @@ static char* espErrText(esp_err_t err) {
 	}
 }
 
+//! \ignore
 //
 // Incoming message queue
 //
@@ -97,7 +106,6 @@ static char* espErrText(esp_err_t err) {
 //
 
 /*!	\class MessageQueue
-	\ingroup internal
 	The queue of incoming messages.  Messages are added by the interrupt handler and removed by the
 	radio receiver task.
 	
@@ -112,9 +120,12 @@ class MessageQueue {
 	short m_tail;	// newest entry
   public:
   	MessageQueue(): m_isEmpty(true), m_head(0), m_tail(0) {};
+	//! \brief Tells whether or not the message queue is empty.
 	bool isEmpty() { return m_isEmpty; }
 	bool add(const uint8_t* dat, const byte len);
 	bool remove(uint8_t* dat, byte* len);
+	/*!	\brief Return the size of the message queue.  Return 0 if the queue is empty.
+	*/
 	short size() {
 		if(isEmpty()) return 0;
 		else if(m_tail<=m_head) return m_head-m_tail+1;
@@ -122,7 +133,10 @@ class MessageQueue {
 	}
 };
 
+#if false	// old ff debug stuff
 struct tmpStruct { byte cmd; byte fromTaskId; tm_nodeId_t fromNodeId; byte ffcmd; uint32_t seq; };
+#endif
+
 
 /*! \brief Add a message to the message queue.
 	The given message is added to the message queue at the end of the queue.
@@ -133,12 +147,14 @@ struct tmpStruct { byte cmd; byte fromTaskId; tm_nodeId_t fromNodeId; byte ffcmd
 */
 bool MessageQueue::add(const uint8_t* dat, const byte len) {
 	// if we can't grab the semaphore in a ms, just ignore the message.
-	tmpStruct* ts;
 	bool ret;
+#if false	// old ff debug stuff
+	tmpStruct* ts;
 	ts = (tmpStruct*)dat;
 	if(DEBUG) Serial << "-->MessageQueue::add cmd: " << ts->cmd
 		<< " from: " << ts->fromNodeId << ' ' << ts->fromTaskId
 		<< " ffcmd: " << ts->ffcmd << " ffseq: " << ts->seq << endl;
+#endif
 	if(xSemaphoreTake(TaskMgr.m_TaskManagerMessageQueueSemaphore,1000)==pdFALSE) {
 		return false;
 	}
@@ -272,6 +288,16 @@ void TaskManager::tmRadioReceiverTask() {
 }
 
 // General purpose sender.  Sends a message somewhere (varying with the kind of radio)
+/*!	\brief Generic packet sender
+	TaskManager.radioBuf contains a complete formatted packet of information to 
+	send to the designated node.  radioSender(node) sends the packet to the node.
+	
+	This routine is only present in radio-enabled environments.  It is implemented 
+	in the driver module.
+	\param node - The target node
+	\returns - boolean, true if the remote node received the packet (low-level receive).  This
+	does not guarantee that the task has received the packet.
+*/
 bool TaskManager::radioSender(tm_nodeId_t destNodeID) {
 //Serial << "radioSender, sending to node " << destNodeID << " from n/t " 
 //<< radioBuf.m_fromNodeId << "/" << radioBuf.m_fromTaskId 
@@ -401,6 +427,6 @@ const char* TaskManager::lastESPError() {
 	return espErrText(m_lastESPError);
 }
 /*! @} */ // end TaskManagerRadioESP
-#endif // ESP
+#endif // ESP radio
 
 

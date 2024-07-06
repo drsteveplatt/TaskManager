@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['tm_5freadline_0',['TM_READLINE',['../_task_manager_readline_8h.html#a0e850ff428fc97d26a1a87fdc1e9af49',1,'TaskManagerReadline.h']]]
+  ['debug_0',['DEBUG',['../_task_manager_8cpp.html#ad72dbcf6d0153db1b8d8a58001feed83',1,'TaskManager.cpp']]]
 ];

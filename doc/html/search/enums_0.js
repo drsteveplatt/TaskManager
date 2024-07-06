@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['radiocmd',['RadioCmd',['../class_task_manager.html#a638d32d0be889ee21ef5492997952148',1,'TaskManager']]]
+  ['taskstates_0',['TaskStates',['../class___task_manager_task.html#a78e7f482a01af21bc297690062a90f1c',1,'_TaskManagerTask']]]
 ];

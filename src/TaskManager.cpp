@@ -1,11 +1,22 @@
+//
+//	Implementation file for TaskManager 
+//
+
+//	version 2.1 2024-0701 SMP
+//
+
+//!	\ignore
 #define TASKMANAGER_MAIN
+//!	\endignore
 
 #include <arduino.h>
 #include <TaskManagerCore.h>
 #include <TaskManagerMacros.h>
 #include <Streaming.h>
 
+//!	\ignore
 #define DEBUG false
+//!	\endignore
 
 
 
@@ -13,14 +24,11 @@
     Implementation file for Arduino Task Manager
 */
 
-/*!	\addtogroup _TaskManagerTask _TaskManagerTask
+/*x	\addtogroup _TaskManagerTask _TaskManagerTask
 */
 
-/*! \addtogroup TaskManager TaskManager
+/*x \addtogroup TaskManager TaskManager
 */
-
-static void nullTask() {
-}
 
 // Globals used to support network clock synchronization
 // TmClockOffset -- the offset between this system's clock and the network server's clock
@@ -28,19 +36,44 @@ static void nullTask() {
 // when clock resyncing is performed
 // Set to 0 at the start.
 #if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
-unsigned long TmClockOffset = 0;
+//!	\ignore
+unsigned long TmClockOffset = 0;	
+//!	\endignore
+
+/*!	\brief Return the network-adjusted time
+
+	When network clock synchronization is used, TmMillis() is the internal routine used to 
+	access the network-adjusted (network-standard) ms time.
+	
+	This should not be called by used tasks.  TaskMgr.millis() should be used instead.
+*/
 unsigned long TmMillis() {
 	return ::millis() + TmClockOffset;
 }
+
+/*!	\brief Adjust the network-adjusted time
+
+	This is an internal test routine.  It modifies the network time adjustment.  It should not be used by user tasks.
+*/
 void TmAdjustClockOffset(unsigned long offsetDelta) {
 	TmClockOffset += offsetDelta;
 }
 #endif // static global network clock
 
-// *******************************************************************
-// Implementation of _TaskManagerTask
-//
-/*! \defgroup clocksync Cross-Node Clock Synchronization
+/*!	\brief An empty task to be called by the TaskManager null task.
+
+	This task does nothing, however, since TaskManager always needs something to run,
+	a task referencing nullTask is created when the TaskManager object is created.
+*/
+static void nullTask() {
+}
+
+
+// **********************************************************
+// *     _TASKMANAGERTASK IMPLEMENTATION					*
+// **********************************************************
+
+/*x \defgroup clocksync Cross-Node Clock Synchronization
 	\ingroup _TaskManagerTask
 	@{
 */
@@ -128,6 +161,8 @@ bool _TaskManagerTask::operator==(_TaskManagerTask& rhs) const {
 }
 
 /*! \brief Print out information about the task
+
+	In a debugging environment (TaskManager debugging is enabled), this will print out information on a single task.
 */
 #if defined(TASKMANAGER_DEBUG)
 size_t _TaskManagerTask::printTo(Print& p) const {
@@ -148,19 +183,23 @@ size_t _TaskManagerTask::printTo(Print& p) const {
     return ret;
 }
 #endif
-/*!	@}
+/*x	@}
 */
 
-// ***********************************************************************
-// Implementation of TaskManager
-//
+// ******************************************************
+// *     TASKMANAGER IMPLEMENTATION					*
+// ******************************************************
 
 // Constructor and Destructor
 
-/*!	\ingroup TaskManager
+/*x	\ingroup TaskManager
 	@{
 */
 
+/*! \brief Create a new TaskManager task control object.
+
+	Creates an empty TaskManager control object
+*/
 TaskManager::TaskManager() {
     add(TASKMGR_NULL_TASK, nullTask);
     m_startTime = millis();
@@ -182,6 +221,12 @@ TaskManager::TaskManager() {
 
 }
 
+/*! \brief Destroy an existing TaskManager task control object.
+
+	Destroys a TaskManager object.  We do not expect this will ever be called, however,
+	it  is  included for completeness.  For normal purpoases, destroying the
+	TaskMgr instance will have serious consequences for the standard loop() routine.
+*/
 TaskManager::~TaskManager() {
 #if TM_USING_RADIO
 #if (defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24)) 
@@ -192,24 +237,72 @@ TaskManager::~TaskManager() {
 #endif // TM_USING_RADIO
 }
 
-//
-//  Add a new task
-//
+/*!  \brief Add a simple task.
+
+	The task will execute once each cycle through the task list.  Unless the task itself forces itself into a different scheduling
+	model (e.g., through YieldMessage), it will execute again at the next available opportunity
+	\param taskId - the task's ID.  For normal user tasks, this should be a byte value in the range [1 239].
+	System tasks have taskId values in the range [240 255].
+	\param fn -- this is a void function with no arguments.  This is the procedure that is called every time
+	the task is invoked.
+	\sa addWaitDelay, addWaitUntil, addAutoWaitDelay
+*/
 void TaskManager::add(tm_taskId_t taskId, void (*fn)()) {
     _TaskManagerTask newTask(taskId, fn);
     m_theTasks.push_back(newTask);
 }
 
+/*! \brief Add a task that will be delayed before its first invocation
+
+	This task will execute once each cycle.  Its first execution will be delayed for a set time.  After this,
+	unless the task forces itself into a different scheduling model (e.g., through yieldMessage), it will
+	execute agaion at the next available opportunity.
+	\param taskId - the task's ID.  For normal user tasks, this should be a byte value in the range [0 127].
+	System tasks have taskId values in the range [128 255].
+	\param fn -- this is a void function with no arguments.  This is the procedure that is called every time
+	the task is invoked.
+	\param msDelay -- the initial delay, in milliseconds
+	\sa add, addWaitUntil, addAutoWaitDelay
+*/
 void TaskManager::addWaitDelay(tm_taskId_t taskId, void(*fn)(), unsigned long msDelay) {
     addWaitUntil(taskId, fn, millis() + msDelay);
 }
 
+/*! \brief Add a task that will be delayed until a set system clock time before its first invocation
+
+	This task will execute once each cycle.  Its first execution will be delayed until a set system clock time.  After this,
+	unless the task forces itself into a different scheduling model (e.g., through yieldMessage), it will
+	execute agaion at the next available opportunity.
+	\param taskId - the task's ID.  For normal user tasks, this should be a byte value in the range [0 127].
+	System tasks have taskId values in the range [128 255].
+	\param fn -- this is a void function with no arguments.  This is the procedure that is called every time
+	the task is invoked.
+	\param msWhen -- the initial delay, in milliseconds
+	\sa add, addWaitDelay, addAutoWaitDelay
+*/
 void TaskManager::addWaitUntil(tm_taskId_t taskId, void(*fn)(), unsigned long msWhen) {
     _TaskManagerTask newTask(taskId, fn);
     newTask.setWaitUntil(msWhen);
     m_theTasks.push_back(newTask);
 }
 
+/*! \brief Add a task that will automatically reschedule itself with a delay
+
+	This task will execute once each cycle.  The task will automatically reschedule itself to not execute
+	until the given delay has passed. The first execution may be delayed using the optional fourth parameter startDelayed.
+	This delay, if used, will be the same as the period.
+
+	Note that
+	yielding for messages may extend this delay.  However, if a message is received during the
+	delay period., the procedure will still wait until the end of the delay period.
+	\param taskId - the task's ID.  For normal user tasks, this should be a byte value in the range [0 127].
+	System tasks have taskId values in the range [128 255].
+	\param fn -- this is a void function with no arguments.  This is the procedure that is called every time
+	the task is invoked.
+	\param period -- the schedule, in milliseconds
+	\param startWaiting -- for the first execution, start immediately (false), or delay its start for one period (true)
+	\sa add, addDelayed, addWaitUntil
+*/
 void TaskManager::addAutoWaitDelay(tm_taskId_t taskId, void(*fn)(), unsigned long period, bool startWaiting /*=false*/) {
     _TaskManagerTask newTask(taskId, fn);
     if(startWaiting) newTask.setWaitDelay(period); else newTask.m_restartTime = millis();
@@ -217,12 +310,36 @@ void TaskManager::addAutoWaitDelay(tm_taskId_t taskId, void(*fn)(), unsigned lon
     m_theTasks.push_back(newTask);
 }
 
+/*! \brief Add a task that is waiting for a message
+
+	The task will be added, but will be waiting for a message.
+	\param taskId - the task's ID.  For normal user tasks, this should be a byte value in the range [0 127].
+	System tasks have taskId values in the range [128 255].
+	\param fn -- this is a void function with no arguments.  This is the procedure that is called every time
+	the task is invoked.
+	\param timeout -- the maximum time to wait (in ms) before timing out.
+*/
 void TaskManager::addWaitMessage(tm_taskId_t taskId, void (*fn)(), unsigned long timeout/*=0*/) {
     _TaskManagerTask newTask(taskId, fn);
     newTask.setWaitMessage(timeout);
     m_theTasks.push_back(newTask);
 }
 
+/*! \brief Add a task that is waiting for a message or until a timeout occurs
+
+	The task will be added, but will be set to be waiting for a message.  If the message does
+	not arrive before the timeout period (in milliseconds), then the routine will be activated.  The
+	routine may use TaskManager::
+	() to determine whether it timed our or received a message.
+	\param taskId - the task's ID.  For normal user tasks, this should be a byte value in the range [0 127].
+	System tasks have taskId values in the range [128 255].
+	\param fn -- this is a void function with no arguments.  This is the procedure that is called every time
+	the task is invoked.
+	\param timeout -- the maximum time to wait (in ms) before timing out.
+	\param startWaiting -- tells whether the routine will start waiting for a message (true) or will execute
+	immediately (false).
+	\sa addWaitMessage
+*/
 void TaskManager::addAutoWaitMessage(tm_taskId_t taskId, void (*fn)(), unsigned long timeout/*=0*/, bool startWaiting/*=true*/) {
     _TaskManagerTask newTask(taskId, fn);
     if(startWaiting) {
@@ -233,24 +350,60 @@ void TaskManager::addAutoWaitMessage(tm_taskId_t taskId, void (*fn)(), unsigned 
     m_theTasks.push_back(newTask);
 }
 
-//
-// Yield functions
-//
+/*! \brief Exit from this task and return control to the task manager
 
+	This exits from the current task, and returns control to the task manager.  Functionally, it is similar to a
+	return statement.  The next time the task gains control, it will resume from the TOP of the routine.  Note that
+	if the task was an Auto task, it will be automatically rescheduled according to its Auto specifications.
+	\sa yieldDelay(), yieldUntil(), yieldMessage(), addAutoWaitDelay(), addAutoWaitMessage()
+*/
 void TaskManager::yield() {
     longjmp(taskJmpBuf, YtYield);
 }
 
+/*! \brief Exit from the task manager and do not restart this task until after a specified period.
+
+	This exits from the current task and returns control to the task manager.  This task will not be rescheduled until
+	at least the stated number of milliseconds has passed.  Note that yieldDelay _overrides_ any of the Auto
+	specifications.  That is, the next rescheduling will occur _solely_ after the stated time period, and will
+	not be constrained by AutoWaitMessage, or a different AutoWaitDelay value.  The Auto specification will
+	be retained, and will be applied on future executions where yield() or a normal return are used.
+	\param ms -- the delay in milliseconds.  Note the next call may exceed this constraint depending on time taken by other tasks.
+	\sa yield(), yieldUntil(), yieldMessage(), addAutoWaitDelay(), addAutoWaitMessage()
+*/
 void TaskManager::yieldDelay(unsigned long ms) {
     yieldUntil(millis()+ms);
 }
 
+/*! \brief Exit from the task manager and do not restart this task until (after) a specified CPU clock time.
+
+	This exits from the current task and returns control to the task manager.  This task will not be rescheduled until
+	the CPU clock (millis()) has exceeded the given time.  Note that yieldUntil _overrides_ any of the Auto
+	specifications.  That is, the next rescheduling will occur _solely_ after the stated clock time has passed, and will
+	not be constrained by AutoWaitMessage, or a different AutoWaitDelay value.  The Auto specification will
+	be retained, and will be applied on future executions where yield() or a normal return are used.
+	\param when -- The target CPU time.  Note the next call may exceed this constraint depending on time taken by other tasks.
+	\sa yield(), yieldDelay(), yieldMessage(), addAutoWaitDelay(), addAutoWaitMessage()
+*/
 void TaskManager::yieldUntil(unsigned long when) {
     // mark it as waiting
     m_theTasks.front().setWaitUntil(when);
     longjmp(taskJmpBuf, YtYieldUntil);
 }
 
+/*! \brief Exit from the task manager and do not restart this task until a message has been received or a stated time period has passed.
+
+	This exits from the current task and returns control to the task manager.  This task will not be rescheduled until
+	a message has been received or a stated time period has passed (the timeout period). The TaskManager::timeOut()
+	function will tell whether or not the timeout had been triggered.
+
+	\note The yieldForMessage call _overrides_ any of the Auto
+	specifications.  That is, the next rescheduling will occur _solely_ after the message has been received, and will
+	not be constrained by AutoWaitDelay, or a different AutoWaitMessage value.  The Auto specification will
+	be retained, and will be applied on future executions where yield() or a normal return are used.
+	\param timeout -- The timeout period, in milliseconds.
+	\sa yield(), yieldDelay(), addAutoWaitDelay(), addAutoWaitMessage(), timeOut()
+*/
 void TaskManager::yieldForMessage(unsigned long timeout/*=0*/) {
     m_theTasks.front().setWaitMessage(timeout);
     longjmp(taskJmpBuf, YtYieldMessageTimeout);
@@ -458,7 +611,14 @@ void TaskManager::loop() {
 }
 
 // Status tasks
+/*!	\brief Suspend the given task on this node.
 
+	The given task will be suspended until it is resumed.  It will not be allowed to run, nor will it receive
+	messages.
+	\param taskId The task to be suspended
+	\returns true if the task could be suspended, false otherwise
+	\sa receive
+*/
 bool TaskManager::suspend(tm_taskId_t taskId) {
     _TaskManagerTask* tsk;
     tsk = findTaskById(taskId);
@@ -466,6 +626,16 @@ bool TaskManager::suspend(tm_taskId_t taskId) {
 	return true;
 }
 
+/*!	\brief Resume the given task on this node
+
+	Resumes a task.  If the task
+	do not exist, nothing happens.  If the task had not been suspended, nothing happens.
+	\param taskId The task to be resumed
+	\returns true if the task could be resumed, false otherwise
+
+	\note Not implemented.
+	\sa suspend()
+*/
 bool TaskManager::resume(tm_taskId_t taskId) {
     _TaskManagerTask* tsk;
     tsk = findTaskById(taskId);
@@ -478,7 +648,24 @@ bool TaskManager::resume(tm_taskId_t taskId) {
 //
 
 #if TM_USING_RADIO && ((defined(ARDUINO_ARCH_AVR) && defined(TASKMGR_AVR_RF24)) || defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32))
+/*! \brief  Sends a string message to a task on a different node
 
+	Sends a message to a task.  The message will go to only one task.
+
+	Note that once a task has been sent a message, it will not be waiting for
+	other instances of the same siggnal number.
+	Note that additional messages sent prior to the task executing will overwrite any prior messages.
+	Messages that are too large are ignored.  Remember to account for the trailing '\n'
+	when considering the string message size.
+
+	\note This routine is only available on ESP and RF24-enabled AVR environments.
+
+	\param nodeId -- the node the message is sent to
+	\param taskId -- the ID number of the task
+	\param message -- the character string message.  It is restricted in length to
+	TASKMGR_MESSAGE_LENGTH-1 characters.
+	\sa yieldForMessage()
+*/
 bool TaskManager::sendMessage(tm_nodeId_t nodeId, tm_taskId_t taskId, char* message) {
 	if(nodeId==0 || nodeId==myNodeId()) { TaskManager::sendMessage(taskId, message); return true; }
 	radioBuf.m_cmd = tmrMessage;
@@ -494,6 +681,22 @@ bool TaskManager::sendMessage(tm_nodeId_t nodeId, tm_taskId_t taskId, char* mess
 	return radioSender(nodeId);
 }
 
+/*! \brief Send a binary message to a task on a different node
+
+	Sends a message to a task.  The message will go to only one task.
+	Messages that are too large are ignored.
+
+	\note Additional messages sent prior to the task executing will overwrite any prior messages.
+	
+	\note This routine is only available on ESP and RF24-enabled AVR environments.
+	
+	\param nodeId -- the node the message is sent to
+	\param taskId -- the ID number of the task
+	\param buf -- A pointer to the structure that is to be passed to the task
+	\param len -- The length of the buffer.  Buffers can be at most TASKMGR_MESSAGE_LENGTH
+	bytes long.
+	\sa yieldForMessage()
+*/
 bool TaskManager::sendMessage(tm_nodeId_t nodeId, tm_taskId_t taskId, void* buf, int len) {
 	if(nodeId==0 || nodeId==myNodeId()) {
 		TaskManager::sendMessage(taskId, buf, len);
@@ -511,6 +714,19 @@ bool TaskManager::sendMessage(tm_nodeId_t nodeId, tm_taskId_t taskId, void* buf,
 	return ret;
 }
 
+/*!	\brief Suspend the given task on the given node
+
+	Suspends a task on any node.  If nodeID==0, it suspends a task on this node. If the node or task
+	do not exist, nothing happens.  If the task was already suspended, it remains suspended.
+	
+	\param nodeId The node containing the task
+	\param taskId The task to be suspended
+	\returns true if the task could be suspended, false otherwise
+
+	\note Not implemented.
+	\note This routine is only available on ESP and RF24-enabled AVR environments.
+	\sa resume()
+*/
 bool TaskManager::suspend(tm_nodeId_t nodeId, tm_taskId_t taskId) {
 	if(nodeId==0 || nodeId==myNodeId()) { TaskManager::suspend(taskId); return true; }
 	radioBuf.m_cmd = tmrSuspend;
@@ -520,6 +736,17 @@ bool TaskManager::suspend(tm_nodeId_t nodeId, tm_taskId_t taskId) {
 	return radioSender(nodeId);
 }
 
+/*!	\brief Resume the given task on the given node
+
+	Resumes a task on any node.  If nodeID==0, it resumes a task on this node.  If the node or task
+	do not exist, nothing happens.  If the task had not been suspended, nothing happens.
+	\param nodeId The node containnig the task
+	\param taskId The task to be resumed
+	\note Not implemented.
+	\returns true if the task could be suspended, false otherwise
+	\note This routine is only available on ESP and RF24-enabled AVR environments.
+	\sa suspend()
+*/
 bool TaskManager::resume(tm_nodeId_t nodeId, tm_taskId_t taskId) {
 	if(nodeId==0 || nodeId==myNodeId()) { TaskManager::resume(taskId); return true; }
 	radioBuf.m_cmd = tmrResume;
@@ -529,6 +756,17 @@ bool TaskManager::resume(tm_nodeId_t nodeId, tm_taskId_t taskId) {
 	return radioSender(nodeId);
 }
 
+/*!	\brief Get source node/task ID of last message
+
+	Returns the nodeId and taskId of the node/task that last sent a message
+	to the current task.  If the current task has never received a message, returns [0 0].
+	If the last message was from "this" node, returns fromNodeId=0.
+
+	\note This routine is only available on ESP and RF24-enabled AVR environments.
+
+	\param[out] fromNodeId -- the nodeId that sent the last message
+	\param[out] fromTaskId -- the taskId that sent the last message
+*/
 void TaskManager::getSource(tm_nodeId_t& fromNodeId, tm_taskId_t& fromTaskId) {
 	fromNodeId = m_theTasks.front().m_fromNodeId;
 	fromTaskId = m_theTasks.front().m_fromTaskId;
@@ -582,7 +820,7 @@ unsigned long TaskManager::millis() const {
 #endif // ESP resync
 
 
-/*!	@}  end ingroup TaskManager
+/*x	@}  end ingroup TaskManager
 */
 
 

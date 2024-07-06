@@ -53,9 +53,11 @@
 	__tmNext__ = 0;
 
 /*!	\brief Return from a task
+
 	Cleans up and returns from a task.
 */
 #define TM_RETURN()		\
+						\
 	{ __tmNext__ = 0; return; }
 
 

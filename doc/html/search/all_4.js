@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['empty_0',['empty',['../group__ring.html#ga1800422d7f49e93354e0f8e7730bdcb6',1,'ring']]]
+  ['debug_0',['DEBUG',['../_task_manager_8cpp.html#ad72dbcf6d0153db1b8d8a58001feed83',1,'TaskManager.cpp']]],
+  ['drivers_1',['TaskManager ESP Network/Mesh Drivers',['../group___task_manager_radio_e_s_p.html',1,'']]]
 ];

@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['constructor_20and_20destructor_0',['Constructor and Destructor',['../group__constructor.html',1,'']]],
-  ['constructors_20and_20destructor_1',['Constructors and Destructor',['../group__constructors.html',1,'']]]
+  ['esp_20network_20mesh_20drivers_0',['TaskManager ESP Network/Mesh Drivers',['../group___task_manager_radio_e_s_p.html',1,'']]]
 ];

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['global_20values_0',['Global Values',['../group__global.html',1,'']]]
+  ['internal_20components_0',['Internal components',['../group__internal.html',1,'']]]
 ];

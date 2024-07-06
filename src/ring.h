@@ -4,12 +4,12 @@
 #include "Streaming.h"
 
 //#define RING_DEBUG
-/*! \defgroup ring Ring: An STL-style templated Ring class
- *  @{
+/*x \ingroup Ring
+	@{
 */
 
 //
-// The ring class implements a templated ring structure.  It implements many of
+// The ring classx implements a templated ring structure.  It implements many of
 // the methods of an STL collection.
 
 
@@ -18,12 +18,15 @@ template<class T> class ring;   // forward declaration
 // Definition of a single node in the ring.  This is the actual data.
 // It is a doubly-linked list that loops in both directions.  A pointer to
 // one of the elements defines the "current" element in the ring.
+/*!	\class _ringNode
+	\brief The entries in a ring.
+*/
 template<class T>class _ringNode {
     friend class ring<T>;
 protected:
-    T m_val;
-    _ringNode* m_next;
-    _ringNode* m_prev;
+    T m_val;			//!< The element in this node in the ring
+    _ringNode* m_next;	//!< A pointer to the next node in the ring
+    _ringNode* m_prev;	//!< A pointer to the previous node in the ring
 #if defined(RING_DEBUG)
     void DebugDump(Print& p) const;
 #endif
@@ -53,6 +56,9 @@ template<class T> void _ringNode<T>::DebugDump(Print& p) const {
     This is a templated class that implements a ring of arbitrary objects.  Each object
     must have a constructor and a destructor as well as operator=.  It should also
     have the printTo member function if any form of serialization is to be done.
+	
+	Note that a ring<T> contains a pointer to a single _ringNode<T>.  The _ringNode contains 
+	pointers to the remaining elements of the ring.
 */
 
 #if defined(RING_DEBUG)
@@ -69,7 +75,7 @@ public:
     //! \brief Construct an empty ring
     ring(): m_cur(NULL) { /*m_prefix = new char[4]; strcpy(m_prefix,"r: ");*/ }
     //! \brief Destroy a ring.
-    /*!
+    /*
     	As part of this process, the destructors for all of the stored objects will be called.
     	After the destruction, the ring will be empty.
     */
@@ -396,5 +402,5 @@ template<class T>void ring<T>::map(void (*fn)(T&, void*), void* p) {
     (fn)(cur->m_val, p);
 }
 
-/*! @} */ // end ring
+/*x @} */ // end ring
 #endif // RING_H_INCLUDED

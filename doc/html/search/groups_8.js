@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['predefined_20taskids_0',['Predefined TaskIDs',['../group__fixed.html',1,'']]],
-  ['public_20member_20constants_20and_20fields_1',['Public Member Constants and Fields',['../group__public.html',1,'']]]
+  ['subtasks_0',['Task Manager Callable Subtasks',['../group__subtask_macros.html',1,'']]],
+  ['support_20reentrant_20task_20code_1',['Macros to support reentrant task code',['../group__reentrant.html',1,'']]],
+  ['synchronization_2',['Mesh Clock Synchronization',['../group___clock_sync.html',1,'']]]
 ];
