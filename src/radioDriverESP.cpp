@@ -11,6 +11,7 @@
 
 // Only use this in an ESP device
 
+// NEWAPI - set to true to adjust for 3.3.1 ESP32 libraries and higher
 #define NEWAPI true
 
 #if defined(DOXYGEN_ALL) || (defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32))
