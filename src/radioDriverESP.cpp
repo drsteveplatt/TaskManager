@@ -379,7 +379,11 @@ bool TaskManager::radioBegin(tm_nodeId_t nodeID, const char* ssid, const char* p
 		Serial << "<--radioBegin error, esp_now_register_recv_cb() failed\n";
 		return false;
 	}
+	#if defined(NEWAPI)
+	m_lastESPError = esp_now_register_send_cb(esp_now_send_cb_t(msg_send_cb));
+	#else
 	m_lastESPError = esp_now_register_send_cb(msg_send_cb);
+	#endif
 	if(m_lastESPError!=ESP_OK) {
 		Serial << "<--radioBegin error, esp_now_register_send_cb() failed\n";
 		return false;

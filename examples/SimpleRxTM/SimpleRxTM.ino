@@ -3,11 +3,11 @@
 
 #if defined(ARDUINO_ARCH_AVR)
 #include <RF24.h>
-#include <TaskManager_2.h>
+#include <TaskManager.h>
 #define CE_PIN   9
 #define CSN_PIN 10
 #else
-#include <TaskManager_2.h>
+#include <TaskManager.h>
 #endif
 
 char dataReceived[10];
