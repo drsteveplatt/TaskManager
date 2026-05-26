@@ -58,6 +58,9 @@ unsigned long TmMillis() {
 void TmAdjustClockOffset(unsigned long offsetDelta) {
 	TmClockOffset += offsetDelta;
 }
+#else
+	// TmMillis() is simpliy millis() for Atmel
+inline unsigned long TmMillis() { return ::millis(); }
 #endif // static global network clock
 
 /*!	\brief An empty task to be called by the TaskManager null task.

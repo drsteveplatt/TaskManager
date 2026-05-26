@@ -90,8 +90,8 @@ typedef uint8_t tm_netId_t;		//!<	Storage for Net ID (ESP architecture)
 // Clock adjustment routines
 #if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
 void TmAdjustClockOffset(unsigned long offsetDelta);
-unsigned long TmMillis();
 #endif
+unsigned long TmMillis();
 /*x	@} */ // ingroup ClockSync
 
 /*x	\ingroup Globals
